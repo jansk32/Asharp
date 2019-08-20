@@ -4,15 +4,56 @@ import {
 	FlatList, SectionList, ToastAndroid, Picker
 } from 'react-native';
 import axios from 'axios';
+import { createStackNavigator, createAppContainer } from 'react-navigation';
+import ImagePicker from 'react-native-image-picker';
+import * as firebase from 'firebase';
+import RNFetchBlob from 'rn-fetch-blob';
+
+const Blob = RNFetchBlob.polyfill.Blob;
+const fs = RNFetchBlob.fs;
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+window.Blob = Blob;
 
 
-export default function App() {
+// Initialize Firebase
+const firebaseConfig = {
+	apiKey: "AIzaSyC4JLE-2HExIPeHTFE0QZmOt7f6koxTqsE",
+	authDomain: "mementos-7bca9.firebaseapp.com",
+	databaseURL: "https://mementos-7bca9.firebaseio.com",
+	projectId: "mementos-7bca9",
+	storageBucket: "gs://mementos-7bca9.appspot.com/",
+	messagingSenderId: "657679581397",
+	appId: "1:657679581397:web:6dbc92e3aa881c59"
+};
+firebase.initializeApp(firebaseConfig);
+
+
+async function uploadImage(uri) {
+	const mime = 'image/jpg';
+	const uploadUri = uri;
+	const sessionId = new Date().getTime();
+	let uploadBlob = null;
+	const imageRef = firebase.storage().ref('images').child(sessionId.toString());
+
+	const data = await fs.readFile(uploadUri, 'base64');
+	const blob = await Blob.build(data, { type: `${mime};BASE64` });
+	uploadBlob = blob;
+	await imageRef.put(blob, { contentType: mime });
+	uploadBlob.close();
+	const url = await imageRef.getDownloadURL();
+	console.log(url);
+	ToastAndroid.show('Image uploaded', ToastAndroid.SHORT);
+}
+
+
+function HomeScreen({ navigation }) {
+	const { navigate } = navigation;
 	const [condition, setCondition] = useState('');
 	const [newMemento, setNewMemento] = useState('');
 	const [mementos, setMementos] = useState([
 		{
 			id: 0,
-			name: 'Harmonica'
+			name: 'Harmonicas'
 		},
 		{
 			id: 1,
@@ -23,9 +64,33 @@ export default function App() {
 			name: 'Photo'
 		}
 	]);
+	const [image, setImage] = useState({});
 
 	return (
 		<>
+			<Image source={image} style={{ height: 200, width: 200 }} />
+
+			<Button
+				title="Pick an image"
+				onPress={() => {
+					ImagePicker.showImagePicker(response => {
+						if (!response.didCancel) {
+							setImage({ uri: response.uri });
+						}
+					})
+				}} />
+
+			<Button
+				title="Upload image"
+				onPress={() => {
+					uploadImage(image.uri);
+				}} />
+
+			<Button
+				title='Go to profile screen'
+				onPress={() => navigate('Profile', { name: 'Jane' })}
+			/>
+
 			<TextInput
 				placeholder='Add a new memento'
 				onChangeText={setNewMemento}
@@ -45,7 +110,7 @@ export default function App() {
 			<Picker
 				selectedValue={condition}
 				onValueChange={(value, index) => setCondition(value)}
-				>
+			>
 				<Picker.Item label='new' value='new' />
 				<Picker.Item label='used' value='used' />
 			</Picker>
@@ -61,7 +126,26 @@ export default function App() {
 	);
 }
 
-function HelloWorldApp() {
+HomeScreen.navigationOptions = {
+	title: 'Welcome'
+};
+
+
+function ProfileScreen() {
+	return (
+		<>
+			<Text style={{ fontSize: 42 }}>This is the profile screen</Text>
+		</>
+	);
+}
+
+ProfileScreen.navigationOptions = {
+	title: 'Profile'
+};
+
+
+// Reference for starting out in RN
+function SampleApp() {
 	const [text, setText] = useState('');
 	const [name, setName] = useState('');
 	const styles = StyleSheet.create({
@@ -129,3 +213,13 @@ function HelloWorldApp() {
 		</>
 	);
 }
+
+
+const MainNavigator = createStackNavigator({
+	Home: { screen: HomeScreen },
+	Profile: { screen: ProfileScreen }
+});
+
+const App = createAppContainer(MainNavigator);
+
+export default App;
