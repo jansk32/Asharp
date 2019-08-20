@@ -45,6 +45,23 @@ async function uploadImage(uri) {
 	ToastAndroid.show('Image uploaded', ToastAndroid.SHORT);
 }
 
+async function downloadImage(filename) {
+	const imageRef = firebase.storage().ref('images/test.jpg');
+}
+
+function googleSignIn() {
+	var provider = new firebase.auth.GoogleAuthProvider();
+	firebase.auth().signInWithPopup(provider);
+	// firebase.auth().getRedirectResult().then(function (result) {
+	// 	if (result.credential) {
+	// 		var token = result.credential.accessToken;
+	// 	}
+	// 	var user = result.user;
+	// }).catch(function (error) {
+
+	// })
+}
+
 
 function HomeScreen({ navigation }) {
 	const { navigate } = navigation;
@@ -89,6 +106,11 @@ function HomeScreen({ navigation }) {
 			<Button
 				title='Go to profile screen'
 				onPress={() => navigate('Profile', { name: 'Jane' })}
+			/>
+
+			<Button
+				title="Log in"
+				onPress={googleSignIn}
 			/>
 
 			<TextInput
