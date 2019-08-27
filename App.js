@@ -14,7 +14,6 @@ const fs = RNFetchBlob.fs;
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
 window.Blob = Blob;
 
-
 // Initialize Firebase
 const firebaseConfig = {
 	apiKey: "AIzaSyC4JLE-2HExIPeHTFE0QZmOt7f6koxTqsE",
@@ -27,7 +26,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-
+// Upload one image
 async function uploadImage(uri) {
 	const mime = 'image/jpg';
 	const uploadUri = uri;
@@ -70,7 +69,7 @@ function HomeScreen({ navigation }) {
 	const [mementos, setMementos] = useState([
 		{
 			id: 0,
-			name: 'Harmonicas'
+			name: 'Guitar'
 		},
 		{
 			id: 1,
@@ -156,7 +155,7 @@ HomeScreen.navigationOptions = {
 function ProfileScreen() {
 	return (
 		<>
-			<Text style={{ fontSize: 42 }}>This is the profile screen</Text>
+			<Text style={{ fontSize: 30, fontWeight: bold }}>This is the profile screen</Text>
 		</>
 	);
 }
