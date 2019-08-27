@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, View, Image } from 'react-native';
 
-<<<<<<< Updated upstream
-=======
 const styles = StyleSheet.create({
     profileBox: {
         backgroundColor: '#fff',
@@ -22,14 +20,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     }
 })
->>>>>>> Stashed changes
 
 export default function ProfileScreen() {
     return (
         <>
-<<<<<<< Updated upstream
-            <Text style={{ fontSize: 42 }}>This is the profile screen</Text>
-=======
             <React.Fragment>
                 <View style={styles.profileBox}>
                     <Image 
@@ -39,7 +33,6 @@ export default function ProfileScreen() {
                     <Text style = {styles.nameText}>Your Name</Text>
                 </View>
             </React.Fragment>
->>>>>>> Stashed changes
         </>
     );
 }
