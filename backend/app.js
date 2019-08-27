@@ -9,7 +9,7 @@ const userRoute = require('../routes/userRoute');
 require("../controller/mongooseController");
 
 // app.use
-app.use(bodyParser.json());
+app.use(bodyParser.json({type: "application/json"}));
 
 
 const port = process.env.PORT || 3000;
