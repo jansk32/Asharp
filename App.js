@@ -152,11 +152,13 @@ HomeScreen.navigationOptions = {
 	title: 'Welcome'
 };
 
-
+// Profile screen
 function ProfileScreen() {
 	return (
 		<>
-			<Text style={{ fontSize: 42 }}>This is the profile screen</Text>
+			<Image source={require('./timothy.png')} style={{width:100, height:100}}/>
+			<Text style={{ fontSize: 10 }}>This is the profile screen</Text>
+
 		</>
 	);
 }
