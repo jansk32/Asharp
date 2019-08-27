@@ -78,16 +78,6 @@ export default function HomeScreen({ navigation }) {
 				title="Sign in"
 			/>
 
-			<Button
-				title='Go to profile screen'
-				onPress={() => navigate('Profile', { name: 'Jane' })}
-			/>
-
-			<Button
-				title="Family tree"
-				onPress={() => navigate('FamilyTree')}
-			/>
-
 			<TextInput
 				placeholder='Add a new memento'
 				onChangeText={setNewMemento}
@@ -124,5 +114,5 @@ export default function HomeScreen({ navigation }) {
 }
 
 HomeScreen.navigationOptions = {
-	title: 'Welcome'
+	title: 'Home'
 };
