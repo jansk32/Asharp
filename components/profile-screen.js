@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, Image} from 'react-native';
+import { Text, StyleSheet, View, Image } from 'react-native';
 
 const styles = StyleSheet.create({
     profileBox: {
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
         borderTopColor: '#585858',
         borderTopWidth: 1,
         padding: 20,
-        
+
     },
 })
 
