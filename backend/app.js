@@ -1,9 +1,13 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
-// route for artefact
-const userRoute = require('../routes/userRoute');
+// user schema
+const schema = require('../schema/userSchema');
+
+// creates the mongoose model 
+var userModel = mongoose.model('user', schema);
 
 // to connect to mongodb
 require("../controller/mongooseController");
@@ -19,7 +23,10 @@ app.get('/', (req,res) => {
 })
 
 app.get('/user', (req,res) => {
-   userRoute.getUser({name: 'Jansen'});
+    userModel.find({name:"Jansen"}, (err,resp) => {
+        if(err) throw err;
+        res.send(resp);
+   });
 })
 
 app.get('/artefact', (req,res) => {

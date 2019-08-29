@@ -34,13 +34,6 @@ async function downloadImage(filename) {
 	const imageRef = firebase.storage().ref('images/test.jpg');
 }
 
-// backend 
-const GetDataFromServer = (obj) => {
-	fetch('/user')
-	.then(res => res.json())
-	.then(users => this.setState({users}));
-}
-
 export default function HomeScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [condition, setCondition] = useState('');
