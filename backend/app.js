@@ -25,7 +25,7 @@ app.get('/', (req,res) => {
 app.get('/user', (req,res) => {
     userModel.find({name:"Jansen"}, (err,resp) => {
         if(err) throw err;
-        res.send(resp);
+        res.json(resp);
    });
 })
 
