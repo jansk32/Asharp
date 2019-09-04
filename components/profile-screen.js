@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, Image , Dimensions} from 'react-native';
+import { Text, StyleSheet, View, Image , Dimensions, TouchableHighlight} from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 const console = require('console');
 
@@ -22,6 +22,11 @@ const styles = StyleSheet.create({
         marginRight: 10,
         marginBottom: 5,
     },
+    imageBox: {
+        margin: 1,
+        width: Dimensions.get('window').width /3.2,
+        height: Dimensions.get('window').width /3.2,
+    },
     textBox: {
         // backgroundColor: 'blue',
         flex: 1,
@@ -33,10 +38,7 @@ const styles = StyleSheet.create({
     itemBox: {
         backgroundColor: '#FAFAFA',
         flex: 1,
-        padding: 8,
-        paddingVertical: 40,
         alignItems: 'center',
-        margin: 2,
     },
     itemText:{
         color: 'black',
@@ -92,12 +94,16 @@ const styles = StyleSheet.create({
     },
 })
 
-const data = [
-    { key: 'A' }, { key: 'B' }, { key: 'C' }, { key: 'D' }, { key: 'E' }, { key: 'F' }, { key: 'G' }, { key: 'H' }, { key: 'I' }, { key: 'J' },
-    // { key: 'K' },
-    // { key: 'L' },
-  ];
+// Profile picture file
+const profPic = {profile: require('../tim_derp.jpg')}
+
 const numColumns = 3;
+
+// Array of images for the grid
+const data = [
+    {image: require('../tim_derp.jpg')}, {image: require('../gg.png')},
+  ];
+
   const formatData = (data, numColumns) => {
 
     const numberOfFullRows = Math.floor(data.length / numColumns);
@@ -119,7 +125,10 @@ export default function ProfileScreen() {
         }
         return (
             <View style={styles.itemBox}>
-                <Text style={styles.itemText}>{item.key}</Text>
+                <Image 
+                    source={item.image} 
+                    style={styles.imageBox}
+                    />
             </View>
         );
     };
@@ -129,7 +138,7 @@ export default function ProfileScreen() {
             <React.Fragment>
                 <View style={styles.profileBox}>
                     <Image 
-                        source={require('../tim_derp.jpg')} 
+                        source={profPic.profile} 
                         style={styles.image}
                     />
                     <View style={styles.textBox}>
