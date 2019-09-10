@@ -5,8 +5,12 @@ const userSchema = new mongoose.Schema({
     dob: Date,
     userName: String,
     password: String,
-    children: [String],
-    artefact: [String] 
+    gender: String,
+    spouse: String,
+    father: String,
+    mother: String,
+    artefact: [String],
+    picture: String 
 });
 
 module.exports = userSchema;

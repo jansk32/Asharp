@@ -40,8 +40,12 @@ app.post("/user/create", (req,res) => {
         dob: req.body.dob,
         userName: req.body.userName,
         password: req.body.password,
-        children: req.body.children,
-        artefact: req.body.artefact 
+        gender: req.body.gender,
+        spouse: req.body.spouse,
+        father: req.body.father,
+        mother: req.body.mother,
+        artefact: req.body.artefact,
+        picture: req.body.picture 
     });
 
     user.save((err,resp) => {
