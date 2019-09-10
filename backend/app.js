@@ -52,6 +52,7 @@ app.post("/user/create", (req,res) => {
 
 // get an artefact
 app.get('/artefact', (req, res) => {
+    console.log(req);
     artefactModel.find(req.body, (err,resp) => {
         if (err) throw err;
         res.json(resp);
@@ -76,6 +77,12 @@ app.post("/artefact/create", (req,res) => {
 })
 
 // assign artefact to a person
+app.put("/user/assign/:id", (req,res) => {
+    userModel.update({id: req.params.id}, {$set: {file: req.body}}, (err, resp) => {
+        if(err) throw err;
+        res.send("updated");
+    })
+});
 
 app.listen(port);
 console.log("Listening to port " + port);
