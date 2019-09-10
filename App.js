@@ -9,8 +9,10 @@ import FamilyTreeScreen from './components/family-tree-screen';
 import ProfileScreen from './components/profile-screen';
 import TimelineScreen from './components/timeline-screen';
 import GalleryScreen from './components/gallery-screen';
+import Login from './components/log-in-screen';
+import SignIn from './components/sign-in-screen';
 
-import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
+import { createBottomTabNavigator, createAppContainer, createSwitchNavigator, createStackNavigator } from 'react-navigation';
 import * as firebase from 'firebase';
 
 // Initialize Firebase
@@ -47,6 +49,12 @@ const MainNavigator = createBottomTabNavigator({
 
 );
 
-const App = createAppContainer(MainNavigator);
+const Stack = createSwitchNavigator({
+	Login: { screen: Login },
+	SignIn: {screen:SignIn},
+	MainNavigator,
+})
+
+const App = createAppContainer(Stack);
 
 export default App;
