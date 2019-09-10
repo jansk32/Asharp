@@ -110,7 +110,7 @@ export default function LoginScreen({ navigation }) {
           </View>
           <View style={styles.signInButton}>
             <TouchableHighlight
-              onPress={() => navigate('SignIn')}>
+              onPress={() => navigate('SignUp1')}>
               <Text
                 style={styles.text}>
                 Sign Up</Text>

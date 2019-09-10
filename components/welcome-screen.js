@@ -9,7 +9,7 @@ export default function WelcomeScreen({navigation}) {
         <View style = {styles.container}>
             <Text style={ styles.title }>mementos</Text>
 
-            <TouchableOpacity onPress={() => navigate('SignIn')}>
+            <TouchableOpacity onPress={() => navigate('SignUp1')}>
                 <Text style={styles.signInButton}>
                     I am a new user
                 </Text>

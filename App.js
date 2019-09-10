@@ -11,7 +11,10 @@ import TimelineScreen from './components/timeline-screen';
 import GalleryScreen from './components/gallery-screen';
 import WelcomeScreen from './components/welcome-screen';
 import Login from './components/log-in-screen';
-import SignIn from './components/sign-in-screen';
+import SignUp1 from './components/sign-up1-screen';
+import SignUp2 from './components/sign-up2-screen';
+import SignUp3 from './components/sign-up3-screen';
+
 
 import { createBottomTabNavigator, 
 	createAppContainer, 
@@ -54,11 +57,17 @@ const MainNavigator = createBottomTabNavigator({
 
 );
 
+const SignUpStack = createStackNavigator({
+	SignUp1:{screen:SignUp1},
+	SignUp2:{screen:SignUp2},
+	SignUp3:{screen:SignUp3},
+
+})
 
 const Stack = createSwitchNavigator({
 	Welcome: {screen: WelcomeScreen},
 	Login: { screen: Login },
-	SignIn: {screen:SignIn},
+	SignUpStack,
 	MainNavigator,
 })
 
