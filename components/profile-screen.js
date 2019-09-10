@@ -33,10 +33,23 @@ const formatData = (data, numColumns) => {
 
 export default function ProfileScreen({ navigation }) {
     const { navigate } = navigation;
+    const [profile, setProfile] = useState({});
+
+    useEffect(() => {
+        console.log('Sending request');
+        axios.get('http://localhost:3000/user')
+        .then((res) => {
+            setProfile(res.data);
+            console.log(res.data);
+            // console.log('FOUND');
+        })
+        .catch(error => console.error(error));
+    }, []);
 
     // Render Item invisible if it's just a placeholder for columns in the grid,
     // if not, render the picture for each grid
     renderItem = ({ item, index }) => {
+        
         if (item.empty === true) {
             return <View style={[styles.itemBox, styles.invisibleItem]} />;
         }
@@ -64,9 +77,9 @@ export default function ProfileScreen({ navigation }) {
                     />
                     <View style={styles.textBox}>
                         <Text 
-                            style={styles.nameText}>Name: {name.tim}</Text>
+                            style={styles.nameText}>Name:{profile.name}</Text>
                         <Text
-                            style={styles.nameText}>Date of Birth: {date.DOB}</Text>
+                            style={styles.nameText}>Date of Birth: {profile.dob}</Text>
                     </View>
                 </View>
                 <View style={styles.settingBox}>
@@ -181,46 +194,46 @@ const styles = StyleSheet.create({
     },
 })
 
-export default function ProfileScreen() {
-    const [profile, setProfile] = useState({});
+// export default function ProfileScreen() {
+//     const [profile, setProfile] = useState({});
 
-    useEffect(() => {
-        console.log('Sending request');
-        axios.get('http://localhost:3000/user')
-        .then((res) => {
-            setProfile(res.data);
-            console.log(res.data);
-            // console.log('FOUND');
-        })
-        .catch(error => console.error(error));
-    }, []);
+//     useEffect(() => {
+//         console.log('Sending request');
+//         axios.get('http://localhost:3000/user')
+//         .then((res) => {
+//             setProfile(res.data);
+//             console.log(res.data);
+//             // console.log('FOUND');
+//         })
+//         .catch(error => console.error(error));
+//     }, []);
 
-    return (
-        <>
-            <React.Fragment>
-                <View style={styles.profileBox}>
-                    <Image 
-                        source={require('../tim_derp.jpg')} 
-                        style={styles.image}
-                    />
-                    <View style={styles.textBox}>
-                        <Text style = {styles.nameText}>Name: {profile.name}</Text>
-                        <Text style = {styles.nameText}>Date of Birth: {profile.dob}</Text>
-                    </View>
-                </View>
-                <View style={styles.settingBox}>
-                    <View style={styles.settingButton}>
-                        <Text style = {styles.nameText}>Profile Setting</Text>
-                    </View>  
-                </View>
-                <View style={styles.artefactsBox}>
-                    <Text style = {styles.nameText}>My Artefacts</Text>
-                </View>
-            </React.Fragment>
-        </>
-    );
-}
+//     return (
+//         <>
+//             <React.Fragment>
+//                 <View style={styles.profileBox}>
+//                     <Image 
+//                         source={require('../tim_derp.jpg')} 
+//                         style={styles.image}
+//                     />
+//                     <View style={styles.textBox}>
+//                         <Text style = {styles.nameText}>Name: {profile.name}</Text>
+//                         <Text style = {styles.nameText}>Date of Birth: {profile.dob}</Text>
+//                     </View>
+//                 </View>
+//                 <View style={styles.settingBox}>
+//                     <View style={styles.settingButton}>
+//                         <Text style = {styles.nameText}>Profile Setting</Text>
+//                     </View>  
+//                 </View>
+//                 <View style={styles.artefactsBox}>
+//                     <Text style = {styles.nameText}>My Artefacts</Text>
+//                 </View>
+//             </React.Fragment>
+//         </>
+//     );
+// }
 
-ProfileScreen.navigationOptions = {
-    title: 'Profile'
-};
+// ProfileScreen.navigationOptions = {
+//     title: 'Profile'
+// };
