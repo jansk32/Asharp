@@ -64,14 +64,14 @@ const styles = StyleSheet.create({
 })
 
 export default function ProfileScreen() {
-    const [profile, setProfile] = useState('');
+    const [profile, setProfile] = useState({});
 
     useEffect(() => {
         console.log('Sending request');
         axios.get('http://localhost:3000/user')
         .then((res) => {
-            // setProfile(resp);
-            console.log(res);
+            setProfile(res.data);
+            console.log(res.data);
             // console.log('FOUND');
         })
         .catch(error => console.error(error));
@@ -86,8 +86,8 @@ export default function ProfileScreen() {
                         style={styles.image}
                     />
                     <View style={styles.textBox}>
-                        <Text style = {styles.nameText}>Name: 'insert name here'</Text>
-                        <Text style = {styles.nameText}>Date of Birth: 'insert DOB'</Text>
+                        <Text style = {styles.nameText}>Name: {profile.name}</Text>
+                        <Text style = {styles.nameText}>Date of Birth: {profile.dob}</Text>
                     </View>
                 </View>
                 <View style={styles.settingBox}>

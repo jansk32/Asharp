@@ -27,14 +27,15 @@ app.get('/', (req, res) => {
 // get a user
 app.get('/user', (req, res) => {
     // change later
-    userModel.find(req.body, (err, resp) => {
+    userModel.find({name: "Jansen"}, (err, resp) => {
         if (err) throw err;
-        res.json(resp);
+        res.json(resp[0]);
     });
 })
 
 // create a user
 app.post("/user/create", (req,res) => {
+    
     let user = userModel({
         name: req.body.name,
         dob: req.body.dob,
