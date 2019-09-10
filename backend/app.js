@@ -82,7 +82,7 @@ app.post("/artefact/create", (req,res) => {
 
 // assign artefact to a person
 app.put("/user/assign/:id", (req,res) => {
-    userModel.update({id: req.params.id}, {$set: {file: req.body}}, (err, resp) => {
+    userModel.update({id: req.params.id}, {$push: {artefact: req.body}}, (err, resp) => {
         if(err) throw err;
         res.send("updated");
     })
