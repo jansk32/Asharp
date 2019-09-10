@@ -40,18 +40,12 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-const BegoNavigator = createSwitchNavigator({
-	Login: { screen: LoginScreen },
-	SignUp: { screen: SignUpScreen },
-});
-
 const MainNavigator = createBottomTabNavigator({
 	Timeline: { screen: TimelineScreen },
 	FamilyTree: {screen: FamilyTreeScreen},
 	Home: { screen: HomeScreen },
 	Gallery: { screen: GalleryScreen },
 	Profile: { screen: ProfileScreen },
-
 	},
     {
 		initialRouteName: 'Home',
@@ -73,10 +67,8 @@ const Stack = createSwitchNavigator({
 	SignIn: {screen:SignIn},
 	MainNavigator,
 })
-const a = createStackNavigator({MainNavigator,BegoNavigator})
 
-// const App = createAppContainer(Stack);
-const App = createAppContainer(a);
+const App = createAppContainer(Stack);
 
 // export default RootSwitch;
 export default App;

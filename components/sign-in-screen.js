@@ -39,7 +39,7 @@ export default function SigninScreen({navigation}) {
 							 />
 						 <Button
                title='Login In'
-               onPress={() => navigate('Sign In')}
+               onPress={() => navigate('Login')}
 							 />
           </React.Fragment>
       </>

@@ -58,7 +58,7 @@ export default function HomeScreen({ navigation }) {
 			<Button
 				title="Sign in"
 				onPress={() => {
-					navigate('SignUp');
+					navigate('SignIp');
 				}}
 			/>
 			<Button
