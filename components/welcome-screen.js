@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         borderColor: '#fbc074',
         backgroundColor: '#fbc074',
         marginLeft: '20%',
-        marginTop: '90%',
+        marginTop: '80%',
 
     },
     loginButton:{
@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white', 
         marginLeft:'20%',
         marginTop: '10%',
+        marginBottom:'30%',
 
     },
     container:{
