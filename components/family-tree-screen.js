@@ -1,6 +1,7 @@
 import React from 'react';
-import { Text } from 'react-native';
-import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path } from 'react-native-svg';
+// import { Text as RNText } from 'react-native';
+import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text } from 'react-native-svg';
+import generateFamilyTree, { family, mainDrawLines } from '../build-family-tree';
 
 
 function Node({ cx, cy, id }) {
@@ -13,24 +14,47 @@ function Node({ cx, cy, id }) {
                 </ClipPath>
             </Defs>
 
-            <Image
+            {/* <Image
                 height={radius * 2}
                 width={radius * 2}
                 x={cx - radius}
                 y={cy - radius}
                 href={require('../tim_derp.jpg')}
                 clipPath={`url(#${id})`}
+            /> */}
+
+            <Circle
+                cx={cx}
+                cy={cy}
+                r={radius}
+                stroke="black"
+                fill="white"
             />
+
+            <Text
+                x={cx}
+                y={cy}
+                fill="black"
+                stroke="black"
+                fontSize="30"
+                textAnchor="middle"
+            >{id}</Text>
+
         </>
     );
 }
 
 export default function FamilyTreeScreen() {
+    const familyTreeInfo = generateFamilyTree(family, 'th');
+    const familyTree = familyTreeInfo.familyTree;
+    const ancestors = familyTreeInfo.ancestors;
+    console.log(familyTree.map(node => [node.id, node.x, node.marriageOffset, node.xOffset, node.width]));
+
     return (
         <>
-            <Svg height="100%" width="100%" viewBox="0 0 500 500">
+            <Svg height="100%" width="100%" viewBox="250 -200 1200 1200">
 
-                <Line x1="50" y1="50" x2="200" y2="50"
+                {/* <Line x1="50" y1="50" x2="200" y2="50"
                     stroke="black"
                     strokeWidth="3"
                 />
@@ -80,10 +104,25 @@ export default function FamilyTreeScreen() {
                     y="200"
                     clipPath="url(#circleView)"
                     fill="green"
-                />
-
+                /> */}
+                {/* 
                 {
                     [50, 200].map(el => <Node cx={el} cy="50" id={el} key={el} />)
+                } */}
+                {
+                    familyTree.map(node => <Node cx={node.x} cy={node.y} id={node.id} key={node.id} />)
+                }
+                {
+                    mainDrawLines(familyTree, ancestors).map((line, i) =>
+                        <Line
+                            x1={line.x1}
+                            y1={line.y1}
+                            x2={line.x2}
+                            y2={line.y2}
+                            stroke="black"
+                            strokeWidth="3"
+                            key={i}
+                        />)
                 }
             </Svg>
         </>
