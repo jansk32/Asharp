@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Text, StyleSheet, View, Image } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -63,6 +64,19 @@ const styles = StyleSheet.create({
 })
 
 export default function ProfileScreen() {
+    const [profile, setProfile] = useState('');
+
+    useEffect(() => {
+        console.log('Sending request');
+        axios.get('http://localhost:3000/user')
+        .then((res) => {
+            // setProfile(resp);
+            console.log(res);
+            // console.log('FOUND');
+        })
+        .catch(error => console.error(error));
+    }, []);
+
     return (
         <>
             <React.Fragment>
@@ -89,6 +103,6 @@ export default function ProfileScreen() {
     );
 }
 
-ProfileScreen.navigationOptions = {
-    title: 'Profile'
-};
+// ProfileScreen.navigationOptions = {
+//     title: 'Profile'
+// };
