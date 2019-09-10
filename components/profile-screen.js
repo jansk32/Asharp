@@ -41,10 +41,12 @@ export default function ProfileScreen({ navigation }) {
         .then((res) => {
             setProfile(res.data);
             console.log(res.data);
+            
             // console.log('FOUND');
         })
         .catch(error => console.error(error));
     }, []);
+    
 
     // Render Item invisible if it's just a placeholder for columns in the grid,
     // if not, render the picture for each grid
