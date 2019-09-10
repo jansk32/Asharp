@@ -1,7 +1,7 @@
 import React from 'react';
 // import { Text as RNText } from 'react-native';
 import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text } from 'react-native-svg';
-import generateFamilyTree, { family } from '../build-family-tree';
+import generateFamilyTree, { family, mainDrawLines } from '../build-family-tree';
 
 
 function Node({ cx, cy, id }) {
@@ -36,7 +36,7 @@ function Node({ cx, cy, id }) {
                 y={cy}
                 fill="black"
                 stroke="black"
-                fontSize="20"
+                fontSize="30"
                 textAnchor="middle"
             >{id}</Text>
 
@@ -45,7 +45,9 @@ function Node({ cx, cy, id }) {
 }
 
 export default function FamilyTreeScreen() {
-    const familyTree = generateFamilyTree(family, 'th');
+    const familyTreeInfo = generateFamilyTree(family, 'th');
+    const familyTree = familyTreeInfo.familyTree;
+    const ancestors = familyTreeInfo.ancestors;
     console.log(familyTree.map(node => [node.id, node.x, node.marriageOffset, node.xOffset, node.width]));
 
     return (
@@ -108,7 +110,19 @@ export default function FamilyTreeScreen() {
                     [50, 200].map(el => <Node cx={el} cy="50" id={el} key={el} />)
                 } */}
                 {
-                    familyTree.map(node => <Node cx={node.x} cy={node.gen * 200} id={node.id} key={node.id} />)
+                    familyTree.map(node => <Node cx={node.x} cy={node.y} id={node.id} key={node.id} />)
+                }
+                {
+                    mainDrawLines(familyTree, ancestors).map((line, i) =>
+                        <Line
+                            x1={line.x1}
+                            y1={line.y1}
+                            x2={line.x2}
+                            y2={line.y2}
+                            stroke="black"
+                            strokeWidth="3"
+                            key={i}
+                        />)
                 }
             </Svg>
         </>
