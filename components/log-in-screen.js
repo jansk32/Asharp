@@ -84,17 +84,19 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.inputBox}>
           <View style={styles.usernameBox}>
             <Text style={styles.text}>Username</Text>
-            <TextInput
-              placeholder='Enter Username'
-              style={styles.textInput}
-            />
+            <View style={styles.textInput}>
+              <TextInput
+                placeholder='Enter Username'
+              />
+            </View>
           </View>
           <View style={styles.passwordBox}>
             <Text style={styles.text}>Password</Text>
-            <TextInput
-              placeholder='Enter Password'
-              style={styles.textInput}
-            />
+            <View style={styles.textInput}>
+              <TextInput
+                placeholder='Enter Password'
+              />
+            </View>
           </View>
         </View>
         <View style={styles.buttonBox}>
