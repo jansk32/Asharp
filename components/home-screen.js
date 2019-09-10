@@ -65,7 +65,7 @@ export default function HomeScreen({ navigation }) {
 		})
 		.then((resp) => {
 			console.log(resp.data[0]);
-			// setNewMemento(resp.data[0]);
+			setMementos(resp.data);
 		})
 		.catch((err) =>{
 			console.log(err);
@@ -125,7 +125,7 @@ export default function HomeScreen({ navigation }) {
 			<FlatList
 				data={mementos}
 				renderItem={({ item }) => <Text style={{ fontSize: 24, lineHeight: 40 }}>{item.name}</Text>}
-				keyExtractor={(item, index) => item.id.toString()}
+				keyExtractor={(item, index) => item.id}
 			/>
 		</>
 	);
