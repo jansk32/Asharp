@@ -6,6 +6,7 @@ import {
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 import * as firebase from 'firebase';
+import axios from 'axios';
 
 const Blob = RNFetchBlob.polyfill.Blob;
 const fs = RNFetchBlob.fs;
@@ -34,10 +35,12 @@ async function downloadImage(filename) {
 	const imageRef = firebase.storage().ref('images/test.jpg');
 }
 
+
+
 export default function HomeScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [condition, setCondition] = useState('');
-	const [newMemento, setNewMemento] = useState('');
+	const [newMemento, setNewMemento] = useState({});
 	const [mementos, setMementos] = useState([
 		{
 			id: 0,
@@ -53,6 +56,21 @@ export default function HomeScreen({ navigation }) {
 		}
 	]);
 	const [image, setImage] = useState({});
+
+	useEffect(() => {
+		axios.get('http://localhost:3000/artefact', {
+			body: {
+				name: "vase"
+			}
+		})
+		.then((resp) => {
+			console.log(resp.data[0]);
+			setMementos(resp.data);
+		})
+		.catch((err) =>{
+			console.log(err);
+		})
+	})
 
 	return (
 		<>
@@ -107,7 +125,7 @@ export default function HomeScreen({ navigation }) {
 			<FlatList
 				data={mementos}
 				renderItem={({ item }) => <Text style={{ fontSize: 24, lineHeight: 40 }}>{item.name}</Text>}
-				keyExtractor={(item, index) => item.id.toString()}
+				keyExtractor={(item, index) => item.id}
 			/>
 		</>
 	);
