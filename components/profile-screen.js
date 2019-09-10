@@ -15,7 +15,7 @@ export default function ProfileScreen() {
 
     useEffect(() => {
         console.log('Sending request');
-        let url = fetch("https://localhost:3000/user")
+        axios.get("/user")
         .then((resp) => {
             // setProfile(resp);
             // console.log(resp);
