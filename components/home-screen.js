@@ -79,7 +79,7 @@ export default function HomeScreen({ navigation }) {
 			/>
 
 			<Button
-				title='Go to profile screen'
+				title="Go to profile screen"
 				onPress={() => navigate('Profile', { name: 'Jane' })}
 			/>
 
@@ -89,13 +89,13 @@ export default function HomeScreen({ navigation }) {
 			/>
 
 			<TextInput
-				placeholder='Add a new memento'
+				placeholder="Add a new memento"
 				onChangeText={setNewMemento}
 				value={newMemento}
 			/>
 
 			<Button
-				title='Add memento'
+				title="Add memento"
 				onPress={() => {
 					setMementos(mementos.concat({ id: mementos.length, name: newMemento }));
 					ToastAndroid.show('Memento added', ToastAndroid.SHORT);
@@ -108,8 +108,8 @@ export default function HomeScreen({ navigation }) {
 				selectedValue={condition}
 				onValueChange={(value, index) => setCondition(value)}
 			>
-				<Picker.Item label='new' value='new' />
-				<Picker.Item label='used' value='used' />
+				<Picker.Item label="new" value='new' />
+				<Picker.Item label="used" value='used' />
 			</Picker>
 
 			<Text>{condition}</Text>
