@@ -6,6 +6,7 @@ export default function WelcomeScreen({navigation}) {
     const { navigate } = navigation;
     return (
         <>
+        <View style = {styles.container}>
             <Text style={ styles.title }>mementos</Text>
 
             <TouchableOpacity onPress={() => navigate('SignIn')}>
@@ -19,6 +20,7 @@ export default function WelcomeScreen({navigation}) {
                     I am an existing user
                 </Text>
             </TouchableOpacity>
+        </View>
         </>
     );
 }
@@ -53,4 +55,8 @@ const styles = StyleSheet.create({
         marginTop: '10%',
 
     },
+    container:{
+        backgroundColor:'white',
+        flex:1,
+    }
 })
