@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet,View, FlatList, Dimensions } from 'react-native';
+import { Text, StyleSheet,View, FlatList, Dimensions, Image, TouchableHighlight } from 'react-native';
 
 const data = [
-    { key: 'A' },
-    { key: 'B' },
-    { key: 'C' },
-    { key: 'D' },
-    { key: 'E' },
-    { key: 'F' },
-    { key: 'G' },
-    { key: 'H' },
-    { key: 'I' },
-    { key: 'J' },
+    { image: require('../tim_derp.jpg') },
+    { image: require('../tim_derp.jpg') },
+    { image: require('../tim_derp.jpg') },
+    { image: require('../tim_derp.jpg') },
+    { image: require('../tim_derp.jpg') },
+
     // { key: 'K' },
     // { key: 'L' },
   ];
@@ -19,12 +15,12 @@ const data = [
 const formatData = (data, numColumns) => {
     const numberOfFullRows = Math.floor(data.length / numColumns);
   
-    let numberOfElementsLastRow = data.length % numColumns;
+    let numberOfElementsLastRow = data.length - numberOfFullRows * numColumns;
     while (
       numberOfElementsLastRow !== numColumns &&
       numberOfElementsLastRow !== 0
     ) {
-      data.push({ key: `blank-${numberOfElementsLastRow}`, empty: true });
+      data.push({ image: `blank-${numberOfElementsLastRow}`, empty: true });
       numberOfElementsLastRow++;
     }
   
@@ -33,15 +29,22 @@ const formatData = (data, numColumns) => {
 
 const numColumns =3;
 
-export default function GalleryScreen() {
+export default function GalleryScreen({navigation}) {
+    const navigate = navigation;
     renderItem = ({ item, index }) => {
         if (item.empty === true) {
           return <View style={[styles.item, styles.itemInvisible]} />;
         }
         return (
-          <View style={styles.item}>
-            <Text style={styles.itemText}>{item.key}</Text>
-          </View>
+        <View style={styles.item}>
+            <TouchableHighlight 
+                onPress={()=> {navigate('Home')}}>
+                <Image 
+                    style={styles.imageBox}
+                    source = {item.image}
+                />
+            </TouchableHighlight>    
+        </View>
         );
       };
     return (
@@ -70,7 +73,7 @@ const styles = StyleSheet.create({
       marginVertical:10
     },
     item: {
-        backgroundColor: '#4D243D',
+        //backgroundColor: '#4D243D',
         alignItems: 'center',
         justifyContent: 'center',
         flex: 1,
@@ -83,6 +86,14 @@ const styles = StyleSheet.create({
       itemText: {
         color: '#fff',
       },
+      imageBox:{
+        height: Dimensions.get('window').width / numColumns, // approximate a square
+        flex: 1,
+        margin: 1,
+        width: Dimensions.get('window').width / numColumns,
+
+
+      }
   })
   
 
