@@ -1,47 +1,121 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, Image, StyleSheet, TextInput, Button, ScrollView,
-	FlatList, SectionList, ToastAndroid, Picker
+  Text, View, Image, StyleSheet, TextInput, Button, ScrollView,
+  FlatList, SectionList, ToastAndroid, Picker, TouchableHighlight,
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 
 const styles = StyleSheet.create({
-    loginText: {
-			fontSize: 30,
-
-    },
-    loginBox: {
-        backgroundColor: '#fff',
-				flex: 1/4,
-				justifyContent: 'space-evenly',
-				textAlign: 'center',
-				alignItems: 'center',
-				// justifyContent: 'center',
-		},
+  container: {
+    backgroundColor: 'white',
+    flex: 1,
+  },
+  loginText: {
+    fontSize: 30,
+  },
+  text: {
+    fontSize: 20,
+  },
+  loginButtonText: {
+    fontSize: 20,
+    color: 'white',
+  },
+  loginBox: {
+    justifyContent: 'space-evenly',
+    textAlign: 'center',
+    alignItems: 'center',
+    paddingTop: 100,
+    paddingBottom: 10,
+  },
+  inputBox: {
+    justifyContent: 'space-between',
+    padding: 40,
+    // justifyContent: 'center',
+  },
+  loginButton: {
+    backgroundColor: '#EC6268',
+    borderColor: '#EC6268',
+    borderWidth: 1,
+    paddingVertical: 9,
+    paddingHorizontal: 80,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: 30,
+  },
+  signInButton: {
+    backgroundColor: 'white',
+    borderColor: '#EC6268',
+    borderWidth: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 70,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  buttonBox: {
+    backgroundColor: '#fff',
+    marginTop: 40,
+    // justifyContent:'space-between',
+  },
+  textInput: {
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 3,
+    alignContent: 'center',
+    marginTop: 10,
+    padding: 5,
+    paddingLeft: 10,
+  },
+  usernameBox: {
+    marginBottom: 40,
   }
+}
 )
 
-export default function LoginScreen({navigation}) {
-  const {navigate} = navigation;
+export default function LoginScreen({ navigation }) {
+  const { navigate } = navigation;
   return (
-      <>
-          <React.Fragment>
-             <View style={styles.loginBox}>
-               <Text style={styles.loginText}>LOGIN</Text>
-             </View>
-						 <View style={styles.loginBox}>
-               <Text style={styles.loginText}>Username</Text>
-               <Text style={styles.loginText}>Password</Text>
-             </View>
-						 <Button
-               title='Login'
-               onPress={() => navigate('Home')}
-							 />
-						 <Button
-               title='Sign In'
-               onPress={() => navigate('SignIn')}
-							 />
-          </React.Fragment>
-      </>
+    <>
+      <View style={styles.container}>
+        <View style={styles.loginBox}>
+          <Text style={styles.loginText}>LOGIN</Text>
+        </View>
+        <View style={styles.inputBox}>
+          <View style={styles.usernameBox}>
+            <Text style={styles.text}>Username</Text>
+            <TextInput
+              placeholder='Enter Username'
+              style={styles.textInput}
+            />
+          </View>
+          <View style={styles.passwordBox}>
+            <Text style={styles.text}>Password</Text>
+            <TextInput
+              placeholder='Enter Password'
+              style={styles.textInput}
+            />
+          </View>
+        </View>
+        <View style={styles.buttonBox}>
+          <View style={styles.loginButton}>
+            <TouchableHighlight
+              onPress={() => navigate('Home')}>
+              <Text
+                style={styles.loginButtonText}>
+                Login</Text>
+            </TouchableHighlight>
+          </View>
+          <View style={styles.signInButton}>
+            <TouchableHighlight
+              onPress={() => navigate('SignIn')}>
+              <Text
+                style={styles.text}>
+                Sign Up</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </View>
+    </>
   );
 }
