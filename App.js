@@ -10,9 +10,14 @@ import ProfileScreen from './components/profile-screen';
 import TimelineScreen from './components/timeline-screen';
 import GalleryScreen from './components/gallery-screen';
 import WelcomeScreen from './components/welcome-screen';
+import Login from './components/log-in-screen';
+import SignIn from './components/sign-in-screen';
 
-
-import { createBottomTabNavigator, createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createBottomTabNavigator, 
+	createAppContainer, 
+	createSwitchNavigator, 
+	createStackNavigator,
+	NavigationScreenOption, } from 'react-navigation';
 import * as firebase from 'firebase';
 
 // Initialize Firebase
@@ -49,11 +54,15 @@ const MainNavigator = createBottomTabNavigator({
 
 );
 
-const WelcomeSwitch = createSwitchNavigator({
+
+const Stack = createSwitchNavigator({
 	Welcome: {screen: WelcomeScreen},
-	Home: {screen: HomeScreen},
-});
+	Login: { screen: Login },
+	SignIn: {screen:SignIn},
+	MainNavigator,
+})
 
-const App = createAppContainer(WelcomeSwitch);
+const App = createAppContainer(Stack);
 
+// export default RootSwitch;
 export default App;

@@ -6,12 +6,12 @@ import {
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 import * as firebase from 'firebase';
+import { throwStatement } from '@babel/types';
 
 const Blob = RNFetchBlob.polyfill.Blob;
 const fs = RNFetchBlob.fs;
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
 window.Blob = Blob;
-
 
 async function uploadImage(uri) {
 	const mime = 'image/jpg';
@@ -53,10 +53,21 @@ export default function HomeScreen({ navigation }) {
 		}
 	]);
 	const [image, setImage] = useState({});
-
 	return (
 		<>
-			<Image source={image} style={{ height: 200, width: 200 }} />
+			<Button
+				title="Sign in"
+				onPress={() => {
+					navigate('SignIn');
+				}}
+			/>
+			<Button
+				title="Log in"
+				onPress={() => {
+					navigate('Login');
+				}
+			}
+			/>
 
 			<Button
 				title="Pick an image"
@@ -68,15 +79,13 @@ export default function HomeScreen({ navigation }) {
 					})
 				}} />
 
+			<Image source={image} style={{ height: 200, width: 200 }} />
+
 			<Button
 				title="Upload image"
 				onPress={() => {
 					uploadImage(image.uri);
 				}} />
-
-			<Button
-				title="Sign in"
-			/>
 
 			<TextInput
 				placeholder='Add a new memento'

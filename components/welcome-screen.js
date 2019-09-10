@@ -1,24 +1,56 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button, TouchableHighlight, TouchableOpacity } from 'react-native';
 
 
 export default function WelcomeScreen({navigation}) {
     const { navigate } = navigation;
     return (
         <>
-            <Text style={{ fontSize: 42 }}>mementos</Text>
-            <Button
-				title="Login"
-				onPress={() => {
-					navigate('Login');
-				}} />
-            <Button
-				title="Sign in"
-				onPress={() => {
-					navigate('Sign In');
-				}} />
+            <Text style={ styles.title }>mementos</Text>
+
+            <TouchableOpacity onPress={() => navigate('SignIn')}>
+                <Text style={styles.signInButton}>
+                    I am a new user
+                </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => navigate('Login')}>
+                <Text style={styles.loginButton}>
+                    I am an existing user
+                </Text>
+            </TouchableOpacity>
         </>
     );
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    title:{
+        marginTop: '20%',
+        textAlign: 'center',
+        fontSize: 50
+    },
+    signInButton: {
+        textAlign: 'center',
+        borderWidth: 1,
+        borderRadius: 50,
+        width: '50%',
+        padding: 15,
+        borderColor: '#fbc074',
+        backgroundColor: '#fbc074',
+        marginLeft: '20%',
+        marginTop: '90%',
+
+    },
+    loginButton:{
+        textAlign: 'center',
+        borderWidth: 1,
+        borderRadius: 50,
+        width:'50%',
+        padding: 15,
+        borderColor:'#fbc074', 
+        backgroundColor: 'white', 
+        marginLeft:'20%',
+        marginTop: '10%',
+
+    },
+})
