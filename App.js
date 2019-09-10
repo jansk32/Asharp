@@ -12,7 +12,20 @@ import GalleryScreen from './components/gallery-screen';
 import Login from './components/log-in-screen';
 import SignIn from './components/sign-in-screen';
 
-import { createBottomTabNavigator, createAppContainer, createSwitchNavigator, createStackNavigator } from 'react-navigation';
+import LoginScreen from './components/log-in-screen';
+import SignUpScreen from './components/sign-up-screen';
+
+import 
+{ createBottomTabNavigator, 
+	createAppContainer, 
+	createSwitchNavigator, 
+	createStackNavigator,
+	NavigationScreenOption,
+  NavigationScreenProps,
+  NavigationTransitionProps,
+  StackViewTransitionConfigs,
+  TabScene,
+  TransitionConfig } from 'react-navigation';
 import * as firebase from 'firebase';
 
 // Initialize Firebase
@@ -27,12 +40,18 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
+const BegoNavigator = createSwitchNavigator({
+	Login: { screen: LoginScreen },
+	SignUp: { screen: SignUpScreen },
+});
+
 const MainNavigator = createBottomTabNavigator({
 	Timeline: { screen: TimelineScreen },
 	FamilyTree: {screen: FamilyTreeScreen},
 	Home: { screen: HomeScreen },
 	Gallery: { screen: GalleryScreen },
 	Profile: { screen: ProfileScreen },
+
 	},
     {
 		initialRouteName: 'Home',
@@ -54,7 +73,10 @@ const Stack = createSwitchNavigator({
 	SignIn: {screen:SignIn},
 	MainNavigator,
 })
+const a = createStackNavigator({MainNavigator,BegoNavigator})
 
-const App = createAppContainer(Stack);
+// const App = createAppContainer(Stack);
+const App = createAppContainer(a);
 
+// export default RootSwitch;
 export default App;
