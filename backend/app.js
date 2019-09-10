@@ -39,6 +39,7 @@ app.post("/user/create", (req,res) => {
     let user = userModel({
         name: req.body.name,
         dob: req.body.dob,
+        email:req.body.email,
         userName: req.body.userName,
         password: req.body.password,
         gender: req.body.gender,
@@ -60,6 +61,7 @@ app.get('/artefact', (req, res) => {
     console.log(req);
     artefactModel.find(req.body, (err,resp) => {
         if (err) throw err;
+        console.log(req);
         res.json(resp);
     })
 })
