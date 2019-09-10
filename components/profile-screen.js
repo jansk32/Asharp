@@ -1,25 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, Button } from 'react-native';
-import Axios from 'axios';
+import axios from 'axios';
 
-this.axios = Axios.create({
-    withCredentials: false,
-    headers:{
-      "Accept": "application/json"
-    },
-    baseURL: 'http://localhost:3000/'
-  });
 
 export default function ProfileScreen() {
-    const [profile, setProfile] = useState("");
+    const [profile, setProfile] = useState('');
 
     useEffect(() => {
         console.log('Sending request');
-        axios.get("/user")
-        .then((resp) => {
+        axios.get('http://localhost:3000/user')
+        .then((res) => {
             // setProfile(resp);
-            // console.log(resp);
-            console.log("FOUND");
+            console.log(res);
+            // console.log('FOUND');
         })
         .catch(error => console.error(error));
     }, []);

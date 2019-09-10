@@ -13,27 +13,27 @@ var userModel = mongoose.model('user', schema);
 require("../controller/mongooseController");
 
 // app.use
-app.use(bodyParser.json({type: "application/json"}));
+app.use(bodyParser.json({ type: "application/json" }));
 
 
 const port = process.env.PORT || 3000;
 
-app.get('/', (req,res) => {
+app.get('/', (req, res) => {
     res.send("Hello World");
 })
 
-app.get('/user', (req,res) => {
-    userModel.find({name:"Jansen"}, (err,resp) => {
-        if(err) throw err;
+app.get('/user', (req, res) => {
+    userModel.find({ name: "Jansen" }, (err, resp) => {
+        if (err) throw err;
         res.json(resp);
-   });
+    });
 })
 
-app.get('/artefact', (req,res) => {
+app.get('/artefact', (req, res) => {
     res.send("artefact");
 })
 
 app.listen(port);
-console.log("Listening to port "+ port);
+console.log("Listening to port " + port);
 
 module.exports = app;
