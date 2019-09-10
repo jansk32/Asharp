@@ -12,9 +12,6 @@ import GalleryScreen from './components/gallery-screen';
 import Login from './components/log-in-screen';
 import SignIn from './components/sign-in-screen';
 
-import LoginScreen from './components/log-in-screen';
-import SignUpScreen from './components/sign-up-screen';
-
 import 
 { createBottomTabNavigator, 
 	createAppContainer, 
