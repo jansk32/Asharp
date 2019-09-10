@@ -25,14 +25,6 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-<<<<<<< HEAD
-// TODO: make home screen the first screen after testing family tree screen
-const MainNavigator = createStackNavigator({
-	FamilyTree: {screen: FamilyTreeScreen},
-	Home: { screen: HomeScreen },
-	Profile: { screen: ProfileScreen },
-});
-=======
 const MainNavigator = createBottomTabNavigator({
 	Timeline: { screen: TimelineScreen },
 	FamilyTree: {screen: FamilyTreeScreen},
@@ -54,7 +46,6 @@ const MainNavigator = createBottomTabNavigator({
     }
 
 );
->>>>>>> d9d7469acda03f255dd3923658a365e5e47948b1
 
 const App = createAppContainer(MainNavigator);
 

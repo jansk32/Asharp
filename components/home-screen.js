@@ -78,19 +78,6 @@ export default function HomeScreen({ navigation }) {
 				title="Sign in"
 			/>
 
-<<<<<<< HEAD
-			<Button
-				title="Go to profile screen"
-				onPress={() => navigate('Profile', { name: 'Jane' })}
-			/>
-
-			<Button
-				title="Family tree"
-				onPress={() => navigate('FamilyTree')}
-			/>
-
-=======
->>>>>>> d9d7469acda03f255dd3923658a365e5e47948b1
 			<TextInput
 				placeholder="Add a new memento"
 				onChangeText={setNewMemento}
