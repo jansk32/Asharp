@@ -102,6 +102,7 @@ app.get('/user/create/1', (req,res) => {
 // second page
 app.get('/user/create/2', (req,res) => {
     newUser.name = req.body.firstName + req.body.lastName;
+    newUser.dob = req.body.dob;
     newUser.userName = req.body.userName;
     newUser.password = req.body.password;
 })
