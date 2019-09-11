@@ -91,6 +91,31 @@ app.put("/user/assign/:id", (req,res) => {
     })
 });
 
+// multiple page sign up
+var newUser = {};
+
+// first page
+app.get('/user/create/1', (req,res) => {
+    newUser.email = req.body.email;
+})
+
+// second page
+app.get('/user/create/2', (req,res) => {
+    newUser.name = req.body.firstName + req.body.lastName;
+    newUser.userName = req.body.userName;
+    newUser.password = req.body.password;
+})
+
+// third page
+app.post('/user/create/3', (req,res) => {
+    newUser.file = req.body.file;
+    let newUserModel = new userModel(newUser);
+    newUserModel.save((err, resp) => {
+        if(err) throw err;
+        res.send(resp);
+    })
+})
+
 app.listen(port);
 console.log("Listening to port " + port);
 
