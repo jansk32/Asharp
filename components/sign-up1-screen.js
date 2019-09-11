@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Text, View, Image, StyleSheet, TextInput, Button, ScrollView,
-  FlatList, SectionList, ToastAndroid, Picker, TouchableHighlight,
+  FlatList, SectionList, ToastAndroid, Picker, TouchableOpacity,
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 
@@ -10,13 +10,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flex: 1,
   },
-  loginText: {
+  title: {
     fontSize: 30,
   },
   text: {
     fontSize: 20,
   },
-  loginButtonText: {
+  whiteText: {
     fontSize: 20,
     color: 'white',
   },
@@ -30,9 +30,8 @@ const styles = StyleSheet.create({
   inputBox: {
     justifyContent: 'space-between',
     padding: 40,
-    // justifyContent: 'center',
   },
-  loginButton: {
+  redButton: {
     backgroundColor: '#EC6268',
     borderColor: '#EC6268',
     borderWidth: 1,
@@ -43,11 +42,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 30,
   },
-  signInButton: {
+  whiteButton: {
     backgroundColor: 'white',
     borderColor: '#EC6268',
     borderWidth: 1,
-    paddingVertical: 8,
+    paddingVertical: 9,
     paddingHorizontal: 70,
     borderRadius: 20,
     justifyContent: 'center',
@@ -56,7 +55,6 @@ const styles = StyleSheet.create({
   buttonBox: {
     backgroundColor: '#fff',
     marginTop: 40,
-    // justifyContent:'space-between',
   },
   textInput: {
     borderColor: 'black',
@@ -64,10 +62,10 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     alignContent: 'center',
     marginTop: 10,
-    padding: 5,
+    padding: 2,
     paddingLeft: 10,
   },
-  usernameBox: {
+  inputElem: {
     marginBottom: 40,
   }
 }
@@ -79,10 +77,10 @@ export default function LoginScreen({ navigation }) {
     <>
       <View style={styles.container}>
         <View style={styles.loginBox}>
-          <Text style={styles.loginText}>Sign Up</Text>
+          <Text style={styles.title}>Sign Up</Text>
         </View>
         <View style={styles.inputBox}>
-          <View style={styles.usernameBox}>
+          <View style={styles.inputElem}>
             <Text style={styles.text}>Email</Text>
             <View style={styles.textInput}>
               <TextInput
@@ -92,21 +90,21 @@ export default function LoginScreen({ navigation }) {
           </View>
         </View>
         <View style={styles.buttonBox}>
-          <View style={styles.loginButton}>
-            <TouchableHighlight
+          <View style={styles.redButton}>
+            <TouchableOpacity
               onPress={() => navigate('SignUp2')}>
               <Text
-                style={styles.loginButtonText}>
+                style={styles.whiteText}>
                 Next</Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
-          <View style={styles.signInButton}>
-            <TouchableHighlight
+          <View style={styles.whiteButton}>
+            <TouchableOpacity
               onPress={() => navigate('Welcome')}>
               <Text
                 style={styles.text}>
                 Back</Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

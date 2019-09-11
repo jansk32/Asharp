@@ -5,7 +5,6 @@ import {
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
