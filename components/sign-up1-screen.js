@@ -4,6 +4,7 @@ import {
   FlatList, SectionList, ToastAndroid, Picker,
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
+import axios from 'axios';
 
 const styles = StyleSheet.create({
   loginText: {
@@ -23,8 +24,31 @@ const styles = StyleSheet.create({
 }
 )
 
+
+
 export default function SigninScreen({ navigation }) {
   const { navigate } = navigation;
+
+  // so that sign in screen signups and sends axios req
+  const pressed = (text) =>{
+    navigate('SignUp2');
+    onPressedEffect(text);
+  }
+
+  // axios 
+  function onPressedEffect(email) {
+    axios.post("http://localhost:3000/user/create/1", {
+        email: email
+      }
+    )
+  // useEffect(() => {
+  //   axios.get("http://localhost:3000/user/create/1", {
+  //     body :{
+  //       email: 'batman@localStorage'
+  //     }
+  //   })
+  // })
+}
   return (
     <>
       <React.Fragment>
@@ -35,11 +59,12 @@ export default function SigninScreen({ navigation }) {
           <Text style={styles.text}>Email</Text>
           <TextInput
             placeholder='Enter Email'
+            onChangeText={(text) => this.email= text}
           />
         </View>
         <Button
           title='->'
-          onPress={() => navigate('SignUp2')}
+          onPress={() => pressed(this.email) }
         />
         <Button
           title='<-'

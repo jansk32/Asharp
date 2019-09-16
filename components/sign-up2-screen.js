@@ -4,6 +4,7 @@ import {
   FlatList, SectionList, ToastAndroid, Picker,
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
+import axios from 'axios';
 
 const styles = StyleSheet.create({
   loginText: {
@@ -25,6 +26,34 @@ const styles = StyleSheet.create({
 
 export default function SigninScreen({ navigation }) {
   const { navigate } = navigation;
+
+  // axios + navigate ==> learn about cookies bruh
+  const pressed = (obj) => {
+    navigate('SignUp3');
+    onPressedEffect(obj);
+  }
+
+  // axios 
+  function onPressedEffect(body) {
+    axios.post("http://localhost:3000/user/create/2", {
+          firstName: "LOL",
+          dob: "1976-03-04",
+          userName: body.userName,
+          password: body.password
+        }
+      )
+    // useEffect(() => {
+    //   axios.get("http://localhost:3000/user/create/2", {
+    //     body :{
+    //       name: "LOL",
+    //       dob: "1976-03-04",
+    //       userName: body.userName,
+    //       password: body.password
+    //     }
+    //   })
+    // })
+  }
+
   return (
     <>
       <React.Fragment>
@@ -35,15 +64,17 @@ export default function SigninScreen({ navigation }) {
           <Text style={styles.text}>Username</Text>
           <TextInput
             placeholder='Enter Username'
+            onChangeText={(text) => this.userName = text}
           />
           <Text style={styles.text}>Password</Text>
           <TextInput
             placeholder='Enter Username'
+            onChangeText={(text) => this.password = text}
           />
         </View>
         <Button
           title='->'
-          onPress={() => navigate('SignUp3')}
+          onPress={() => pressed({password: this.password, userName: this.userName})}
         />
         <Button
           title='<-'

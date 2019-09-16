@@ -95,12 +95,12 @@ app.put("/user/assign/:id", (req,res) => {
 var newUser = {};
 
 // first page
-app.get('/user/create/1', (req,res) => {
+app.post('/user/create/1', (req,res) => {
     newUser.email = req.body.email;
 })
 
 // second page
-app.get('/user/create/2', (req,res) => {
+app.post('/user/create/2', (req,res) => {
     newUser.name = req.body.firstName + req.body.lastName;
     newUser.dob = req.body.dob;
     newUser.userName = req.body.userName;
