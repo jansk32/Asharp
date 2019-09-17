@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   Text, View, StyleSheet, TextInput, TouchableOpacity
 } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
+import axios from 'axios';
 
 const styles = StyleSheet.create({
   container: {
@@ -46,6 +48,34 @@ const styles = StyleSheet.create({
 
 export default function LoginScreen({ navigation }) {
   const { navigate } = navigation;
+
+  // axios + navigate ==> learn about cookies bruh
+  const pressed = (obj) => {
+    navigate('SignUp3');
+    onPressedEffect(obj);
+  }
+
+  // axios 
+  function onPressedEffect(body) {
+    axios.post("http://localhost:3000/user/create/2", {
+          firstName: "LOL",
+          dob: "1976-03-04",
+          userName: body.userName,
+          password: body.password
+        }
+      )
+    // useEffect(() => {
+    //   axios.get("http://localhost:3000/user/create/2", {
+    //     body :{
+    //       name: "LOL",
+    //       dob: "1976-03-04",
+    //       userName: body.userName,
+    //       password: body.password
+    //     }
+    //   })
+    // })
+  }
+
   return (
     <>
       <View style={styles.container}>
@@ -55,6 +85,7 @@ export default function LoginScreen({ navigation }) {
             <View style={styles.textInput}>
               <TextInput
                 placeholder='Enter First Name'
+                onChangeText={(text) => this.firstName = text}
               />
             </View>
           </View>
@@ -63,6 +94,7 @@ export default function LoginScreen({ navigation }) {
             <View style={styles.textInput}>
               <TextInput
                 placeholder='Enter Last Name'
+                onChangeText={(text) => this.lastName = text}
               />
             </View>
           </View>
@@ -71,6 +103,7 @@ export default function LoginScreen({ navigation }) {
             <View style={styles.textInput}>
               <TextInput
                 placeholder='Enter DOB'
+                onChangeText={(text) => this.dob = text}
               />
             </View>
           </View>
@@ -79,13 +112,14 @@ export default function LoginScreen({ navigation }) {
             <View style={styles.textInput}>
               <TextInput
                 placeholder='Enter Password'
+                onChangeText={(text) => this.password = text}
               />
             </View>
           </View>
         </View>
         <View style={styles.redButton}>
           <TouchableOpacity
-            onPress={() => navigate('SignUp3')}>
+            onPress={() => pressed({password: this.password, firstName: this.firstName, lastName: this.lastName, dob: this.dob})}>
             <Text
               style={styles.buttonText}>
               Next</Text>

@@ -40,8 +40,6 @@ export default function ProfileScreen({ navigation }) {
         axios.get('http://localhost:3000/user')
         .then((res) => {
             setProfile(res.data);
-            console.log(res.data);
-            
             // console.log('FOUND');
         })
         .catch(error => console.error(error));

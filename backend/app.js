@@ -3,6 +3,41 @@ const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+// passport.js
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
+
+// passport local config
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+      User.findOne({ username: username }, function(err, found) {
+        if (err) { return done(err); }
+        // if no username found
+        if (!found) {
+          return done(null, false, { message: 'Incorrect username or password' });
+        }
+        if (!found.validPassword(password)) {
+          return done(null, false, { message: 'Incorrect username or password' });
+        }
+        return done(null, user);
+      });
+    }
+  ));
+
+// passport Facebook config
+passport.use(new FacebookStrategy({
+    clientID: FACEBOOK_APP_ID,
+    clientSecret: FACEBOOK_APP_SECRET,
+    callbackURL: "http://localhost:3000/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+
 // schemas
 const userSchema = require('../schema/userSchema');
 const artSchema = require('../schema/artefactSchema');
@@ -20,6 +55,8 @@ app.use(bodyParser.json({ type: "application/json" }));
 
 const port = process.env.PORT || 3000;
 
+// need to change this later not sure to what though
+// '/' should be the home page 
 app.get('/', (req, res) => {
     res.send("Hello World");
 })
@@ -90,6 +127,54 @@ app.put("/user/assign/:id", (req,res) => {
         res.send("updated");
     })
 });
+
+// multiple page sign up
+// not very good practice tbh 
+var newUser = {};
+
+// first page
+app.post('/user/create/1', (req,res) => {
+    newUser.email = req.body.email;
+})
+
+// second page
+app.post('/user/create/2', (req,res) => {
+    newUser.name = req.body.firstName + req.body.lastName;
+    newUser.dob = req.body.dob;
+    newUser.userName = req.body.userName;
+    newUser.password = req.body.password;
+})
+
+// third page
+app.post('/user/create/3', (req,res) => {
+    newUser.picture = req.body.file;
+    console.log(newUser);
+    let newUserModel = new userModel(newUser);
+    newUserModel.save((err, resp) => {
+        if(err) throw err;
+    })
+})
+
+// login page
+app.get('/login', (req,res) => {
+
+});
+
+// login local
+app.post('/login/local', passport.authenticate('local', { successRedirect: '/',
+failureRedirect: '/login' }));
+
+//login Facebook
+app.get('/login/facebook',
+  passport.authenticate('facebook'));
+
+app.get('/login/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/');
+  });
+
 
 app.listen(port);
 console.log("Listening to port " + port);

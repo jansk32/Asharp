@@ -4,6 +4,7 @@ import {
   FlatList, SectionList, ToastAndroid, Picker, TouchableOpacity,
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
+import axios from 'axios';
 
 const styles = StyleSheet.create({
   container: {
@@ -73,6 +74,27 @@ const styles = StyleSheet.create({
 
 export default function LoginScreen({ navigation }) {
   const { navigate } = navigation;
+
+  // so that sign in screen signups and sends axios req
+  const pressed = (text) =>{
+    navigate('SignUp2');
+    onPressedEffect(text);
+  }
+
+  // axios 
+  function onPressedEffect(email) {
+    axios.post("http://localhost:3000/user/create/1", {
+        email: email
+      }
+    )
+  // useEffect(() => {
+  //   axios.get("http://localhost:3000/user/create/1", {
+  //     body :{
+  //       email: 'batman@localStorage'
+  //     }
+  //   })
+  // })
+}
   return (
     <>
       <View style={styles.container}>
@@ -85,6 +107,7 @@ export default function LoginScreen({ navigation }) {
             <View style={styles.textInput}>
               <TextInput
                 placeholder='Enter Email'
+                onChangeText={(text) => this.email= text}
               />
             </View>
           </View>
@@ -92,7 +115,7 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.buttonBox}>
           <View style={styles.redButton}>
             <TouchableOpacity
-              onPress={() => navigate('SignUp2')}>
+              onPress={() => pressed(this.email) }>
               <Text
                 style={styles.whiteText}>
                 Next</Text>

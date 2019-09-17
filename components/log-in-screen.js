@@ -4,6 +4,7 @@ import {
   FlatList, SectionList, ToastAndroid, Picker, TouchableHighlight,
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
+import axios from 'axios';
 
 const styles = StyleSheet.create({
   container: {
@@ -75,6 +76,19 @@ const styles = StyleSheet.create({
 
 export default function LoginScreen({ navigation }) {
   const { navigate } = navigation;
+
+  // axios authentication
+  function axiosLocal(obj) {
+  axios.post("http://localhost:3000/login/local",
+  {username: obj.userName,
+  password: obj.password})
+  };
+
+  // axios third party authentication
+  function axiosThirdParty(obj){
+    axios.get("http://localhost:3000/login/facebook")
+  }
+
   return (
     <>
       <View style={styles.container}>
