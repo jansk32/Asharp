@@ -14,6 +14,72 @@ const fs = RNFetchBlob.fs;
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
 window.Blob = Blob;
 
+const styles = StyleSheet.create({
+	container: {
+		backgroundColor: 'white',
+		flex: 1,
+	},
+	title: {
+		fontSize: 30,
+	},
+	text: {
+		fontSize: 20,
+	},
+	whiteText: {
+		fontSize: 20,
+		color: 'white',
+	},
+	loginBox: {
+		justifyContent: 'space-evenly',
+		textAlign: 'center',
+		alignItems: 'center',
+		paddingTop: 100,
+		paddingBottom: 10,
+	},
+	inputBox: {
+		justifyContent: 'space-between',
+		padding: 40,
+	},
+	redButton: {
+		backgroundColor: '#EC6268',
+		borderColor: '#EC6268',
+		borderWidth: 1,
+		paddingVertical: 9,
+		paddingHorizontal: 80,
+		borderRadius: 20,
+		justifyContent: 'center',
+		alignSelf: 'center',
+		marginBottom: 30,
+	},
+	whiteButton: {
+		backgroundColor: 'white',
+		borderColor: '#EC6268',
+		borderWidth: 1,
+		paddingVertical: 9,
+		paddingHorizontal: 70,
+		borderRadius: 20,
+		justifyContent: 'center',
+		alignSelf: 'center',
+	},
+	buttonBox: {
+		backgroundColor: '#fff',
+		marginTop: 40,
+	},
+	textInput: {
+		borderColor: 'black',
+		borderWidth: 1,
+		borderRadius: 3,
+		alignContent: 'center',
+		marginTop: 10,
+		padding: 2,
+		paddingLeft: 10,
+	},
+	inputElem: {
+		marginBottom: 40,
+	}
+}
+)
+
 async function uploadImage(uri) {
 	const mime = 'image/jpg';
 	const uploadUri = uri;
@@ -35,103 +101,51 @@ async function downloadImage(filename) {
 	const imageRef = firebase.storage().ref('images/test.jpg');
 }
 
-
-
 export default function HomeScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [condition, setCondition] = useState('');
 	const [newMemento, setNewMemento] = useState({});
-	const [mementos, setMementos] = useState([
-		{
-			id: 0,
-			name: 'Harmonicas'
-		},
-		{
-			id: 1,
-			name: 'Letter'
-		},
-		{
-			id: 2,
-			name: 'Photo'
-		}
-	]);
 	const [image, setImage] = useState({});
-
-	useEffect(() => {
-		axios.get('http://localhost:3000/artefact', {
-			body: {
-				name: "vase"
-			}
-		})
-		.then((resp) => {
-			console.log(resp.data[0]);
-			setMementos(resp.data);
-		})
-		.catch((err) =>{
-			console.log(err);
-		})
-	})
 
 	return (
 		<>
-			<Button
-				title="Logout"
-				onPress={() => {
-					navigate('Welcome');
-				}}
-			/>
-			<Button
-				title="Pick an image"
-				onPress={() => {
-					ImagePicker.showImagePicker(response => {
-						if (!response.didCancel) {
-							setImage({ uri: response.uri });
-						}
-					})
-				}} />
+			<View style={styles.container}>
+				<View style={styles.loginBox}>
+					<Text style={styles.title}>Upload Image</Text>
+				</View>
 
-			<Image source={image} style={{ height: 200, width: 200 }} />
+				{/* Upload Image */}
+				<View style={styles.whiteButton}>
+					<TouchableOpacity
+						onPress={() => {
+							ImagePicker.showImagePicker(response => {
+								if (!response.didCancel) {
+									setImage({ uri: response.uri });
+								}
+							})
+						}}>
+						<Text styls={styles.text}>Pick Image</Text>
+					</TouchableOpacity>
+				</View>
 
-			<Button
-				title="Upload image"
-				onPress={() => {
-					uploadImage(image.uri);
-				}} />
+				<Image source={image} style={{ height: 200, width: 200, alignSelf: 'center', borderColor:'black', borderWidth: 1, }} />
 
-			<TextInput
-				placeholder="Add a new memento"
-				onChangeText={setNewMemento}
-				value={newMemento}
-			/>
+				<View style={styles.redButton}>
+					<TouchableOpacity
+						onPress={() => {
+							uploadImage(image.uri);
+						}}>
+						<Text style={styles.text}>Upload Image</Text>
+					</TouchableOpacity>
+				</View>
 
-			<Button
-				title="Add memento"
-				onPress={() => {
-					setMementos(mementos.concat({ id: mementos.length, name: newMemento }));
-					ToastAndroid.show('Memento added', ToastAndroid.SHORT);
-					setNewMemento('');
-				}
-				}
-			/>
-
-			<Picker
-				selectedValue={condition}
-				onValueChange={(value, index) => setCondition(value)}
-			>
-				<Picker.Item label="new" value='new' />
-				<Picker.Item label="used" value='used' />
-			</Picker>
-
-			<Text>{condition}</Text>
-
-			<FlatList
-				data={mementos}
-				renderItem={({ item }) => <Text style={{ fontSize: 24, lineHeight: 40 }}>{item.name}</Text>}
-				keyExtractor={(item, index) => item.id}
-			/>
+				<Text>{condition}</Text>
+			</View>
 		</>
 	);
 }
+
+
 
 HomeScreen.navigationOptions = {
 	title: 'Home'
