@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-evenly',
 		textAlign: 'center',
 		alignItems: 'center',
-		paddingTop: 100,
+		paddingTop: 50,
 		paddingBottom: 10,
 	},
 	inputBox: {
@@ -69,7 +69,15 @@ const styles = StyleSheet.create({
 	},
 	inputElem: {
 		marginBottom: 40,
-	}
+	},
+	imageStyle: { 
+        margin: 2,
+        width: 400,
+        height: 400,
+		alignSelf: 'center', 
+		borderColor:'black', 
+		borderWidth: 1, 
+	},
 }
 );
 
@@ -90,26 +98,26 @@ export default function HomeScreen({ navigation }) {
 				<View style={styles.whiteButton}>
 					<TouchableOpacity
 						onPress={async () => setImage(await pickImage())}>
-						<Text styls={styles.text}>Pick Image</Text>
+						<Text style={styles.text}>Pick Image</Text>
 					</TouchableOpacity>
 				</View>
 
-				<Image source={image} style={{ height: 200, width: 200, alignSelf: 'center', borderColor: 'black', borderWidth: 1, }} />
+				<Image source={image} style={styles.imageStyle} />
 
-				<View style={styles.redButton}>
+				<View style={styles.whiteButton}>
 					<TouchableOpacity
-						onPress={() => uploadImage(image.uri)}>
+						onPress={async () => {
+							await uploadImage(image.uri);
+							navigate('AddImageDetails');
+						}}>
 						<Text style={styles.text}>Upload Image</Text>
 					</TouchableOpacity>
 				</View>
-
 				<Text>{condition}</Text>
 			</View>
 		</>
 	);
 }
-
-
 
 HomeScreen.navigationOptions = {
 	title: 'Home'
