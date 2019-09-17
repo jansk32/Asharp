@@ -55,6 +55,7 @@ export default function SigninScreen({ navigation }) {
   }
 
    // axios + navigate ==> learn about cookies bruh
+   // TIMMYY!! HOW TO SAVE IMAGE PLS PASS AS ARGUMENT TO ONPRESSEDEFFECT
    const pressed = () => {
     navigate('Home');
     onPressedEffect();
@@ -62,7 +63,7 @@ export default function SigninScreen({ navigation }) {
 
   // axios 
   function onPressedEffect() {
-    axios.get("http://localhost:3000/user/create/3", {
+    axios.post("http://localhost:3000/user/create/3", {
          file: "ablah.com"
       })
   }

@@ -109,11 +109,11 @@ app.post('/user/create/2', (req,res) => {
 
 // third page
 app.post('/user/create/3', (req,res) => {
-    newUser.file = req.body.file;
+    newUser.picture = req.body.file;
+    console.log(newUser);
     let newUserModel = new userModel(newUser);
     newUserModel.save((err, resp) => {
         if(err) throw err;
-        res.send(resp);
     })
 })
 
