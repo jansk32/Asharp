@@ -14,7 +14,7 @@ import Login from './components/log-in-screen';
 import SignUp1 from './components/sign-up1-screen';
 import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
-import AddImageDetailsScreen from './components/upload-image-screen';
+import AddImageDetailsScreen from './components/add-image-details-screen';
 
 
 import {
