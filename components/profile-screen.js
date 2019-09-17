@@ -58,7 +58,7 @@ export default function ProfileScreen({ navigation }) {
         return (
             <View style={styles.itemBox}>
                 <TouchableHighlight onPress={() => {
-                    navigate('Home')
+                    navigate('ItemDetail')
                 }}>
                     <Image
                         source={item.image}

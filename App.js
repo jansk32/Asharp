@@ -71,14 +71,19 @@ const itemStack = createStackNavigator({
 	Gallery: {screen: GalleryScreen},
 })
 
+const itemStackProfile = createStackNavigator({
+	MainNavigator,
+	ItemDetail: {screen: ItemDetailScreen},
+	Profile: {screen: ProfileScreen},
+})
+
 const Stack = createSwitchNavigator({
 	Welcome: {screen: WelcomeScreen},
 	Login: { screen: Login },
 	SignUpStack,
 	MainNavigator,
-	itemStack
-	
-
+	itemStack,
+	itemStackProfile
 })
 
 
