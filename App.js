@@ -9,6 +9,7 @@ import FamilyTreeScreen from './components/family-tree-screen';
 import ProfileScreen from './components/profile-screen';
 import TimelineScreen from './components/timeline-screen';
 import GalleryScreen from './components/gallery-screen';
+import ItemDetailScreen from './components/item-detail-screen';
 import WelcomeScreen from './components/welcome-screen';
 import Login from './components/log-in-screen';
 import SignUp1 from './components/sign-up1-screen';
@@ -64,12 +65,22 @@ const SignUpStack = createStackNavigator({
 
 })
 
+const itemStack = createStackNavigator({
+	MainNavigator,
+	ItemDetail: {screen: ItemDetailScreen},
+	Gallery: {screen: GalleryScreen},
+})
+
 const Stack = createSwitchNavigator({
 	Welcome: {screen: WelcomeScreen},
 	Login: { screen: Login },
 	SignUpStack,
 	MainNavigator,
+	itemStack
+	
+
 })
+
 
 const App = createAppContainer(Stack);
 

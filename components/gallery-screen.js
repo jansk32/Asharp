@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet,View, FlatList, Dimensions, Image, TouchableHighlight } from 'react-native';
+import ItemDetailScreen from './item-detail-screen';
 
 const data = [
     { image: require('../tim_derp.jpg') },
@@ -30,15 +31,16 @@ const formatData = (data, numColumns) => {
 const numColumns =3;
 
 export default function GalleryScreen({navigation}) {
-    const navigate = navigation;
+    const {navigate} = navigation;
     renderItem = ({ item, index }) => {
         if (item.empty === true) {
           return <View style={[styles.item, styles.itemInvisible]} />;
         }
         return (
         <View style={styles.item}>
-            <TouchableHighlight 
-                onPress={()=> {navigate('Home')}}>
+            <TouchableHighlight onPress={() => {
+                    navigate('ItemDetail')
+                }}>
                 <Image 
                     style={styles.imageBox}
                     source = {item.image}
