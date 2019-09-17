@@ -4,7 +4,7 @@ import {
 	FlatList, SectionList, ToastAndroid, Picker, TouchableOpacity,
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
-import axios from 'axios';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const styles = StyleSheet.create({
 	container: {
@@ -76,25 +76,21 @@ export default function LoginScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [email, setEmail] = useState('');
 
-	// so that sign in screen signups and sends axios req
-	function goToNextPage(text) {
-		navigate('SignUp2');
-		onPressedEffect(text);
+	async function storeEmail() {
+		try {
+			await AsyncStorage.setItem('email', email);
+			ToastAndroid.show('Stored email', ToastAndroid.SHORT);
+		} catch (e) {
+			ToastAndroid.show('Error storing email', ToastAndroid.SHORT);
+		}
 	}
 
-	// axios 
-	function onPressedEffect(email) {
-		// axios.post("http://localhost:3000/user/create/1", {
-		// 	email: email
-		// });
-		// useEffect(() => {
-		//   axios.get("http://localhost:3000/user/create/1", {
-		//     body :{
-		//       email: 'batman@localStorage'
-		//     }
-		//   })
-		// })
+	// so that sign in screen signups and sends axios req
+	async function goToNextPage() {
+		await storeEmail();
+		navigate('SignUp2');
 	}
+
 	return (
 		<>
 			<View style={styles.container}>
@@ -116,7 +112,7 @@ export default function LoginScreen({ navigation }) {
 				<View style={styles.buttonBox}>
 					<View style={styles.redButton}>
 						<TouchableOpacity
-							onPress={() => goToNextPage(email)}>
+							onPress={goToNextPage}>
 							<Text
 								style={styles.whiteText}>
 								Next

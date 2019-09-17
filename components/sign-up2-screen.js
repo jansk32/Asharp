@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, StyleSheet, TextInput, TouchableOpacity
+	Text, View, StyleSheet, TextInput, TouchableOpacity, ToastAndroid
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
-import axios from 'axios';
+import AsyncStorage from '@react-native-community/async-storage';
+
 
 const styles = StyleSheet.create({
 	container: {
@@ -53,31 +54,17 @@ export default function LoginScreen({ navigation }) {
 	const [password, setPassword] = useState('');
 
 	// axios + navigate ==> learn about cookies bruh
-	function pressed(obj) {
+	async function goToNextPage() {
+		const data = { name, dob, password }
+		for (const key in data) {
+			try {
+				await AsyncStorage.setItem(key, data[key]);
+			} catch (e) {
+				ToastAndroid.show('Error storing ' + key, ToastAndroid.SHORT);
+			}
+		}
 		navigate('SignUp3');
-		onPressedEffect(obj);
 	}
-
-	// axios
-	// function onPressedEffect(body) {
-	// 	axios.post("http://localhost:3000/user/create/2", {
-	// 		name: body.name,
-	// 		dob: body.dob,
-	// 		userName: body.userName,
-	// 		password: body.password
-	// 	}
-	// 	)
-	// 	// useEffect(() => {
-	// 	//   axios.get("http://localhost:3000/user/create/2", {
-	// 	//     body :{
-	// 	//       name: "LOL",
-	// 	//       dob: "1976-03-04",
-	// 	//       userName: body.userName,
-	// 	//       password: body.password
-	// 	//     }
-	// 	//   })
-	// 	// })
-	// }
 
 	return (
 		<>
@@ -116,7 +103,7 @@ export default function LoginScreen({ navigation }) {
 				</View>
 				<View style={styles.redButton}>
 					<TouchableOpacity
-						onPress={() => pressed({ name, dob, password })}>
+						onPress={goToNextPage}>
 						<Text
 							style={styles.buttonText}>
 							Next

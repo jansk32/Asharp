@@ -5,12 +5,8 @@ import {
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import axios from 'axios';
-import RNFetchBlob from 'rn-fetch-blob';
-import * as firebase from 'firebase';
-const Blob = RNFetchBlob.polyfill.Blob;
-const fs = RNFetchBlob.fs;
-window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
-window.Blob = Blob;
+import AsyncStorage from '@react-native-community/async-storage';
+import { pickImage, uploadImage } from '../image-tools';
 
 const styles = StyleSheet.create({
 	container: {
@@ -83,40 +79,33 @@ const styles = StyleSheet.create({
 
 export default function LoginScreen({ navigation }) {
 	const { navigate } = navigation;
-
-	async function uploadImage(uri) {
-		const mime = 'image/jpg';
-		const uploadUri = uri;
-		const sessionId = new Date().getTime();
-		let uploadBlob = null;
-		const imageRef = firebase.storage().ref('images').child(sessionId.toString());
-
-		const data = await fs.readFile(uploadUri, 'base64');
-		const blob = await Blob.build(data, { type: `${mime};BASE64` });
-		uploadBlob = blob;
-		await imageRef.put(blob, { contentType: mime });
-		uploadBlob.close();
-		const url = await imageRef.getDownloadURL();
-		console.log(url);
-		ToastAndroid.show('Image uploaded', ToastAndroid.SHORT);
-	}
-
-	async function downloadImage(filename) {
-		const imageRef = firebase.storage().ref('images/test.jpg');
-	}
+	const [image, setImage] = useState({});
 
 	// axios + navigate ==> learn about cookies bruh
 	// TIMMYY!! HOW TO SAVE IMAGE PLS PASS AS ARGUMENT TO ONPRESSEDEFFECT
-	const pressed = () => {
-		navigate('Home');
-		onPressedEffect();
+
+	async function uploadSignUpData() {
+		let dataKeys = ['email', 'name', 'dob', 'password', 'pictureUrl'];
+		let data = {};
+		for (const key of dataKeys) {
+			try {
+				data[key] = await AsyncStorage.getItem(key);
+			} catch (e) {
+				ToastAndroid.show('Error getting ' + key, ToastAndroid.SHORT);
+			}
+		}
+		axios.post('http://localhost:3000/user/create', data);
 	}
 
-	// axios 
-	function onPressedEffect() {
-		axios.post("http://localhost:3000/user/create/3", {
-			file: "ablah.com" // picture url
-		})
+	async function finishSignUp() {
+		const pictureUrl = await uploadImage(image.uri);
+		try {
+			await AsyncStorage.setItem('pictureUrl', pictureUrl);
+		} catch (e) {
+			ToastAndroid.show('Error storing picture URL', ToastAndroid.SHORT);
+		}
+		await uploadSignUpData();
+		navigate('Home');
 	}
 
 	return (
@@ -128,26 +117,28 @@ export default function LoginScreen({ navigation }) {
 							<Text style={styles.text}>Choose Picture</Text>
 							<View style={styles.textInput}>
 								<TextInput
-									placeholder='Picure preview'
+									placeholder="Picture preview"
 								/>
 							</View>
 						</View>
 					</View>
 					<View style={styles.buttonBox}>
 						<View style={styles.signInButton}>
-							<TouchableHighlight>
+							<TouchableHighlight
+								onPress={async () => setImage(await pickImage())}>
 								<Text
 									style={styles.text}>
-									Upload Picture</Text>
-
+									Pick Picture
+								</Text>
 							</TouchableHighlight>
 						</View>
 						<View style={styles.loginButton}>
 							<TouchableHighlight
-								onPress={() => pressed()}>
+								onPress={finishSignUp}>
 								<Text
 									style={styles.loginButtonText}>
-									Finish</Text>
+									Finish
+								</Text>
 							</TouchableHighlight>
 						</View>
 					</View>
