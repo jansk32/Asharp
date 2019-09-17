@@ -14,13 +14,17 @@ import Login from './components/log-in-screen';
 import SignUp1 from './components/sign-up1-screen';
 import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
+import UploadImageScreen from './components/upload-image-screen';
 
 
-import { createBottomTabNavigator, 
-	createAppContainer, 
-	createSwitchNavigator, 
+import {
+	createBottomTabNavigator,
+	createAppContainer,
+	createSwitchNavigator,
 	createStackNavigator,
-	NavigationScreenOption, } from 'react-navigation';
+	NavigationScreenOption,
+	navigationOptions
+} from 'react-navigation';
 import * as firebase from 'firebase';
 
 // Initialize Firebase
@@ -37,41 +41,48 @@ firebase.initializeApp(firebaseConfig);
 
 const MainNavigator = createBottomTabNavigator({
 	Timeline: { screen: TimelineScreen },
-	FamilyTree: {screen: FamilyTreeScreen},
+	FamilyTree: { screen: FamilyTreeScreen },
 	Home: { screen: HomeScreen },
 	Gallery: { screen: GalleryScreen },
 	Profile: { screen: ProfileScreen },
-	},
-    {
+},
+	{
 		initialRouteName: 'Home',
-        tabBarOptions: {
-            activeTintColor: 'white',
-            inactiveTintColor: 'black',
-            showLabel: true,
-            showIcon: false,
-            style: {
+		tabBarOptions: {
+			activeTintColor: 'white',
+			inactiveTintColor: 'black',
+			showLabel: true,
+			showIcon: false,
+			style: {
 				backgroundColor: '#47B39D',
-            }
-        }
-    }
-
+			}
+		},
+		navigationOptions: {
+			header: null,
+		},
+	},
 );
 
-const SignUpStack = createStackNavigator({
-	SignUp1:{screen:SignUp1},
-	SignUp2:{screen:SignUp2},
-	SignUp3:{screen:SignUp3},
+const uploadArtefactStack = createStackNavigator({
+	MainNavigator,
+	UploadImage: { screen: UploadImageScreen },
 
 })
 
+const SignUpStack = createStackNavigator({
+	SignUp1: { screen: SignUp1 },
+	SignUp2: { screen: SignUp2 },
+	SignUp3: { screen: SignUp3 },
+})
+
 const Stack = createSwitchNavigator({
-	Welcome: {screen: WelcomeScreen},
+	Welcome: { screen: WelcomeScreen },
 	Login: { screen: Login },
 	SignUpStack,
 	MainNavigator,
+	uploadArtefactStack,
 })
 
 const App = createAppContainer(Stack);
 
-// export default RootSwitch;
 export default App;

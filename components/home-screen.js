@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-evenly',
 		textAlign: 'center',
 		alignItems: 'center',
-		paddingTop: 100,
+		paddingTop: 50,
 		paddingBottom: 10,
 	},
 	inputBox: {
@@ -76,7 +76,15 @@ const styles = StyleSheet.create({
 	},
 	inputElem: {
 		marginBottom: 40,
-	}
+	},
+	imageStyle: { 
+        margin: 2,
+        width: 400,
+        height: 400,
+		alignSelf: 'center', 
+		borderColor:'black', 
+		borderWidth: 1, 
+	},
 }
 )
 
@@ -90,11 +98,15 @@ async function uploadImage(uri) {
 	const data = await fs.readFile(uploadUri, 'base64');
 	const blob = await Blob.build(data, { type: `${mime};BASE64` });
 	uploadBlob = blob;
+
 	await imageRef.put(blob, { contentType: mime });
 	uploadBlob.close();
+
 	const url = await imageRef.getDownloadURL();
 	console.log(url);
+
 	ToastAndroid.show('Image uploaded', ToastAndroid.SHORT);
+
 }
 
 async function downloadImage(filename) {
@@ -124,16 +136,16 @@ export default function HomeScreen({ navigation }) {
 								}
 							})
 						}}>
-						<Text styls={styles.text}>Pick Image</Text>
+						<Text style={styles.text}>Pick Image</Text>
 					</TouchableOpacity>
 				</View>
 
-				<Image source={image} style={{ height: 200, width: 200, alignSelf: 'center', borderColor:'black', borderWidth: 1, }} />
+				<Image source={image} style={styles.imageStyle} />
 
-				<View style={styles.redButton}>
+				<View style={styles.whiteButton}>
 					<TouchableOpacity
 						onPress={() => {
-							uploadImage(image.uri);
+							uploadImage(image.uri), navigate('UploadImage');
 						}}>
 						<Text style={styles.text}>Upload Image</Text>
 					</TouchableOpacity>
@@ -144,8 +156,6 @@ export default function HomeScreen({ navigation }) {
 		</>
 	);
 }
-
-
 
 HomeScreen.navigationOptions = {
 	title: 'Home'
