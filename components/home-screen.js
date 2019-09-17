@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, Image, StyleSheet, TextInput, Alert, Button, ScrollView,
+	Text, View, Image, StyleSheet, TextInput, Alert, Button,
 	FlatList, SectionList, ToastAndroid, Picker
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';

@@ -27,23 +27,23 @@ firebase.initializeApp(firebaseConfig);
 
 const MainNavigator = createBottomTabNavigator({
 	Timeline: { screen: TimelineScreen },
-	FamilyTree: {screen: FamilyTreeScreen},
+	FamilyTree: { screen: FamilyTreeScreen },
 	Home: { screen: HomeScreen },
 	Gallery: { screen: GalleryScreen },
 	Profile: { screen: ProfileScreen },
-	},
-    {
-		initialRouteName: 'Home',
-        tabBarOptions: {
-            activeTintColor: 'white',
-            inactiveTintColor: 'black',
-            showLabel: true,
-            showIcon: false,
-            style: {
+},
+	{
+		initialRouteName: 'FamilyTree',
+		tabBarOptions: {
+			activeTintColor: 'white',
+			inactiveTintColor: 'black',
+			showLabel: true,
+			showIcon: false,
+			style: {
 				backgroundColor: '#47B39D',
-            }
-        }
-    }
+			}
+		}
+	}
 
 );
 
