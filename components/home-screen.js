@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
 	Text, View, Image, StyleSheet, TextInput, Alert, Button, ScrollView,
-	FlatList, SectionList, ToastAndroid, Picker
+	FlatList, SectionList, ToastAndroid, Picker, TouchableOpacity,
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';

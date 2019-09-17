@@ -1,38 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Text, View, Image, StyleSheet, TextInput, Button, ScrollView,
-  FlatList, SectionList, ToastAndroid, Picker, TouchableHighlight,
+  Text, View, StyleSheet, TextInput, TouchableOpacity
 } from 'react-native';
-import { NavigationEvents } from 'react-navigation';
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     flex: 1,
   },
-  loginText: {
-    fontSize: 30,
-  },
   text: {
-    fontSize: 20,
+    fontSize: 18,
   },
-  loginButtonText: {
+  buttonText: {
     fontSize: 20,
     color: 'white',
-  },
-  loginBox: {
-    justifyContent: 'space-evenly',
-    textAlign: 'center',
-    alignItems: 'center',
-    paddingTop: 100,
-    paddingBottom: 10,
   },
   inputBox: {
     justifyContent: 'space-between',
     padding: 40,
-    // justifyContent: 'center',
   },
-  loginButton: {
+  redButton: {
     backgroundColor: '#EC6268',
     borderColor: '#EC6268',
     borderWidth: 1,
@@ -43,32 +30,16 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 30,
   },
-  signInButton: {
-    backgroundColor: 'white',
-    borderColor: '#EC6268',
-    borderWidth: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 70,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignSelf: 'center',
-  },
-  buttonBox: {
-    backgroundColor: '#fff',
-    marginTop: 40,
-    // justifyContent:'space-between',
-  },
   textInput: {
     borderColor: 'black',
     borderWidth: 1,
     borderRadius: 3,
     alignContent: 'center',
     marginTop: 10,
-    padding: 5,
     paddingLeft: 10,
   },
-  usernameBox: {
-    marginBottom: 40,
+  inputElem: {
+    marginBottom: 18,
   }
 }
 )
@@ -77,54 +48,50 @@ export default function LoginScreen({ navigation }) {
   const { navigate } = navigation;
   return (
     <>
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.inputBox}>
-            <View style={styles.usernameBox}>
-              <Text style={styles.text}>First Name</Text>
-              <View style={styles.textInput}>
-                <TextInput
-                  placeholder='Enter First Name'
-                />
-              </View>
-            </View>
-            <View style={styles.usernameBox}>
-              <Text style={styles.text}>Last Name</Text>
-              <View style={styles.textInput}>
-                <TextInput
-                  placeholder='Enter Last Name'
-                />
-              </View>
-            </View>
-            <View style={styles.usernameBox}>
-              <Text style={styles.text}>Date of Birth</Text>
-              <View style={styles.textInput}>
-                <TextInput
-                  placeholder='Enter DOB'
-                />
-              </View>
-            </View>
-            <View style={styles.passwordBox}>
-              <Text style={styles.text}>Password</Text>
-              <View style={styles.textInput}>
-                <TextInput
-                  placeholder='Enter Password'
-                />
-              </View>
+      <View style={styles.container}>
+        <View style={styles.inputBox}>
+          <View style={styles.inputElem}>
+            <Text style={styles.text}>First Name</Text>
+            <View style={styles.textInput}>
+              <TextInput
+                placeholder='Enter First Name'
+              />
             </View>
           </View>
-          <View style={styles.buttonBox}>
-            <View style={styles.loginButton}>
-              <TouchableHighlight
-                onPress={() => navigate('SignUp3')}>
-                <Text
-                  style={styles.loginButtonText}>
-                  Next</Text>
-              </TouchableHighlight>
+          <View style={styles.inputElem}>
+            <Text style={styles.text}>Last Name</Text>
+            <View style={styles.textInput}>
+              <TextInput
+                placeholder='Enter Last Name'
+              />
+            </View>
+          </View>
+          <View style={styles.inputElem}>
+            <Text style={styles.text}>Date of Birth</Text>
+            <View style={styles.textInput}>
+              <TextInput
+                placeholder='Enter DOB'
+              />
+            </View>
+          </View>
+          <View style={styles.inputElem}>
+            <Text style={styles.text}>Password</Text>
+            <View style={styles.textInput}>
+              <TextInput
+                placeholder='Enter Password'
+              />
             </View>
           </View>
         </View>
-      </ScrollView>
+        <View style={styles.redButton}>
+          <TouchableOpacity
+            onPress={() => navigate('SignUp3')}>
+            <Text
+              style={styles.buttonText}>
+              Next</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </>
   );
 }
