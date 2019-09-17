@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, Image, StyleSheet, TextInput, Alert, Button,
-	FlatList, SectionList, ToastAndroid, Picker
+	Text, View, Image, StyleSheet, TextInput, Alert, Button, ScrollView,
+	FlatList, SectionList, ToastAndroid, Picker, TouchableOpacity,
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 import * as firebase from 'firebase';
+import axios from 'axios';
+import { throwStatement } from '@babel/types';
 
 const Blob = RNFetchBlob.polyfill.Blob;
 const fs = RNFetchBlob.fs;
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
 window.Blob = Blob;
-
 
 async function uploadImage(uri) {
 	const mime = 'image/jpg';
@@ -34,10 +35,12 @@ async function downloadImage(filename) {
 	const imageRef = firebase.storage().ref('images/test.jpg');
 }
 
+
+
 export default function HomeScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [condition, setCondition] = useState('');
-	const [newMemento, setNewMemento] = useState('');
+	const [newMemento, setNewMemento] = useState({});
 	const [mementos, setMementos] = useState([
 		{
 			id: 0,
@@ -54,10 +57,29 @@ export default function HomeScreen({ navigation }) {
 	]);
 	const [image, setImage] = useState({});
 
+	useEffect(() => {
+		axios.get('http://localhost:3000/artefact', {
+			body: {
+				name: "vase"
+			}
+		})
+		.then((resp) => {
+			console.log(resp.data[0]);
+			setMementos(resp.data);
+		})
+		.catch((err) =>{
+			console.log(err);
+		})
+	})
+
 	return (
 		<>
-			<Image source={image} style={{ height: 200, width: 200 }} />
-
+			<Button
+				title="Logout"
+				onPress={() => {
+					navigate('Welcome');
+				}}
+			/>
 			<Button
 				title="Pick an image"
 				onPress={() => {
@@ -68,15 +90,13 @@ export default function HomeScreen({ navigation }) {
 					})
 				}} />
 
+			<Image source={image} style={{ height: 200, width: 200 }} />
+
 			<Button
 				title="Upload image"
 				onPress={() => {
 					uploadImage(image.uri);
 				}} />
-
-			<Button
-				title="Sign in"
-			/>
 
 			<TextInput
 				placeholder="Add a new memento"
@@ -107,7 +127,7 @@ export default function HomeScreen({ navigation }) {
 			<FlatList
 				data={mementos}
 				renderItem={({ item }) => <Text style={{ fontSize: 24, lineHeight: 40 }}>{item.name}</Text>}
-				keyExtractor={(item, index) => item.id.toString()}
+				keyExtractor={(item, index) => item.id}
 			/>
 		</>
 	);

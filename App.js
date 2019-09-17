@@ -9,8 +9,19 @@ import FamilyTreeScreen from './components/family-tree-screen';
 import ProfileScreen from './components/profile-screen';
 import TimelineScreen from './components/timeline-screen';
 import GalleryScreen from './components/gallery-screen';
+import ItemDetailScreen from './components/item-detail-screen';
+import WelcomeScreen from './components/welcome-screen';
+import Login from './components/log-in-screen';
+import SignUp1 from './components/sign-up1-screen';
+import SignUp2 from './components/sign-up2-screen';
+import SignUp3 from './components/sign-up3-screen';
 
-import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
+
+import { createBottomTabNavigator, 
+	createAppContainer, 
+	createSwitchNavigator, 
+	createStackNavigator,
+	NavigationScreenOption, } from 'react-navigation';
 import * as firebase from 'firebase';
 
 // Initialize Firebase
@@ -47,6 +58,36 @@ const MainNavigator = createBottomTabNavigator({
 
 );
 
-const App = createAppContainer(MainNavigator);
+const SignUpStack = createStackNavigator({
+	SignUp1:{screen:SignUp1},
+	SignUp2:{screen:SignUp2},
+	SignUp3:{screen:SignUp3},
 
+})
+
+const itemStack = createStackNavigator({
+	MainNavigator,
+	ItemDetail: {screen: ItemDetailScreen},
+	Gallery: {screen: GalleryScreen},
+})
+
+const itemStackProfile = createStackNavigator({
+	MainNavigator,
+	ItemDetail: {screen: ItemDetailScreen},
+	Profile: {screen: ProfileScreen},
+})
+
+const Stack = createSwitchNavigator({
+	Welcome: {screen: WelcomeScreen},
+	Login: { screen: Login },
+	SignUpStack,
+	MainNavigator,
+	itemStack,
+	itemStackProfile
+})
+
+
+const App = createAppContainer(Stack);
+
+// export default RootSwitch;
 export default App;
