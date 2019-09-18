@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
 	Text, View, StyleSheet, TextInput, TouchableOpacity, ToastAndroid
 } from 'react-native';
+import DatePicker from 'react-native-datepicker';
 import { NavigationEvents } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -83,11 +84,35 @@ export default function LoginScreen({ navigation }) {
 					<View style={styles.inputElem}>
 						<Text style={styles.text}>Date of Birth</Text>
 						<View style={styles.textInput}>
-							<TextInput
+							{/* <TextInput
 								placeholder='Enter DOB'
 								onChangeText={setDob}
 								value={dob}
-							/>
+							/> */}
+							<DatePicker
+								style={{width: 200}}
+								mode="date"
+								placeholder="select date"
+								format="YYYY-MM-DD"
+								minDate="1900-01-01"
+								maxDate="2019-01-01"
+								confirmBtnText="Confirm"
+								cancelBtnText="Cancel"
+								customStyles={{
+									dateIcon: {
+									position: 'absolute',
+									left: 0,
+									top: 4,
+									marginLeft: 0
+									},
+									dateInput: {
+									marginLeft: 36
+									}
+									// ... You can check the source to find the other keys.
+								}}
+								onDateChange={setDob}
+								value={dob}
+      						/>
 						</View>
 					</View>
 					<View style={styles.inputElem}>

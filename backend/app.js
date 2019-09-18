@@ -11,7 +11,8 @@ const LocalStrategy = require('passport-local').Strategy;
 // passport local config
 passport.use(new LocalStrategy(
 	function (username, password, done) {
-		User.findOne({ username: username }, function (err, found) {
+		userModel.findOne({ userName: username }, function (err, found) {
+			console.log(found);
 			if (err) { return done(err); }
 			// if no username found
 			if (!found) {
@@ -174,9 +175,14 @@ app.get('/login', (req, res) => {
 
 // login local
 app.post('/login/local', passport.authenticate('local', {
-	successRedirect: '/',
-	failureRedirect: '/login'
+	successRedirect: '/login/success/true',
+	failureRedirect: '/login/success/false'
 }));
+
+// login success or not 
+app.get('login/success/:isFail', (req,res) => {
+	res.send(req.params.isFail);
+})
 
 // login Facebook
 // app.get('/login/facebook',
