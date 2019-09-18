@@ -73,11 +73,19 @@ const styles = StyleSheet.create({
 	},
 	usernameBox: {
 		marginBottom: 40,
-	}
+	},
+	imageStyle: {
+		margin: 2,
+		width: 400,
+		height: 400,
+		alignSelf: 'center',
+		borderColor: 'black',
+		borderWidth: 1,
+	},
 }
 )
 
-export default function LoginScreen({ navigation }) {
+export default function SignUp3({ navigation }) {
 	const { navigate } = navigation;
 	const [image, setImage] = useState({});
 
@@ -112,16 +120,7 @@ export default function LoginScreen({ navigation }) {
 		<>
 			<ScrollView>
 				<View style={styles.container}>
-					<View style={styles.inputBox}>
-						<View style={styles.usernameBox}>
-							<Text style={styles.text}>Choose Picture</Text>
-							<View style={styles.textInput}>
-								<TextInput
-									placeholder="Picture preview"
-								/>
-							</View>
-						</View>
-					</View>
+					<Text style={styles.text}>Picture preview</Text>
 					<View style={styles.buttonBox}>
 						<View style={styles.signInButton}>
 							<TouchableHighlight
@@ -132,6 +131,8 @@ export default function LoginScreen({ navigation }) {
 								</Text>
 							</TouchableHighlight>
 						</View>
+						<Image source={image} style={styles.imageStyle} />
+
 						<View style={styles.loginButton}>
 							<TouchableHighlight
 								onPress={finishSignUp}>

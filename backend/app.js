@@ -174,9 +174,15 @@ app.get('/login', (req, res) => {
 
 // login local
 app.post('/login/local', passport.authenticate('local', {
-	successRedirect: '/',
-	failureRedirect: '/login'
+	successRedirect: '/login/success/true',
+	failureRedirect: '/login/success/fail'
 }));
+
+// login success or not route
+app.get('/login/success/:isFail', (req,res) => {
+	res.send(req.params.isFail);
+})
+
 
 // login Facebook
 // app.get('/login/facebook',
