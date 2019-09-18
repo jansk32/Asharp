@@ -76,12 +76,14 @@ const styles = StyleSheet.create({
 
 export default function LoginScreen({ navigation }) {
   const { navigate } = navigation;
+  const [userName, setUserName] = useState('');
+	const [password, setPassword] = useState('');
+
 
   // axios authentication
   function axiosLocal(obj) {
   axios.post("http://localhost:3000/login/local",
-  {username: obj.userName,
-  password: obj.password})
+  obj)
   };
 
   // axios third party authentication
@@ -101,6 +103,7 @@ export default function LoginScreen({ navigation }) {
             <View style={styles.textInput}>
               <TextInput
                 placeholder='Enter Username'
+                onChangeText={setUserName}
               />
             </View>
           </View>
@@ -109,6 +112,7 @@ export default function LoginScreen({ navigation }) {
             <View style={styles.textInput}>
               <TextInput
                 placeholder='Enter Password'
+                onChangeText={setPassword}
               />
             </View>
           </View>
@@ -116,7 +120,7 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.buttonBox}>
           <View style={styles.loginButton}>
             <TouchableHighlight
-              onPress={() => navigate('Home')}>
+              onPress={() => axiosLocal({userName: userName, password: password })}>
               <Text
                 style={styles.loginButtonText}>
                 Login</Text>

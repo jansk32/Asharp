@@ -20,6 +20,7 @@
     "passport-local": "^1.0.0",
     "react": "16.8.6",
     "react-native": "0.60.4",
+    "react-native-datepicker": "^1.7.2",
     "react-native-gesture-handler": "^1.4.1",
     "react-native-image-picker": "^1.1.0",
     "react-native-layout-grid": "0.0.2",
