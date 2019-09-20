@@ -30,6 +30,14 @@ passport.use(new LocalStrategy(
 	}
 ));
 
+passport.serializeUser(function(user, done) {
+	done(null, user);
+  });
+  
+passport.deserializeUser(function(user, done) {
+	done(null, user);
+  });
+
 // passport Facebook config
 // passport.use(new FacebookStrategy({
 // 	clientID: FACEBOOK_APP_ID,
@@ -58,6 +66,7 @@ require('../controller/mongooseController');
 app.use(bodyParser.json({ type: 'application/json' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
+app.use(passport.session());
 
 
 // app.use(function(req, res, next) {
