@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+// var cors = require('cors');
+// app.use(cors());
 
 // passport.js
 const passport = require('passport');
@@ -10,21 +12,31 @@ const LocalStrategy = require('passport-local').Strategy;
 
 // passport local config
 passport.use(new LocalStrategy(
+	{usernameField: 'email',
+	passwordField: 'password'},
 	function (username, password, done) {
-		userModel.findOne({ userName: username }, function (err, found) {
+		userModel.findOne({ email: username }, function (err, found) {
 			console.log(found);
 			if (err) { return done(err); }
 			// if no username found
 			if (!found) {
 				return done(null, false, { message: 'Incorrect username or password' });
 			}
-			if (!found.validPassword(password)) {
+			if (!found.pasword === password) {
 				return done(null, false, { message: 'Incorrect username or password' });
 			}
-			return done(null, user);
+			return done(null, found);
 		});
 	}
 ));
+
+passport.serializeUser(function(user, done) {
+	done(null, user);
+  });
+  
+passport.deserializeUser(function(user, done) {
+	done(null, user);
+  });
 
 // passport Facebook config
 // passport.use(new FacebookStrategy({
@@ -52,6 +64,20 @@ require('../controller/mongooseController');
 
 // app.use
 app.use(bodyParser.json({ type: 'application/json' }));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+// app.use(function(req, res, next) {
+// 	res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+// 	res.header(
+// 		'Access-Control-Allow-Headers',
+// 		'Origin, X-Requested-With, Content-Type, Accept'
+// 	);
+// 	next();
+// });
+
 
 // need to change this later not sure to what though
 // '/' should be the home page 
@@ -71,6 +97,7 @@ app.get('/user', (req, res) => {
 // Create a user
 app.post('/user/create', ({ body: {
 	name,
+	userName,
 	dob,
 	email,
 	password,
@@ -82,6 +109,7 @@ app.post('/user/create', ({ body: {
 	pictureUrl } }, res) => {
 	const user = userModel({
 		name,
+		userName,
 		dob,
 		email,
 		password,
@@ -100,9 +128,16 @@ app.post('/user/create', ({ body: {
 		res.send(resp);
 	})
 })
+// get ALL artefacts
+app.get('/artefact', (req,res) => {
+	artefactModel.find({}, (err,result) => {
+		res.send(result);
+	})
+})
+
 
 // get an artefact
-app.get('/artefact', (req, res) => {
+app.get('/artefact/find', (req, res) => {
 	console.log(req);
 	artefactModel.find(req.body, (err, resp) => {
 		if (err) throw err;
@@ -142,33 +177,7 @@ app.put('/user/assign/:id', (req, res) => {
 
 // Tim: this will be replaced by the single route called /user/create so
 // the front end will make only one request to the back end
-// multiple page sign up
-// not very good practice tbh 
-let newUser = {};
 
-// first page
-app.post('/user/create/1', (req, res) => {
-	newUser.email = req.body.email;
-});
-
-// second page
-app.post('/user/create/2', ({ body: { name, dob, password } }, res) => {
-	newUser.name = name;
-	newUser.dob = dob;
-	newUser.password = password;
-});
-
-// third page
-app.post('/user/create/3', (req, res) => {
-	newUser.picture = req.body.file;
-	console.log(newUser);
-	let newUserModel = new userModel(newUser);
-	newUserModel.save().then((doc) => {
-		
-	}).catch((err) => {
-		console.log(err);
-	});
-});
 
 // login page [in progress]
 app.get('/login', (req, res) => {
@@ -176,13 +185,24 @@ app.get('/login', (req, res) => {
 });
 
 // login local
-app.post('/login/local', passport.authenticate('local', {
-	successRedirect: '/login/success/true',
-	failureRedirect: '/login/success/false'
-}));
+app.post('/login/local', passport.authenticate('local'),(req,res) => {
+	console.log(req.body);
+	console.log("posted");
+	res.send(true);
+});
+
+// app.post('/login/local', (req,res) => {
+// 	console.log(req.body);
+// 	userModel.findOne({userName: req.body.userName}, (err, result) => {
+// 		if(err) throw err;
+// 		console.log(result);
+// 	})
+// }
+// );
 
 // login success or not 
 app.get('login/success/:isFail', (req,res) => {
+	console.log(req.params.isFail);
 	res.send(req.params.isFail);
 })
 

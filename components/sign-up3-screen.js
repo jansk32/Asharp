@@ -94,7 +94,7 @@ export default function SignUp3({ navigation }) {
 	const [image, setImage] = useState({});
 
 	async function uploadSignUpData() {
-		let dataKeys = ['email', 'name', 'dob', 'password', 'pictureUrl'];
+		let dataKeys = ['email', 'userName','name', 'dob', 'password', 'pictureUrl'];
 		let data = {};
 		for (const key of dataKeys) {
 			try {
