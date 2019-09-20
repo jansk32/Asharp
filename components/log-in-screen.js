@@ -84,7 +84,7 @@ export default function LoginScreen({ navigation }) {
   function axiosLocal(objData) {
     console.log(objData);
     axios.post("http://localhost:3000/login/local",objData)
-    .then(navigate('HomeScreen'))
+    .then(navigate('Home'))
     .catch((err) => console.log(err));
   };
 

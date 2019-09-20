@@ -128,9 +128,16 @@ app.post('/user/create', ({ body: {
 		res.send(resp);
 	})
 })
+// get ALL artefacts
+app.get('/artefact', (req,res) => {
+	artefactModel.find({}, (err,result) => {
+		res.send(result);
+	})
+})
+
 
 // get an artefact
-app.get('/artefact', (req, res) => {
+app.get('/artefact/find', (req, res) => {
 	console.log(req);
 	artefactModel.find(req.body, (err, resp) => {
 		if (err) throw err;
