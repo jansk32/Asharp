@@ -12,10 +12,10 @@ const LocalStrategy = require('passport-local').Strategy;
 
 // passport local config
 passport.use(new LocalStrategy(
-	{usernameField: 'userName',
+	{usernameField: 'email',
 	passwordField: 'password'},
 	function (username, password, done) {
-		userModel.findOne({ userName: username }, function (err, found) {
+		userModel.findOne({ email: username }, function (err, found) {
 			console.log(found);
 			if (err) { return done(err); }
 			// if no username found
