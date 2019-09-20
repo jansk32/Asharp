@@ -22,10 +22,10 @@ passport.use(new LocalStrategy(
 			if (!found) {
 				return done(null, false, { message: 'Incorrect username or password' });
 			}
-			if (!found.validPassword(password)) {
+			if (!found.pasword === password) {
 				return done(null, false, { message: 'Incorrect username or password' });
 			}
-			return done(null, user);
+			return done(null, found);
 		});
 	}
 ));
@@ -57,6 +57,8 @@ require('../controller/mongooseController');
 // app.use
 app.use(bodyParser.json({ type: 'application/json' }));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
+
 
 // app.use(function(req, res, next) {
 // 	res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
@@ -167,14 +169,9 @@ app.get('/login', (req, res) => {
 });
 
 // login local
-app.post('/login/local', async (req,res) => {
+app.post('/login/local', passport.authenticate('local'),(req,res) => {
+	console.log(req.body);
 	console.log("posted");
-	req.query = req.body;
-	console.log(req.query);
-	await passport.authenticate('local', { successRedirect: '/login/success/true',
-	failureRedirect: '/login/success/false',
-	failureFlash: true })
-	console.log("done");
 });
 
 // app.post('/login/local', (req,res) => {
