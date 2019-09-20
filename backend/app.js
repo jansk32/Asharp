@@ -2,8 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-// var cors = require('cors');
-// app.use(cors());
+const session = require('express-session');
 
 // passport.js
 const passport = require('passport');
@@ -35,9 +34,10 @@ passport.serializeUser(function(user, done) {
   });
   
 passport.deserializeUser(function(user, done) {
-	done(null, user);
+	done(null,user);
   });
 
+  
 // passport Facebook config
 // passport.use(new FacebookStrategy({
 // 	clientID: FACEBOOK_APP_ID,
@@ -68,6 +68,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+// cookies
+app.set('trust proxy', 1);
+app.use(session({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: true
+}))
+
 
 // app.use(function(req, res, next) {
 // 	res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
@@ -88,9 +96,11 @@ app.get('/', (req, res) => {
 // get a user
 app.get('/user', (req, res) => {
 	// change later
-	userModel.find({ name: 'Jansen' }, (err, resp) => {
+	let id = req.session.passport.user._id;
+	// console.log(req.session.passport.user._id);
+	userModel.find({ _id: id }, (err, resp) => {
 		if (err) throw err;
-		res.json(resp[0]);
+		res.send(resp[0]);
 	});
 })
 
@@ -130,6 +140,7 @@ app.post('/user/create', ({ body: {
 })
 // get ALL artefacts
 app.get('/artefact', (req,res) => {
+	console.log(req.user);
 	artefactModel.find({}, (err,result) => {
 		res.send(result);
 	})
@@ -138,7 +149,6 @@ app.get('/artefact', (req,res) => {
 
 // get an artefact
 app.get('/artefact/find', (req, res) => {
-	console.log(req);
 	artefactModel.find(req.body, (err, resp) => {
 		if (err) throw err;
 		console.log(req);
@@ -186,7 +196,7 @@ app.get('/login', (req, res) => {
 
 // login local
 app.post('/login/local', passport.authenticate('local'),(req,res) => {
-	console.log(req.body);
+	console.log(req.user);
 	console.log("posted");
 	res.send(true);
 });

@@ -37,7 +37,7 @@ export default function ProfileScreen({ navigation }) {
 
     useEffect(() => {
         console.log('Sending request');
-        axios.get('http://localhost:3000/user')
+        axios.get('http://localhost:3000/user', { withCredentials: true })
         .then((res) => {
             setProfile(res.data);
             // console.log('FOUND');
@@ -72,7 +72,7 @@ export default function ProfileScreen({ navigation }) {
             <React.Fragment>
                 <View style={styles.profileBox}>
                     <Image
-                        source={profPic.profile}
+                        source={{uri: profile.pictureUrl}}
                         style={styles.image}
                     />
                     <View style={styles.textBox}>
