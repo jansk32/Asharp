@@ -181,6 +181,7 @@ app.get('/login', (req, res) => {
 app.post('/login/local', passport.authenticate('local'),(req,res) => {
 	console.log(req.body);
 	console.log("posted");
+	res.send(true);
 });
 
 // app.post('/login/local', (req,res) => {
