@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button, TouchableHighlight, TouchableOpacity } from 'react-native';
-
+// import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function WelcomeScreen({navigation}) {
     const { navigate } = navigation;
@@ -8,7 +8,7 @@ export default function WelcomeScreen({navigation}) {
         <>
         <View style = {styles.container}>
             <Text style={ styles.title }>mementos</Text>
-
+            {/* <Icon name="camera" size={30} color="black" /> */}
             <TouchableOpacity onPress={() => navigate('SignUp1')}>
                 <Text style={styles.signInButton}>
                     I am a new user

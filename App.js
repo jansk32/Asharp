@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
 	Text, View, Image, StyleSheet, TextInput, Alert, Button, ScrollView,
-	FlatList, SectionList, ToastAndroid, Picker
+	FlatList, SectionList, ToastAndroid, Picker,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+const myIcon = <Icon name="rocket" size={30} color="#900" />;
+
 
 import HomeScreen from './components/home-screen';
 import FamilyTreeScreen from './components/family-tree-screen';
@@ -40,7 +43,16 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const MainNavigator = createBottomTabNavigator({
-	Timeline: { screen: TimelineScreen },
+
+	Timeline: { screen: TimelineScreen,
+	navigationOptions: {
+		tabBarIcon: ({ tintColor }) => (myIcon),
+		tabBarOptions: {
+			showIcon: true,
+		}
+		}
+
+	},
 	FamilyTree: { screen: FamilyTreeScreen },
 	Home: { screen: HomeScreen },
 	Gallery: { screen: GalleryScreen },
@@ -52,7 +64,7 @@ const MainNavigator = createBottomTabNavigator({
 			activeTintColor: 'white',
 			inactiveTintColor: 'black',
 			showLabel: true,
-			showIcon: false,
+			showIcon: true,
 			style: {
 				backgroundColor: '#47B39D',
 			}
