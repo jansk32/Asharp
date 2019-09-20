@@ -93,7 +93,7 @@ export default function SignUp3({ navigation }) {
 	// TIMMYY!! HOW TO SAVE IMAGE PLS PASS AS ARGUMENT TO ONPRESSEDEFFECT
 
 	async function uploadSignUpData() {
-		let dataKeys = ['email', 'name', 'dob', 'password', 'pictureUrl'];
+		let dataKeys = ['email', 'userName','name', 'dob', 'password', 'pictureUrl'];
 		let data = {};
 		for (const key of dataKeys) {
 			try {

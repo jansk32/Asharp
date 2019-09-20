@@ -81,9 +81,10 @@ export default function LoginScreen({ navigation }) {
 
 
   // axios authentication
-  function axiosLocal(obj) {
-  axios.post("http://localhost:3000/login/local",
-  obj)
+  function axiosLocal(objData) {
+    console.log(objData);
+    axios.post("http://localhost:3000/login/local",objData)
+    .catch((err) => console.log(err));
   };
 
   // axios third party authentication

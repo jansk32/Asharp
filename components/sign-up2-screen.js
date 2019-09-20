@@ -53,10 +53,11 @@ export default function LoginScreen({ navigation }) {
 	const [name, setName] = useState('');
 	const [dob, setDob] = useState('');
 	const [password, setPassword] = useState('');
+	const [userName, setUsername] = useState('');
 
 	// axios + navigate ==> learn about cookies bruh
 	async function goToNextPage() {
-		const data = { name, dob, password }
+		const data = { name, userName, dob, password }
 		for (const key in data) {
 			try {
 				await AsyncStorage.setItem(key, data[key]);
@@ -72,12 +73,22 @@ export default function LoginScreen({ navigation }) {
 			<View style={styles.container}>
 				<View style={styles.inputBox}>
 					<View style={styles.inputElem}>
-						<Text style={styles.text}>First Name</Text>
+						<Text style={styles.text}>Name</Text>
 						<View style={styles.textInput}>
 							<TextInput
 								placeholder='Enter Full Name'
 								onChangeText={setName}
 								value={name}
+							/>
+						</View>
+					</View>
+					<View style={styles.inputElem}>
+						<Text style={styles.text}>Username</Text>
+						<View style={styles.textInput}>
+							<TextInput
+								placeholder='Enter username'
+								onChangeText={setUsername}
+								value={userName}
 							/>
 						</View>
 					</View>
