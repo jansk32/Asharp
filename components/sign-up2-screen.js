@@ -42,6 +42,11 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		paddingLeft: 10,
 	},
+	dateInput: {
+		alignContent: 'center',
+		marginTop: 10,
+		width: 330,
+	},
 	inputElem: {
 		marginBottom: 18,
 	}
@@ -94,14 +99,10 @@ export default function LoginScreen({ navigation }) {
 					</View>
 					<View style={styles.inputElem}>
 						<Text style={styles.text}>Date of Birth</Text>
-						<View style={styles.textInput}>
-							{/* <TextInput
-								placeholder='Enter DOB'
-								onChangeText={setDob}
-								value={dob}
-							/> */}
+
 							<DatePicker
-								style={{width: 200}}
+								style={styles.dateInput}
+								date={dob}
 								mode="date"
 								placeholder="select date"
 								format="YYYY-MM-DD"
@@ -111,20 +112,18 @@ export default function LoginScreen({ navigation }) {
 								cancelBtnText="Cancel"
 								customStyles={{
 									dateIcon: {
-									position: 'absolute',
-									left: 0,
-									top: 4,
-									marginLeft: 0
-									},
-									dateInput: {
-									marginLeft: 36
-									}
-									// ... You can check the source to find the other keys.
+										position: 'absolute',
+										left: 0,
+										top: 4,
+										marginLeft: 0
+										},
+										dateInput: {
+										marginLeft: 36
+										}
 								}}
 								onDateChange={setDob}
 								value={dob}
       						/>
-						</View>
 					</View>
 					<View style={styles.inputElem}>
 						<Text style={styles.text}>Password</Text>

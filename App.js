@@ -70,13 +70,24 @@ const uploadArtefactStack = createStackNavigator({
 
 const SignUpStack = createStackNavigator({
 	SignUp1: { screen: SignUp1 },
-	SignUp2: { screen: SignUp2 },
-	SignUp3: { screen: SignUp3 },
+	SignUp2: { screen: SignUp2,
+		navigationOptions: ({navigation}) => ({
+			title: 'Enter details',
+			headerTitleStyle: { color: '#EC6268' },
+		}),
+	},
+	SignUp3: {
+		screen: SignUp3,
+		navigationOptions: ({ navigation }) => ({
+			title: 'Choose profile picture!',
+			headerTitleStyle: { color: '#EC6268' }
+		}),
+	},
 });
 
 const Stack = createSwitchNavigator({
 	Welcome: { screen: WelcomeScreen },
-	Login: { screen: Login },
+	Login: {screen: Login},
 	SignUpStack,
 	MainNavigator,
 	uploadArtefactStack,
