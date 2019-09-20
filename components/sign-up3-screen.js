@@ -8,6 +8,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import { pickImage, uploadImage } from '../image-tools';
 
+// Stylesheets for formatting and designing layout
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: 'white',
@@ -17,6 +18,9 @@ const styles = StyleSheet.create({
 		fontSize: 30,
 	},
 	text: {
+		fontSize: 20,
+	},
+	title: {
 		fontSize: 20,
 	},
 	loginButtonText: {
@@ -89,9 +93,6 @@ export default function SignUp3({ navigation }) {
 	const { navigate } = navigation;
 	const [image, setImage] = useState({});
 
-	// axios + navigate ==> learn about cookies bruh
-	// TIMMYY!! HOW TO SAVE IMAGE PLS PASS AS ARGUMENT TO ONPRESSEDEFFECT
-
 	async function uploadSignUpData() {
 		let dataKeys = ['email', 'name', 'dob', 'password', 'pictureUrl'];
 		let data = {};
@@ -120,7 +121,7 @@ export default function SignUp3({ navigation }) {
 		<>
 			<ScrollView>
 				<View style={styles.container}>
-					<Text style={styles.text}>Picture preview</Text>
+					<Text style={styles.title}>Picture preview</Text>
 					<View style={styles.buttonBox}>
 						<View style={styles.signInButton}>
 							<TouchableHighlight

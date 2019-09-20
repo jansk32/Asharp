@@ -163,9 +163,11 @@ app.post('/user/create/3', (req, res) => {
 	newUser.picture = req.body.file;
 	console.log(newUser);
 	let newUserModel = new userModel(newUser);
-	newUserModel.save((err, resp) => {
-		if (err) throw err;
-	})
+	newUserModel.save().then((doc) => {
+		
+	}).catch((err) => {
+		console.log(err);
+	});
 });
 
 // login page [in progress]
