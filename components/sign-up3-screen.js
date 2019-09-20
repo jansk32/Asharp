@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, Image, StyleSheet, TextInput, Button, ScrollView,
-	FlatList, SectionList, ToastAndroid, Picker, TouchableHighlight, ImagePicker,
+	Text, View, Image, StyleSheet, Button, ScrollView,
+	FlatList, SectionList, ToastAndroid, Picker, TouchableOpacity, ImagePicker, Dimensions
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import axios from 'axios';
@@ -13,78 +13,49 @@ const styles = StyleSheet.create({
 	container: {
 		backgroundColor: 'white',
 		flex: 1,
-	},
-	loginText: {
-		fontSize: 30,
+
 	},
 	text: {
-		fontSize: 20,
+		fontSize: 18,
+		color: 'black',
 	},
-	title: {
-		fontSize: 20,
-	},
-	loginButtonText: {
+	whiteText: {
 		fontSize: 20,
 		color: 'white',
 	},
-	loginBox: {
-		justifyContent: 'space-evenly',
-		textAlign: 'center',
-		alignItems: 'center',
-		paddingTop: 100,
-		paddingBottom: 10,
-	},
-	inputBox: {
-		justifyContent: 'space-between',
-		padding: 40,
-		// justifyContent: 'center',
-	},
-	loginButton: {
-		backgroundColor: '#EC6268',
-		borderColor: '#EC6268',
+	picButton: {
+		backgroundColor: '#fff',
 		borderWidth: 1,
+		borderColor: '#FBC074',
+		paddingHorizontal: 26,
+		paddingVertical: 3,
+		borderRadius: 20,
+		justifyContent: 'center',
+		alignSelf: 'center',
+		marginTop: 20,
+		marginBottom: 80,
+
+	},
+	finishButton: {
+		backgroundColor: '#FBC074',
+		borderWidth: 1,
+		borderColor: '#FBC074',
 		paddingVertical: 9,
 		paddingHorizontal: 80,
 		borderRadius: 20,
 		justifyContent: 'center',
 		alignSelf: 'center',
-		marginBottom: 30,
-	},
-	signInButton: {
-		backgroundColor: 'white',
-		borderColor: '#EC6268',
-		borderWidth: 1,
-		paddingVertical: 8,
-		paddingHorizontal: 40,
-		borderRadius: 20,
-		justifyContent: 'center',
-		alignSelf: 'center',
-		marginBottom: 20,
-	},
-	buttonBox: {
-		backgroundColor: '#fff',
-		marginTop: 40,
-		// justifyContent:'space-between',
-	},
-	textInput: {
-		borderColor: 'black',
-		borderWidth: 1,
-		borderRadius: 3,
-		alignContent: 'center',
-		marginTop: 10,
-		padding: 5,
-		paddingLeft: 10,
-	},
-	usernameBox: {
-		marginBottom: 40,
 	},
 	imageStyle: {
 		margin: 2,
-		width: 400,
-		height: 400,
+		marginTop: '20%',
+		width: Dimensions.get('window').width * 0.75,
+		height: Dimensions.get('window').width * 0.75,
 		alignSelf: 'center',
-		borderColor: 'black',
+		borderColor: '#233439',
 		borderWidth: 1,
+		borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
+
 	},
 }
 )
@@ -94,7 +65,7 @@ export default function SignUp3({ navigation }) {
 	const [image, setImage] = useState({});
 
 	async function uploadSignUpData() {
-		let dataKeys = ['email', 'userName','name', 'dob', 'password', 'pictureUrl'];
+		let dataKeys = ['email', 'userName', 'name', 'dob', 'password', 'pictureUrl'];
 		let data = {};
 		for (const key of dataKeys) {
 			try {
@@ -121,28 +92,25 @@ export default function SignUp3({ navigation }) {
 		<>
 			<ScrollView>
 				<View style={styles.container}>
-					<Text style={styles.title}>Picture preview</Text>
-					<View style={styles.buttonBox}>
-						<View style={styles.signInButton}>
-							<TouchableHighlight
-								onPress={async () => setImage(await pickImage())}>
-								<Text
-									style={styles.text}>
-									Pick Picture
+					<Image source={image} style={styles.imageStyle} />
+					<View style={styles.picButton}>
+					<TouchableOpacity
+							onPress={async () => setImage(await pickImage())}>
+							<Text
+								style={styles.textButton}>
+								Pick Picture
 								</Text>
-							</TouchableHighlight>
-						</View>
-						<Image source={image} style={styles.imageStyle} />
-
-						<View style={styles.loginButton}>
-							<TouchableHighlight
-								onPress={finishSignUp}>
-								<Text
-									style={styles.loginButtonText}>
-									Finish
+						</TouchableOpacity>
+					</View>
+					
+					<View style={styles.finishButton}>
+						<TouchableOpacity
+							onPress={finishSignUp}>
+							<Text
+								style={styles.whiteText}>
+								Finish
 								</Text>
-							</TouchableHighlight>
-						</View>
+						</TouchableOpacity>
 					</View>
 				</View>
 			</ScrollView>
