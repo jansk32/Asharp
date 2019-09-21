@@ -28,13 +28,6 @@ import {
 var tintColor = 'black';
 // Import icons
 import Icon from 'react-native-vector-icons/Ionicons';
-const icons = 
-	{	timelineIcon:<Icon name="md-hourglass" color={tintColor} size={30} />,
-		familyTreeIcon: <Icon name="md-airplane" color={tintColor} size={30} />,
-		uploadIcon: <Icon name="md-add" color={tintColor} size={30} />,
-		galleryIcon: <Icon name="md-images" color={tintColor} size={30} />,
-		profileIcon :<Icon name="md-person" color={tintColor} size={30} />,
-	};
 
 // Import firebase.
 import * as firebase from 'firebase';
@@ -87,12 +80,14 @@ const MainNavigator = createBottomTabNavigator({
 	{
 		initialRouteName: 'Home',
 		tabBarOptions: {
-			activeTintColor: 'white',
+			activeTintColor: '#579B93',
 			inactiveTintColor: 'black',
 			showLabel: false,
 			showIcon: true,
 			style: {
-				backgroundColor: '#47B39D',
+				backgroundColor: 'white',
+				borderTopColor: '#579B93',
+				borderTopWidth: .5,
 			}
 		},
 		navigationOptions: {

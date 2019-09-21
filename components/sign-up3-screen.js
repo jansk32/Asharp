@@ -98,7 +98,7 @@ export default function SignUp3({ navigation }) {
 					<TouchableOpacity
 							onPress={async () => setImage(await pickImage())}>
 							<Text
-								style={styles.textButton}>
+								style={styles.text}>
 								Pick Picture
 								</Text>
 						</TouchableOpacity>
