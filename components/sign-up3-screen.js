@@ -7,7 +7,6 @@ import { NavigationEvents } from 'react-navigation';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import { pickImage, uploadImage } from '../image-tools';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 // Stylesheets for formatting and designing layout
