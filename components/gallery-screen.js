@@ -42,7 +42,7 @@ export default function GalleryScreen({navigation}) {
             setArtefact(result.data);
         })
         .catch(err => console.log(error));
-    })
+    },[])
 
     renderItem = ({ item, index }) => {
         if (item.empty === true) {
