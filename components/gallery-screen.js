@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet,View, FlatList, Dimensions, Image, TouchableHighlight } from 'react-native';
+import ItemDetailScreen from './item-detail-screen';
 import axios from 'axios';
 
 const data = [
@@ -50,8 +51,9 @@ export default function GalleryScreen({navigation}) {
         }
         return (
         <View style={styles.item}>
-            <TouchableHighlight 
-                onPress={()=> {navigate('Home')}}>
+            <TouchableHighlight onPress={() => {
+                    navigate('ItemDetail')
+                }}>
                 <Image 
                     style={styles.imageBox}
                     source = {item.image}
