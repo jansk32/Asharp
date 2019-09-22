@@ -58,11 +58,10 @@ export default function LoginScreen({ navigation }) {
 	const [name, setName] = useState('');
 	const [dob, setDob] = useState('');
 	const [password, setPassword] = useState('');
-	const [userName, setUsername] = useState('');
 
 	// axios + navigate ==> learn about cookies bruh
 	async function goToNextPage() {
-		const data = { name, userName, dob, password }
+		const data = { name, dob, password }
 		for (const key in data) {
 			try {
 				await AsyncStorage.setItem(key, data[key]);
@@ -88,16 +87,6 @@ export default function LoginScreen({ navigation }) {
 						</View>
 					</View>
 					<View style={styles.inputElem}>
-						<Text style={styles.text}>Username</Text>
-						<View style={styles.textInput}>
-							<TextInput
-								placeholder='Enter username'
-								onChangeText={setUsername}
-								value={userName}
-							/>
-						</View>
-					</View>
-					<View style={styles.inputElem}>
 						<Text style={styles.text}>Date of Birth</Text>
 
 							<DatePicker
@@ -110,6 +99,7 @@ export default function LoginScreen({ navigation }) {
 								maxDate="2019-01-01"
 								confirmBtnText="Confirm"
 								cancelBtnText="Cancel"
+								androidMode = "spinner"
 								customStyles={{
 									dateIcon: {
 										position: 'absolute',

@@ -21,7 +21,7 @@ passport.use(new LocalStrategy(
 			if (!found) {
 				return done(null, false, { message: 'Incorrect username or password' });
 			}
-			if (!found.pasword === password) {
+			if (!(found.password === password)) {
 				return done(null, false, { message: 'Incorrect username or password' });
 			}
 			return done(null, found);
@@ -196,9 +196,9 @@ app.get('/login', (req, res) => {
 
 // login local
 app.post('/login/local', passport.authenticate('local'),(req,res) => {
-	console.log(req.user);
 	console.log("posted");
-	res.send(true);
+	console.log(req.user);
+	res.send(req.user);
 });
 
 // app.post('/login/local', (req,res) => {
