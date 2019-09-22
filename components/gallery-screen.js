@@ -4,7 +4,7 @@ import ItemDetailScreen from './item-detail-screen';
 import axios from 'axios';
 import downloadImage from '../image-tools';
 
-// format data
+// Format how the grid is going to be shown
 const formatData = (data, numColumns) => {
     const numberOfFullRows = Math.floor(data.length / numColumns);
   
@@ -37,9 +37,10 @@ export default function GalleryScreen({navigation}) {
 			}
 		}
 		fetchArtefacts();
-    }, []);
+	}, []);
 
-    // render items
+	// Render Item invisible if it's just a placeholder for columns in the grid,
+    // if not, render the picture for each grid
     renderItem = ({ item, index }) => {
         if (item.empty) {
           return <View style={[styles.item, styles.itemInvisible]} />;

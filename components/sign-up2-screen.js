@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
 }
 )
 
+// Enter Name, Birthday and password.
 export default function LoginScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [name, setName] = useState('');

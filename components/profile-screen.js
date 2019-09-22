@@ -114,12 +114,11 @@ const formatData = (data, numColumns) => {
     return data;
 };
 
-
 export default function ProfileScreen({ navigation }) {
     const { navigate } = navigation;
     const [profile, setProfile] = useState({});
 
-    // get profile details
+    // Get profile details
     useEffect(() => {
         console.log('Sending request');
         axios.get('http://localhost:3000/user', { withCredentials: true })
@@ -132,7 +131,7 @@ export default function ProfileScreen({ navigation }) {
     
     const [artefact, setArtefact] = useState([]);
 
-    // get all the artefact
+    // Get all the artefact
     useEffect(() => {
         axios.get("http://localhost:3000/artefact")
         .then((result) => {

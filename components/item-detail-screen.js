@@ -3,14 +3,13 @@ import { Text, Image, View, StyleSheet, Button, TouchableHighlight, TouchableOpa
 import axios from 'axios';
 import Moment from 'moment';
 
-
-
+// See the details of each individual artefacts
 export default function ItemDetailScreen({navigation}) {
     const {navigate} = navigation;
     var artefactId = navigation.getParam('artefactId');
     const [artefact, setArtefact] = useState({});
 
-    // get all artefacts
+    // Get all artefacts
     useEffect(() => {
         async function fetchArtefact() {
             const res = await axios.get(`http://localhost:3000/artefact/find/${artefactId}`);
@@ -27,30 +26,13 @@ export default function ItemDetailScreen({navigation}) {
                     style={styles.image}
                     source={{uri: artefact.file}}
                 />
-                <View style={styles.artefactElems}>
                     <Text>Name: {artefact.name}</Text>
                     <Text>Date: {artefact.date}</Text>
                     <Text>Owner id: {artefact.owner}</Text>
                     <Text>Value: {artefact.value}</Text>
                     <Text>Description: {artefact.description}</Text>
-                </View>
             </View>
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    image:{
-        width: 350,
-        height: 350
-    },
-    container:{
-        flex: 1, 
-        alignItems: "center", 
-        justifyContent: "center" 
-    },
-    artefactElems: {
-        // alignItems:
-    },
-})
 
