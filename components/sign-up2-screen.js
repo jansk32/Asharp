@@ -55,6 +55,7 @@ export default function LoginScreen({ navigation }) {
 	const [dob, setDob] = useState('');
 	const [password, setPassword] = useState('');
 
+	// Stores input in a temporary storage
 	async function goToNextPage() {
 		const data = { name, dob, password }
 		for (const key in data) {
