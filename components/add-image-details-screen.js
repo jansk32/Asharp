@@ -4,7 +4,10 @@ import {
   FlatList, SectionList, ToastAndroid, Picker, TouchableHighlight,
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
+import DatePicker from 'react-native-datepicker';
 import axios from 'axios';
+import downloadImage from '../image-tools';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const styles = StyleSheet.create({
   container: {
@@ -82,10 +85,41 @@ const styles = StyleSheet.create({
 
 export default function UploadImageScreen({ navigation }) {
   const { navigate } = navigation;
+  const [description, setDescription] = useState('');
+  const [value, setValue] = useState('');
+  const [name, setName] = useState('');
+  const [date, setDate] = useState('');
+  const [image, setImage] = useState();
+
+  async function createArtefact() {
+    // let dataKeys = ['value', 'name', 'date', 'description','pictureUrl'];
+    let data = {
+      name: name,
+      date: date,
+      value: value,
+      description: description
+};
+    try {
+          data.file = await AsyncStorage.getItem('artefactPictureUrl');
+        } catch (e) {
+          ToastAndroid.show('Error getting pictureUrl' , ToastAndroid.SHORT);
+        }
+    await axios.post('http://localhost:3000/artefact/create', data)
+    .then((result) => {if(result) {navigate('Home')}});
+  }
+
+  // useEffect(async () => {
+  //     console.log(await AsyncStorage.getItem('artefactPictureUrl'));
+  //     setImage(downloadImage(await AsyncStorage.getItem('artefactPictureUrl')));
+  // }, []);
 
   return (
     <>
       <ScrollView>
+        <Image
+        source={image}
+        style={{height: 200, width: 200}}
+        />
         <View style={styles.container}>
           <View style={styles.inputBox}>
             <View style={styles.upperBox}>
@@ -93,22 +127,44 @@ export default function UploadImageScreen({ navigation }) {
               <View style={styles.textInputUpper}>
                 <TextInput
                   placeholder='Enter Item Name'
+                  onChangeText = {setName}
                 />
               </View>
             </View>
             <View style={styles.usernameBox}>
               <Text style={styles.text}>Date</Text>
-              <View style={styles.textInputUpper}>
-                <TextInput
-                  placeholder='Date this item is retrieved'
-                />
-              </View>
+              <DatePicker
+								style={styles.dateInput}
+								date={date}
+								mode="date"
+								placeholder="select date"
+								format="YYYY-MM-DD"
+								minDate="1900-01-01"
+								maxDate="2019-01-01"
+								confirmBtnText="Confirm"
+								cancelBtnText="Cancel"
+								androidMode = "spinner"
+								customStyles={{
+									dateIcon: {
+										position: 'absolute',
+										left: 0,
+										top: 4,
+										marginLeft: 0
+										},
+										dateInput: {
+										marginLeft: 36
+										}
+								}}
+								onDateChange={setDate}
+								value={date}
+      						/>
             </View>
             <View style={styles.usernameBox}>
               <Text style={styles.text}>Desription</Text>
               <View style={styles.textInput}>
                 <TextInput
                   placeholder='Describe the item.'
+                  onChangeText={setDescription}
                 />
               </View>
             </View>
@@ -117,13 +173,14 @@ export default function UploadImageScreen({ navigation }) {
               <View style={styles.textInput}>
                 <TextInput
                   placeholder='Write down the memory and value this item holds.'
+                  onChangeText= {setValue}
                 />
               </View>
             </View>
           </View>
             <View style={styles.redButton}>
               <TouchableHighlight
-                onPress={() => navigate('Home')}>
+                onPress={createArtefact}>
                 <Text
                   style={styles.redButtonText}>
                   Upload Artefact</Text>

@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { throwStatement } from '@babel/types';
 import { pickImage, uploadImage } from '../image-tools';
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 const styles = StyleSheet.create({
@@ -87,6 +88,21 @@ export default function HomeScreen({ navigation }) {
 	const [newMemento, setNewMemento] = useState({});
 	const [image, setImage] = useState({});
 
+    async function uploadImageArtefact() {
+        const pictureUrl = await uploadImage(image.uri);
+        console.log(pictureUrl);
+        try { 
+            await AsyncStorage.setItem('artefactPictureUrl', pictureUrl);
+        } catch (e) {
+			console.error(e);
+            ToastAndroid.show('Error storing picture URL', ToastAndroid.SHORT);
+        }
+    }
+
+    async function upload() {
+        await uploadImageArtefact()
+        .then(() => navigate('AddImageDetails'));
+    }
 	return (
 		<>
 			<View style={styles.container}>
@@ -106,10 +122,7 @@ export default function HomeScreen({ navigation }) {
 
 				<View style={styles.whiteButton}>
 					<TouchableOpacity
-						onPress={async () => {
-							await uploadImage(image.uri);
-							navigate('AddImageDetails');
-						}}>
+						onPress={upload}>
 						<Text style={styles.text}>Upload Image</Text>
 					</TouchableOpacity>
 				</View>

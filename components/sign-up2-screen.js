@@ -59,7 +59,6 @@ export default function LoginScreen({ navigation }) {
 	const [dob, setDob] = useState('');
 	const [password, setPassword] = useState('');
 
-	// axios + navigate ==> learn about cookies bruh
 	async function goToNextPage() {
 		const data = { name, dob, password }
 		for (const key in data) {
