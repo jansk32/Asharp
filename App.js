@@ -77,11 +77,12 @@ const itemStackProfile = createStackNavigator({
 	Profile: {screen: ProfileScreen},
 })
 
+// TODO: move MainNavigator back to third last position
 const Stack = createSwitchNavigator({
+	MainNavigator,
 	Welcome: {screen: WelcomeScreen},
 	Login: { screen: Login },
 	SignUpStack,
-	MainNavigator,
 	itemStack,
 	itemStackProfile
 })
