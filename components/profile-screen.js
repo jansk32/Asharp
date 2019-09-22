@@ -79,7 +79,7 @@ export default function ProfileScreen({ navigation }) {
                         <Text 
                             style={styles.nameText}>Name:{profile.name}</Text>
                         <Text
-                            style={styles.nameText}>Date of Birth: {getDate()}</Text>
+                            style={styles.nameText}>Date of Birth: {profile.dob}</Text>
                     </View>
                 </View>
                 <View style={styles.settingBox}>
