@@ -1,64 +1,72 @@
 import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet,View, FlatList, Dimensions, Image, TouchableHighlight } from 'react-native';
 import ItemDetailScreen from './item-detail-screen';
+import axios from 'axios';
+import downloadImage from '../image-tools';
 
-const data = [
-    { image: require('../tim_derp.jpg') },
-    { image: require('../tim_derp.jpg') },
-    { image: require('../tim_derp.jpg') },
-    { image: require('../tim_derp.jpg') },
-    { image: require('../tim_derp.jpg') },
-
-    // { key: 'K' },
-    // { key: 'L' },
-  ];
-
+// format data
 const formatData = (data, numColumns) => {
     const numberOfFullRows = Math.floor(data.length / numColumns);
   
     let numberOfElementsLastRow = data.length - numberOfFullRows * numColumns;
     while (
-      numberOfElementsLastRow !== numColumns &&
-      numberOfElementsLastRow !== 0
+    	numberOfElementsLastRow !== numColumns &&
+    	numberOfElementsLastRow !== 0
     ) {
-      data.push({ image: `blank-${numberOfElementsLastRow}`, empty: true });
-      numberOfElementsLastRow++;
+    	data.push({key: `blank-${numberOfElementsLastRow}`, empty: true });
+    	numberOfElementsLastRow++;
     }
-  
-    return data;
-  };
+	return data;
+};
 
-const numColumns =3;
+const numColumns = 3;
 
 export default function GalleryScreen({navigation}) {
     const {navigate} = navigation;
+    const [artefacts, setArtefacts] = useState([]);
+
+    // Get all the artefact
+    useEffect(() => {
+		async function fetchArtefacts() {
+			try {
+				const res = await axios.get('http://localhost:3000/artefact');
+				setArtefacts(res.data);
+				console.log(res.data)
+			} catch (e) {
+				console.error(e);
+			}
+		}
+		fetchArtefacts();
+    }, []);
+
+    // render items
     renderItem = ({ item, index }) => {
-        if (item.empty === true) {
+        if (item.empty) {
           return <View style={[styles.item, styles.itemInvisible]} />;
-        }
+		}
         return (
         <View style={styles.item}>
-            <TouchableHighlight onPress={() => {
-                    navigate('ItemDetail')
-                }}>
-                <Image 
+            <TouchableHighlight onPress={() => navigate('ItemDetail', {artefactId: item._id}) }>
+                <Image
                     style={styles.imageBox}
-                    source = {item.image}
+                    source={{uri: item.file}}
                 />
             </TouchableHighlight>    
         </View>
-        );
-      };
+    	);
+	}
+	
     return (
         <>
         <View>
             <Text style={styles.header}>Memories left behind</Text>
         </View>
         <FlatList
-            data={formatData(data,numColumns)}
-            renderItem={this.renderItem}
-            numColumns = {numColumns}
-            style = {styles.container}
+			data={formatData(artefacts, numColumns)}
+            keyExtractor={(item, index) => item._id}
+            renderItem={renderItem}
+            numColumns={numColumns}
+            style={styles.container}
         />
         </>
     );
@@ -67,7 +75,7 @@ export default function GalleryScreen({navigation}) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginVertical:20
+        marginVertical: 20
     },
     header: {
       fontSize: 20,
@@ -93,8 +101,6 @@ const styles = StyleSheet.create({
         flex: 1,
         margin: 1,
         width: Dimensions.get('window').width / numColumns,
-
-
       }
   })
   
