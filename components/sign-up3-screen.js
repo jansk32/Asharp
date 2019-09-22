@@ -1,48 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, Image, StyleSheet, Button, ScrollView,
-	FlatList, SectionList, ToastAndroid, Picker, TouchableOpacity, ImagePicker, Dimensions
+	Text, View, Image, StyleSheet, ScrollView,
+	ToastAndroid, TouchableOpacity, Dimensions
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import { pickImage, uploadImage } from '../image-tools';
 
+
 // Stylesheets for formatting and designing layout
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: 'white',
 		flex: 1,
-
 	},
 	text: {
-		fontSize: 18,
+		fontSize: 16,
 		color: 'black',
+		textAlign: 'center',
 	},
 	whiteText: {
 		fontSize: 20,
 		color: 'white',
+		textAlign: 'center',
 	},
 	picButton: {
 		backgroundColor: '#fff',
 		borderWidth: 1,
 		borderColor: '#FBC074',
-		paddingHorizontal: 26,
-		paddingVertical: 3,
-		borderRadius: 20,
+		width: Dimensions.get('window').width / 3,
+		height: Dimensions.get('window').width / 11,
+		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
-		marginTop: 20,
 		marginBottom: 80,
-
 	},
 	finishButton: {
 		backgroundColor: '#FBC074',
 		borderWidth: 1,
 		borderColor: '#FBC074',
-		paddingVertical: 9,
-		paddingHorizontal: 80,
-		borderRadius: 20,
+		width: Dimensions.get('window').width / 1.75,
+		height: Dimensions.get('window').width / 8,
+		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
 	},
@@ -55,7 +55,13 @@ const styles = StyleSheet.create({
 		borderColor: '#233439',
 		borderWidth: 1,
 		borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
-
+	},
+	buttonBox: {
+		backgroundColor: '#fff',
+		marginTop: '5%',
+		justifyContent: 'space-between',
+		flex: 1,
+		marginBottom: '7.5%',
 	},
 }
 )
@@ -103,25 +109,29 @@ export default function SignUp3({ navigation }) {
 			<ScrollView>
 				<View style={styles.container}>
 					<Image source={image} style={styles.imageStyle} />
-					<View style={styles.picButton}>
-					<TouchableOpacity
+					<View style={styles.buttonBox}>
+						<TouchableOpacity
 							onPress={async () => setImage(await pickImage())}>
-							<Text
-								style={styles.textButton}>
-								Pick Picture
-								</Text>
+								<View style={styles.picButton}>
+									<Text
+									style={styles.text}>
+									Pick Picture
+									</Text>
+								</View>
 						</TouchableOpacity>
 					</View>
-					
-					<View style={styles.finishButton}>
-						<TouchableOpacity
-							onPress={finishSignUp}>
+
+					<TouchableOpacity
+						onPress={finishSignUp}>
+						<View style={styles.finishButton}>
+
 							<Text
 								style={styles.whiteText}>
 								Finish
 								</Text>
-						</TouchableOpacity>
-					</View>
+						</View>
+
+					</TouchableOpacity>
 				</View>
 			</ScrollView>
 		</>

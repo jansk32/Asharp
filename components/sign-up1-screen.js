@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, Image, StyleSheet, TextInput, Button, ScrollView,
-	FlatList, SectionList, ToastAndroid, Picker, TouchableOpacity,
+	Text, View, Image, StyleSheet, TextInput, ToastAndroid, TouchableOpacity, Dimensions,
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -17,45 +16,49 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: 20,
 	},
+	buttonText: {
+		fontSize: 20,
+		textAlign: 'center',
+	},
 	whiteText: {
 		fontSize: 20,
 		color: 'white',
+		textAlign: 'center',
 	},
-	loginBox: {
+	signUpBox: {
 		justifyContent: 'space-evenly',
 		textAlign: 'center',
 		alignItems: 'center',
-		paddingTop: 100,
-		paddingBottom: 10,
+		paddingTop: '30%',
 	},
 	inputBox: {
 		justifyContent: 'space-between',
-		padding: 40,
+		paddingVertical: '10%',
+		paddingHorizontal: '10%',
+	  },
+	buttonBox: {
+		backgroundColor: '#fff',
+		justifyContent: 'space-evenly',
+		paddingVertical: '9%',
+		flex: 1,
 	},
 	redButton: {
 		backgroundColor: '#EC6268',
-		borderColor: '#EC6268',
-		borderWidth: 1,
-		paddingVertical: 9,
-		paddingHorizontal: 80,
-		borderRadius: 20,
+		width: Dimensions.get('window').width / 1.75,
+		height: Dimensions.get('window').width / 8,
+		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
-		marginBottom: 30,
 	},
 	whiteButton: {
 		backgroundColor: 'white',
 		borderColor: '#EC6268',
 		borderWidth: 1,
-		paddingVertical: 9,
-		paddingHorizontal: 70,
-		borderRadius: 20,
+		width: Dimensions.get('window').width / 1.75,
+		height: Dimensions.get('window').width / 8,
+		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
-	},
-	buttonBox: {
-		backgroundColor: '#fff',
-		marginTop: 40,
 	},
 	textInput: {
 		borderColor: 'black',
@@ -94,7 +97,7 @@ export default function LoginScreen({ navigation }) {
 	return (
 		<>
 			<View style={styles.container}>
-				<View style={styles.loginBox}>
+				<View style={styles.signUpBox}>
 					<Text style={styles.title}>Sign Up</Text>
 				</View>
 				<View style={styles.inputBox}>
@@ -110,24 +113,25 @@ export default function LoginScreen({ navigation }) {
 					</View>
 				</View>
 				<View style={styles.buttonBox}>
-					<View style={styles.redButton}>
-						<TouchableOpacity
-							onPress={goToNextPage}>
+					<TouchableOpacity
+						onPress={goToNextPage}>
+						<View style={styles.redButton}>
 							<Text
 								style={styles.whiteText}>
 								Next
 								</Text>
-						</TouchableOpacity>
-					</View>
-					<View style={styles.whiteButton}>
-						<TouchableOpacity
-							onPress={() => navigate('Welcome')}>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => navigate('Welcome')}>
+						<View style={styles.whiteButton}>
+
 							<Text
-								style={styles.text}>
+								style={styles.buttonText}>
 								Back
 								</Text>
-						</TouchableOpacity>
-					</View>
+						</View>
+					</TouchableOpacity>
 				</View>
 			</View>
 		</>

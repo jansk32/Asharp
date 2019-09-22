@@ -23,10 +23,12 @@
     "react": "16.8.6",
     "react-native": "0.60.4",
     "react-native-datepicker": "^1.7.2",
+    "react-native-elements": "^1.0.0-beta8",
     "react-native-gesture-handler": "^1.4.1",
     "react-native-image-picker": "^1.1.0",
     "react-native-layout-grid": "0.0.2",
     "react-native-svg": "^9.9.4",
+    "react-native-vector-icons": "^6.6.0",
     "react-navigation": "^3.12.1",
     "request": "^2.88.0",
     "rn-fetch-blob": "^0.10.16"

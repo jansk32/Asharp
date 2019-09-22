@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').width / 3.2,
     },
     textBox: {
-        // backgroundColor: 'blue',
         flex: 1,
         padding: 8,
         marginLeft: 10,

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
 	Text, View, Image, StyleSheet, TextInput, Alert, Button, ScrollView,
-	FlatList, SectionList, ToastAndroid, Picker
+	FlatList, SectionList, ToastAndroid, Picker,
 } from 'react-native';
 
+// Importing all existing screens for navigation
 import HomeScreen from './components/home-screen';
 import FamilyTreeScreen from './components/family-tree-screen';
 import ProfileScreen from './components/profile-screen';
@@ -16,15 +17,19 @@ import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
 
-
+// Import react navigation tools.
 import {
 	createBottomTabNavigator,
 	createAppContainer,
 	createSwitchNavigator,
 	createStackNavigator,
-	NavigationScreenOption,
-	navigationOptions
 } from 'react-navigation';
+
+var tintColor = 'black';
+// Import icons
+import Icon from 'react-native-vector-icons/Ionicons';
+
+// Import firebase.
 import * as firebase from 'firebase';
 
 // Initialize Firebase
@@ -40,21 +45,49 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const MainNavigator = createBottomTabNavigator({
-	Timeline: { screen: TimelineScreen },
-	FamilyTree: { screen: FamilyTreeScreen },
-	Home: { screen: HomeScreen },
-	Gallery: { screen: GalleryScreen },
-	Profile: { screen: ProfileScreen },
+	
+	Timeline: { 
+		screen: TimelineScreen,
+		navigationOptions: {
+			tabBarIcon: ({tintColor}) => <Icon name="md-hourglass" color={tintColor} size={30} />
+		}, 
+	},
+	FamilyTree: { 
+		screen: FamilyTreeScreen,
+		navigationOptions: {
+			tabBarIcon: ({tintColor}) => <Icon name="md-leaf" color={tintColor} size={30} />
+		},
+	 },
+	Home: { 
+		screen: HomeScreen,
+		navigationOptions: {
+			tabBarIcon: ({tintColor}) => <Icon name="md-add" color={tintColor} size={30} />
+		},
+	 },
+	Gallery: { 
+		screen: GalleryScreen,
+		navigationOptions: {
+			tabBarIcon: ({tintColor}) => <Icon name="md-images" color={tintColor} size={30} />
+		},
+	},
+	Profile: {
+		screen: ProfileScreen,
+		navigationOptions: {
+			tabBarIcon: ({tintColor}) => <Icon name="md-person" color={tintColor} size={30} />
+		},
+	},
 },
 	{
 		initialRouteName: 'Home',
 		tabBarOptions: {
-			activeTintColor: 'white',
+			activeTintColor: '#579B93',
 			inactiveTintColor: 'black',
-			showLabel: true,
-			showIcon: false,
+			showLabel: false,
+			showIcon: true,
 			style: {
-				backgroundColor: '#47B39D',
+				backgroundColor: 'white',
+				borderTopColor: '#579B93',
+				borderTopWidth: .5,
 			}
 		},
 		navigationOptions: {
@@ -70,8 +103,9 @@ const uploadArtefactStack = createStackNavigator({
 
 const SignUpStack = createStackNavigator({
 	SignUp1: { screen: SignUp1 },
-	SignUp2: { screen: SignUp2,
-		navigationOptions: ({navigation}) => ({
+	SignUp2: {
+		screen: SignUp2,
+		navigationOptions: ({ navigation }) => ({
 			title: 'Enter details',
 			headerTitleStyle: { color: '#EC6268' },
 		}),
@@ -87,7 +121,7 @@ const SignUpStack = createStackNavigator({
 
 const Stack = createSwitchNavigator({
 	Welcome: { screen: WelcomeScreen },
-	Login: {screen: Login},
+	Login: { screen: Login },
 	SignUpStack,
 	MainNavigator,
 	uploadArtefactStack,
