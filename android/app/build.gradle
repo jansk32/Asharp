@@ -81,6 +81,12 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+project.ext.vectoricons = [
+    iconFontNames: [ 'AntDesign.ttf','Entypo.ttf','EvilIcons.ttf','MaterialIcons.ttf', 'Ionicons.ttf' ] // Name of the font files you want to copy
+]
+
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -188,9 +194,10 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-image-picker')
+    implementation project(':react-native-vector-icons')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    compile project(':react-native-vector-icons') // for vector icons
 
     if (enableHermes) {
       def hermesPath = "../../node_modules/hermesvm/android/";

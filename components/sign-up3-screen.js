@@ -1,114 +1,139 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Text, View, Image, StyleSheet, TextInput, Button, ScrollView,
-  FlatList, SectionList, ToastAndroid, Picker, TouchableHighlight, ImagePicker,
+	Text, View, Image, StyleSheet, ScrollView,
+	ToastAndroid, TouchableOpacity, Dimensions
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
+import axios from 'axios';
+import AsyncStorage from '@react-native-community/async-storage';
+import { pickImage, uploadImage } from '../image-tools';
 
+
+// Stylesheets for formatting and designing layout
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-    flex: 1,
-  },
-  loginText: {
-    fontSize: 30,
-  },
-  text: {
-    fontSize: 20,
-  },
-  loginButtonText: {
-    fontSize: 20,
-    color: 'white',
-  },
-  loginBox: {
-    justifyContent: 'space-evenly',
-    textAlign: 'center',
-    alignItems: 'center',
-    paddingTop: 100,
-    paddingBottom: 10,
-  },
-  inputBox: {
-    justifyContent: 'space-between',
-    padding: 40,
-    // justifyContent: 'center',
-  },
-  loginButton: {
-    backgroundColor: '#EC6268',
-    borderColor: '#EC6268',
-    borderWidth: 1,
-    paddingVertical: 9,
-    paddingHorizontal: 80,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginBottom: 30,
-  },
-  signInButton: {
-    backgroundColor: 'white',
-    borderColor: '#EC6268',
-    borderWidth: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  buttonBox: {
-    backgroundColor: '#fff',
-    marginTop: 40,
-    // justifyContent:'space-between',
-  },
-  textInput: {
-    borderColor: 'black',
-    borderWidth: 1,
-    borderRadius: 3,
-    alignContent: 'center',
-    marginTop: 10,
-    padding: 5,
-    paddingLeft: 10,
-  },
-  usernameBox: {
-    marginBottom: 40,
-  }
+	container: {
+		backgroundColor: 'white',
+		flex: 1,
+	},
+	text: {
+		fontSize: 16,
+		color: 'black',
+		textAlign: 'center',
+	},
+	whiteText: {
+		fontSize: 20,
+		color: 'white',
+		textAlign: 'center',
+	},
+	picButton: {
+		backgroundColor: '#fff',
+		borderWidth: 1,
+		borderColor: '#FBC074',
+		width: Dimensions.get('window').width / 3,
+		height: Dimensions.get('window').width / 11,
+		borderRadius: 50,
+		justifyContent: 'center',
+		alignSelf: 'center',
+		marginBottom: 80,
+	},
+	finishButton: {
+		backgroundColor: '#FBC074',
+		borderWidth: 1,
+		borderColor: '#FBC074',
+		width: Dimensions.get('window').width / 1.75,
+		height: Dimensions.get('window').width / 8,
+		borderRadius: 50,
+		justifyContent: 'center',
+		alignSelf: 'center',
+	},
+	imageStyle: {
+		margin: 2,
+		marginTop: '20%',
+		width: Dimensions.get('window').width * 0.75,
+		height: Dimensions.get('window').width * 0.75,
+		alignSelf: 'center',
+		borderColor: '#233439',
+		borderWidth: 1,
+		borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
+	},
+	buttonBox: {
+		backgroundColor: '#fff',
+		marginTop: '5%',
+		justifyContent: 'space-between',
+		flex: 1,
+		marginBottom: '7.5%',
+	},
 }
 )
 
-export default function LoginScreen({ navigation }) {
-  const { navigate } = navigation;
-  return (
-    <>
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.inputBox}>
-            <View style={styles.usernameBox}>
-              <Text style={styles.text}>Choose Picture</Text>
-              <View style={styles.textInput}>
-                <TextInput
-                  placeholder='Picure preview'
-                />
-              </View>
-            </View>
-          </View>
-          <View style={styles.buttonBox}>
-            <View style={styles.signInButton}>
-              <TouchableHighlight>
-                <Text
-                  style={styles.text}>
-                  Upload Picture</Text>
-              </TouchableHighlight>
-            </View>
-            <View style={styles.loginButton}>
-              <TouchableHighlight
-                onPress={() => navigate('Home')}>
-                <Text
-                  style={styles.loginButtonText}>
-                  Finish</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-    </>
-  );
+export default function SignUp3({ navigation }) {
+	const { navigate } = navigation;
+	const [image, setImage] = useState({});
+
+	async function uploadSignUpData() {
+		let dataKeys = ['email', 'name', 'dob', 'password', 'pictureUrl'];
+		let data = {};
+		for (const key of dataKeys) {
+			try {
+				data[key] = await AsyncStorage.getItem(key);
+			} catch (e) {
+				ToastAndroid.show('Error getting ' + key, ToastAndroid.SHORT);
+			}
+		}
+		axios.post('http://localhost:3000/user/create', data);
+	}
+
+	// automatically login to have give available acct details
+	async function login() {
+		  axios.post('http://localhost:3000/login/local',{
+			email: await AsyncStorage.getItem('email'),
+			password: await AsyncStorage.getItem('password')
+		})
+		.then((result) => navigate('Home'));
+	}
+
+	async function finishSignUp() {
+		const pictureUrl = await uploadImage(image.uri);
+		try {
+			await AsyncStorage.setItem('pictureUrl', pictureUrl);
+		} catch (e) {
+			ToastAndroid.show('Error storing picture URL', ToastAndroid.SHORT);
+		}
+		await uploadSignUpData();
+		await login()
+
+	}
+
+	return (
+		<>
+			<ScrollView>
+				<View style={styles.container}>
+					<Image source={image} style={styles.imageStyle} />
+					<View style={styles.buttonBox}>
+						<TouchableOpacity
+							onPress={async () => setImage(await pickImage())}>
+								<View style={styles.picButton}>
+									<Text
+									style={styles.text}>
+									Pick Picture
+									</Text>
+								</View>
+						</TouchableOpacity>
+					</View>
+
+					<TouchableOpacity
+						onPress={finishSignUp}>
+						<View style={styles.finishButton}>
+
+							<Text
+								style={styles.whiteText}>
+								Finish
+								</Text>
+						</View>
+
+					</TouchableOpacity>
+				</View>
+			</ScrollView>
+		</>
+	);
 }
