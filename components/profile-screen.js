@@ -114,15 +114,12 @@ const formatData = (data, numColumns) => {
     return data;
 };
 
-// const getImage = (data) => {
-
-
-// }
 
 export default function ProfileScreen({ navigation }) {
     const { navigate } = navigation;
     const [profile, setProfile] = useState({});
 
+    // get profile details
     useEffect(() => {
         console.log('Sending request');
         axios.get('http://localhost:3000/user', { withCredentials: true })
@@ -154,9 +151,8 @@ export default function ProfileScreen({ navigation }) {
         }
         return (
             <View style={styles.itemBox}>
-                <TouchableOpacity onPress={() => {
-                    navigate('Home')
-                }}>
+                <TouchableOpacity 
+                onPress={() => navigate('ItemDetail', {artefactId: item._id})}>
                     <Image
                         source={{uri: item.file}}
                         style={styles.imageBox} />
@@ -173,10 +169,12 @@ export default function ProfileScreen({ navigation }) {
         <>
             <React.Fragment>
                 <View style={styles.profileBox}>
-                    <Image
+                
+<Image
                         source={{uri: profile.pictureUrl}}
                         style={styles.image}
                     />
+                    
                     <View style={styles.textBox}>
                         <Text 
                             style={styles.nameText}>Name: {profile.name}</Text>

@@ -4,7 +4,7 @@ import ItemDetailScreen from './item-detail-screen';
 import axios from 'axios';
 import downloadImage from '../image-tools';
 
-
+// format data
 const formatData = (data, numColumns) => {
     const numberOfFullRows = Math.floor(data.length / numColumns);
   
@@ -22,7 +22,7 @@ const formatData = (data, numColumns) => {
 const numColumns = 3;
 
 export default function GalleryScreen({navigation}) {
-    const navigate = navigation;
+    const {navigate} = navigation;
     const [artefacts, setArtefacts] = useState([]);
 
     // Get all the artefact
@@ -39,14 +39,14 @@ export default function GalleryScreen({navigation}) {
 		fetchArtefacts();
     }, []);
 
-
+    // render items
     renderItem = ({ item, index }) => {
         if (item.empty) {
           return <View style={[styles.item, styles.itemInvisible]} />;
 		}
         return (
         <View style={styles.item}>
-            <TouchableHighlight onPress={() => navigate('ItemDetail')}>
+            <TouchableHighlight onPress={() => navigate('ItemDetail', {artefactId: item._id}) }>
                 <Image
                     style={styles.imageBox}
                     source={{uri: item.file}}
@@ -63,7 +63,7 @@ export default function GalleryScreen({navigation}) {
         </View>
         <FlatList
 			data={formatData(artefacts, numColumns)}
-            // keyExtractor={(item, index) => item.file}
+            keyExtractor={(item, index) => item._id}
             renderItem={renderItem}
             numColumns={numColumns}
             style={styles.container}

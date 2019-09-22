@@ -97,7 +97,7 @@ app.get('/', (req, res) => {
 app.get('/user', (req, res) => {
 	// change later
 	let id = req.session.passport.user._id;
-	// console.log(req.session.passport.user._id);
+	console.log(req.session.passport.user._id);
 	userModel.find({ _id: id }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp[0]);
@@ -138,7 +138,7 @@ app.post('/user/create', ({ body: {
 		res.send(resp);
 	})
 })
-// get ALL artefacts
+// Get ALL artefacts
 app.get('/artefact', (req,res) => {
 	artefactModel.find({}, (err,result) => {
 		res.send(result);
@@ -146,12 +146,12 @@ app.get('/artefact', (req,res) => {
 })
 
 
-// get an artefact
-app.get('/artefact/find', (req, res) => {
-	artefactModel.find(req.body, (err, resp) => {
+// Get a single artefact by id
+app.get('/artefact/find/:artefactId', (req, res) => {
+	artefactModel.findById(req.params.artefactId, (err, resp) => {
 		if (err) throw err;
-		console.log(req);
-		res.json(resp);
+		console.log(resp);
+		res.send(resp);
 	})
 });
 

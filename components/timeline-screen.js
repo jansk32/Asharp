@@ -1,54 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, FlatList, View, Image } from 'react-native';
 import Timeline from 'react-native-timeline-feed';
+import axios from 'axios';
+
 
 export default function TimelineScreen({ navigation }) {
 	const { navigate } = navigation;
-	const data = [
-		{
-			time: '2018-03-11',
-			title: 'Pictures',
-			image: require('../tim_derp.jpg'),
-		},
-		{
-			time: '2018-03-11',
-			title: 'Drums',
-			image: require('../tim_derp.jpg')
-		},
-		{
-			time: '2013-03-13',
-			title: 'Piano',
-			image: require('../tim_derp.jpg')
-		},
-		{
-			time: '2018-03-11',
-			title: 'Teapot',
-			image: require('../tim_derp.jpg')
-		},
-		{
-			time: '2013-03-12',
-			title: 'Cards',
-			image: require('../tim_derp.jpg')
-		},
-		{
-			time: '2013-03-13',
-			title: 'Figurine',
-			image: require('../tim_derp.jpg')
-		},
-		{
-			time: '2013-03-13',
-			title: 'Family Picture',
-			image: require('../tim_derp.jpg')
-		}
-	];
+	const [artefacts, setArtefacts] = useState([]);
 
-	// Sort data, print duplicates without the time
+    // Get all the artefact
+    useEffect(() => {
+		async function fetchArtefacts() {
+			try {
+				const res = await axios.get('http://localhost:3000/artefact');
+				setArtefacts(res.data);
+				console.log(res.data)
+			} catch (e) {
+				console.error(e);
+			}
+		}
+		fetchArtefacts();
+    }, []);
+	
+	// TODO: Format the date and so it will show up
 	const formatData = (data) => {
 		data.sort(function (a, b) {
-			if (a.time === b.time) {
-				b.time = '';
+			if (a.date === b.date) {
+				b.date = '';
 			}
-			return (new Date(a.time)) > (new Date(b.time)) ? 1 : -1;
+			return (new Date(a.date)) > (new Date(b.date)) ? 1 : -1;
 		});
 		return data;
 	};
@@ -58,8 +38,8 @@ export default function TimelineScreen({ navigation }) {
 		return (
 			<View style={{ flex: 1 }}>
 				<View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-					<Image source={require('../tim_derp.jpg')} style={styles.image} />
-					<Text style={[styles.itemTitle]}>{item.title}</Text>
+					<Image source={{uri: item.file}} style={styles.image} />
+					<Text style={[styles.itemTitle]}>{item.name}</Text>
 				</View>
 			</View>
 		);
@@ -70,7 +50,7 @@ export default function TimelineScreen({ navigation }) {
 			<Text style={styles.title}>Timeline</Text>
 			<Timeline
 				style={styles.list}
-				data={formatData(data)}
+				data={formatData(artefacts)}
 				circleSize={15}
 				circleColor='#FBC074'
 				lineColor='grey'
