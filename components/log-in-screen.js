@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Text, View, Image, StyleSheet, TextInput, Button, ScrollView,
-  FlatList, SectionList, ToastAndroid, Picker, TouchableHighlight,
+  Text, View, StyleSheet, TextInput, TouchableOpacity, Dimensions,
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import axios from 'axios';
@@ -17,47 +16,31 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
   },
-  loginButtonText: {
-    fontSize: 20,
-    color: 'white',
-  },
+  buttonText: {
+		fontSize: 20,
+		textAlign: 'center',
+	},
+	whiteText: {
+		fontSize: 20,
+		color: 'white',
+		textAlign: 'center',
+	},
   loginBox: {
     justifyContent: 'space-evenly',
     textAlign: 'center',
     alignItems: 'center',
-    paddingTop: 100,
-    paddingBottom: 10,
+    paddingTop: '30%',
   },
   inputBox: {
     justifyContent: 'space-between',
-    padding: 40,
-    // justifyContent: 'center',
-  },
-  loginButton: {
-    backgroundColor: '#EC6268',
-    borderColor: '#EC6268',
-    borderWidth: 1,
-    paddingVertical: 9,
-    paddingHorizontal: 80,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginBottom: 30,
-  },
-  signInButton: {
-    backgroundColor: 'white',
-    borderColor: '#EC6268',
-    borderWidth: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 70,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignSelf: 'center',
+    paddingVertical: '10%',
+    paddingHorizontal: '10%',
   },
   buttonBox: {
-    backgroundColor: '#fff',
-    marginTop: 40,
-    // justifyContent:'space-between',
+		backgroundColor: '#fff',
+		paddingVertical: '9%',
+		justifyContent: 'space-between',
+		flex: 1,
   },
   textInput: {
     borderColor: 'black',
@@ -70,26 +53,43 @@ const styles = StyleSheet.create({
   },
   usernameBox: {
     marginBottom: 40,
-  }
+  },
+  redButton: {
+    backgroundColor: '#EC6268',
+    width: Dimensions.get('window').width / 1.75,
+    height: Dimensions.get('window').width / 8,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  whiteButton: {
+    backgroundColor: 'white',
+    borderColor: '#EC6268',
+    borderWidth: 1,
+    width: Dimensions.get('window').width / 1.75,
+    height: Dimensions.get('window').width / 8,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
 }
 )
 
 export default function LoginScreen({ navigation }) {
   const { navigate } = navigation;
   const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-
+  const [password, setPassword] = useState('');
 
   // axios authentication
   function axiosLocal(objData) {
     console.log(objData);
-    axios.post("http://localhost:3000/login/local",objData)
-    .then(navigate('Home'))
-    .catch((err) => console.log(err));
+    axios.post("http://localhost:3000/login/local", objData)
+      .then(navigate('Home'))
+      .catch((err) => console.log(err));
   };
 
   // axios third party authentication
-  function axiosThirdParty(obj){
+  function axiosThirdParty(obj) {
     axios.get("http://localhost:3000/login/facebook")
   }
 
@@ -104,7 +104,7 @@ export default function LoginScreen({ navigation }) {
             <Text style={styles.text}>Email</Text>
             <View style={styles.textInput}>
               <TextInput
-                placeholder='Enter Username'
+                placeholder='Enter Email'
                 onChangeText={setEmail}
               />
             </View>
@@ -120,22 +120,22 @@ export default function LoginScreen({ navigation }) {
           </View>
         </View>
         <View style={styles.buttonBox}>
-          <View style={styles.loginButton}>
-            <TouchableHighlight
-              onPress={() => axiosLocal({email: email, password: password })}>
+          <TouchableOpacity
+            onPress={() => axiosLocal({ email: email, password: password })}>
+            <View style={styles.redButton}>
               <Text
-                style={styles.loginButtonText}>
+                style={styles.whiteText}>
                 Login</Text>
-            </TouchableHighlight>
-          </View>
-          <View style={styles.signInButton}>
-            <TouchableHighlight
-              onPress={() => navigate('SignUp1')}>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigate('SignUp1')}>
+            <View style={styles.whiteButton}>
               <Text
-                style={styles.text}>
+                style={styles.buttonText}>
                 Sign Up</Text>
-            </TouchableHighlight>
-          </View>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     </>

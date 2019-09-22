@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, StyleSheet, TextInput, TouchableOpacity, ToastAndroid
+	Text, View, StyleSheet, TextInput, TouchableOpacity, ToastAndroid, Dimensions,
 } from 'react-native';
 import DatePicker from 'react-native-datepicker';
-import { NavigationEvents } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
-
 
 const styles = StyleSheet.create({
 	container: {
@@ -15,9 +13,10 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: 18,
 	},
-	buttonText: {
+	whiteText: {
 		fontSize: 20,
 		color: 'white',
+		textAlign: 'center',
 	},
 	inputBox: {
 		justifyContent: 'space-between',
@@ -25,14 +24,11 @@ const styles = StyleSheet.create({
 	},
 	redButton: {
 		backgroundColor: '#EC6268',
-		borderColor: '#EC6268',
-		borderWidth: 1,
-		paddingVertical: 9,
-		paddingHorizontal: 80,
-		borderRadius: 20,
+		width: Dimensions.get('window').width / 1.75,
+		height: Dimensions.get('window').width / 8,
+		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
-		marginBottom: 30,
 	},
 	textInput: {
 		borderColor: 'black',
@@ -76,6 +72,7 @@ export default function LoginScreen({ navigation }) {
 	return (
 		<>
 			<View style={styles.container}>
+
 				<View style={styles.inputBox}>
 					<View style={styles.inputElem}>
 						<Text style={styles.text}>Name</Text>
@@ -99,31 +96,30 @@ export default function LoginScreen({ navigation }) {
 					</View>
 					<View style={styles.inputElem}>
 						<Text style={styles.text}>Date of Birth</Text>
-
-							<DatePicker
-								style={styles.dateInput}
-								date={dob}
-								mode="date"
-								placeholder="select date"
-								format="YYYY-MM-DD"
-								minDate="1900-01-01"
-								maxDate="2019-01-01"
-								confirmBtnText="Confirm"
-								cancelBtnText="Cancel"
-								customStyles={{
-									dateIcon: {
-										position: 'absolute',
-										left: 0,
-										top: 4,
-										marginLeft: 0
-										},
-										dateInput: {
-										marginLeft: 36
-										}
-								}}
-								onDateChange={setDob}
-								value={dob}
-      						/>
+						<DatePicker
+							style={styles.dateInput}
+							date={dob}
+							mode="date"
+							placeholder="select date"
+							format="YYYY-MM-DD"
+							minDate="1900-01-01"
+							maxDate="2019-01-01"
+							confirmBtnText="Confirm"
+							cancelBtnText="Cancel"
+							customStyles={{
+								dateIcon: {
+									position: 'absolute',
+									left: 0,
+									top: 4,
+									marginLeft: 0
+								},
+								dateInput: {
+									marginLeft: 36
+								}
+							}}
+							onDateChange={setDob}
+							value={dob}
+						/>
 					</View>
 					<View style={styles.inputElem}>
 						<Text style={styles.text}>Password</Text>
@@ -136,15 +132,15 @@ export default function LoginScreen({ navigation }) {
 						</View>
 					</View>
 				</View>
-				<View style={styles.redButton}>
-					<TouchableOpacity
-						onPress={goToNextPage}>
+				<TouchableOpacity
+					onPress={goToNextPage}>
+					<View style={styles.redButton}>
 						<Text
-							style={styles.buttonText}>
+							style={styles.whiteText}>
 							Next
 							</Text>
-					</TouchableOpacity>
-				</View>
+					</View>
+				</TouchableOpacity>
 			</View>
 		</>
 	);
