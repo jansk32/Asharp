@@ -140,7 +140,6 @@ app.post('/user/create', ({ body: {
 })
 // get ALL artefacts
 app.get('/artefact', (req,res) => {
-	console.log(req.user);
 	artefactModel.find({}, (err,result) => {
 		res.send(result);
 	})
@@ -160,7 +159,6 @@ app.get('/artefact/find', (req, res) => {
 app.post('/artefact/create', ({ 
 	body: { name, date, value, description, file }, 
 	session: {passport: {user: {_id : owner} }}}, res) => {
-	console.log(owner);
 	const artefact = artefactModel({
 		name,
 		date,

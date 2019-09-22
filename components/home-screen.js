@@ -97,7 +97,7 @@ export default function HomeScreen({ navigation }) {
 				</View>
 				<View style={styles.uploadButton}>
 					<TouchableOpacity
-						onPress={upload}>
+						onPress= {upload}>
 						<Text style={styles.text}>Upload Image</Text>
 					</TouchableOpacity>
 				</View>

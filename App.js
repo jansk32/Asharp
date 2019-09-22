@@ -137,6 +137,7 @@ const Stack = createSwitchNavigator({
 	Login: { screen: Login },
 	SignUpStack,
 	MainNavigator,
+	uploadArtefactStack,
 	itemStack,
 	itemStackProfile
 })

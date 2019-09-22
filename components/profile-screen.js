@@ -114,6 +114,11 @@ const formatData = (data, numColumns) => {
     return data;
 };
 
+// const getImage = (data) => {
+
+
+// }
+
 export default function ProfileScreen({ navigation }) {
     const { navigate } = navigation;
     const [profile, setProfile] = useState({});
@@ -128,7 +133,18 @@ export default function ProfileScreen({ navigation }) {
         .catch(error => console.error(error));
     }, []);
     
+    const [artefact, setArtefact] = useState([]);
 
+    // get all the artefact
+    useEffect(() => {
+        axios.get("http://localhost:3000/artefact")
+        .then((result) => {
+            console.log(result.data);
+            setArtefact(result.data);
+        })
+        .catch(err => console.log(error));
+    },[])
+    
     // Render Item invisible if it's just a placeholder for columns in the grid,
     // if not, render the picture for each grid
     renderItem = ({ item, index }) => {
@@ -142,7 +158,7 @@ export default function ProfileScreen({ navigation }) {
                     navigate('Home')
                 }}>
                     <Image
-                        source={item.image}
+                        source={{uri: item.file}}
                         style={styles.imageBox} />
                 </TouchableOpacity>
             </View>
@@ -189,7 +205,7 @@ export default function ProfileScreen({ navigation }) {
                 <View style={styles.artefactsBox}>
                     <Text style={styles.artText}>My Artefacts</Text>
                     <FlatList
-                        data={formatData(data, numColumns)}
+                        data={formatData(artefact, numColumns)}
                         numColumns={3}
                         renderItem={this.renderItem}
                     />
