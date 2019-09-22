@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Text, StyleSheet, View, Image, Dimensions, TouchableHighlight, Button } from 'react-native';
+import { Text, StyleSheet, View, Image, Dimensions, TouchableOpacity, Button } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import Moment from 'moment';
 
-// Profile picture file
-const profPic = { profile: require('../tim_derp.jpg') }
-
-// Name (currently just one name)
-const name = {tim: 'Timothy'}
-
-// Date of Birth (currently just a string)
-const date = {DOB: '20-03-99'}
 // Number 
 const numColumns = 3;
 
@@ -18,92 +11,6 @@ const numColumns = 3;
 const data = [
     { image: require('../tim_derp.jpg') }, { image: require('../gg.png') },
 ];
-
-const formatData = (data, numColumns) => {
-
-    const fullRowsNum = Math.floor(data.length / numColumns);
-
-    let numberOfElementsLastRow = data.length - (fullRowsNum * numColumns);
-    while (numberOfElementsLastRow !== numColumns && numberOfElementsLastRow !== 0) {
-        data.push({ key: `blank-${numberOfElementsLastRow}`, empty: true });
-        numberOfElementsLastRow++;
-    }
-    return data;
-};
-
-export default function ProfileScreen({ navigation }) {
-    const { navigate } = navigation;
-    const [profile, setProfile] = useState({});
-
-    useEffect(() => {
-        console.log('Sending request');
-        axios.get('http://localhost:3000/user', { withCredentials: true })
-        .then((res) => {
-            setProfile(res.data);
-            // console.log('FOUND');
-        })
-        .catch(error => console.error(error));
-    }, []);
-    
-
-    // Render Item invisible if it's just a placeholder for columns in the grid,
-    // if not, render the picture for each grid
-    renderItem = ({ item, index }) => {
-        
-        if (item.empty === true) {
-            return <View style={[styles.itemBox, styles.invisibleItem]} />;
-        }
-        return (
-            <View style={styles.itemBox}>
-                <TouchableHighlight onPress={() => {
-                    navigate('Home')
-                }}>
-                    <Image
-                        source={item.image}
-                        style={styles.imageBox} />
-                </TouchableHighlight>
-            </View>
-        );
-    };
-
-    // Return the whole layout for profile
-    return (
-        <>
-            <React.Fragment>
-                <View style={styles.profileBox}>
-                    <Image
-                        source={{uri: profile.pictureUrl}}
-                        style={styles.image}
-                    />
-                    <View style={styles.textBox}>
-                        <Text 
-                            style={styles.nameText}>Name:{profile.name}</Text>
-                        <Text
-                            style={styles.nameText}>Date of Birth: {profile.dob}</Text>
-                    </View>
-                </View>
-                <View style={styles.settingBox}>
-                    <View style={styles.settingButton}>
-                        <TouchableHighlight
-                            onPress={() => navigate('Home')}>
-                            <Text
-                                style={styles.nameText}>
-                                Profile Setting</Text>
-                        </TouchableHighlight>
-                    </View>
-                </View>
-                <View style={styles.artefactsBox}>
-                    <Text style={styles.artText}>My Artefacts</Text>
-                    <FlatList
-                        data={formatData(data, numColumns)}
-                        numColumns={3}
-                        renderItem={this.renderItem}
-                    />
-                </View>
-            </React.Fragment>
-        </>
-    );
-}
 
 // Stylesheets to format the layout of the page
 const styles = StyleSheet.create({
@@ -152,6 +59,8 @@ const styles = StyleSheet.create({
         flex: 1 / 10,
         backgroundColor: '#fff',
         paddingBottom: 5,
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
     },
     settingButton: {
         backgroundColor: '#fff',
@@ -193,6 +102,105 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
 })
+
+const formatData = (data, numColumns) => {
+
+    const fullRowsNum = Math.floor(data.length / numColumns);
+
+    let numberOfElementsLastRow = data.length - (fullRowsNum * numColumns);
+    while (numberOfElementsLastRow !== numColumns && numberOfElementsLastRow !== 0) {
+        data.push({ key: `blank-${numberOfElementsLastRow}`, empty: true });
+        numberOfElementsLastRow++;
+    }
+    return data;
+};
+
+export default function ProfileScreen({ navigation }) {
+    const { navigate } = navigation;
+    const [profile, setProfile] = useState({});
+
+    useEffect(() => {
+        console.log('Sending request');
+        axios.get('http://localhost:3000/user', { withCredentials: true })
+        .then((res) => {
+            setProfile(res.data);
+            // console.log('FOUND');
+        })
+        .catch(error => console.error(error));
+    }, []);
+    
+
+    // Render Item invisible if it's just a placeholder for columns in the grid,
+    // if not, render the picture for each grid
+    renderItem = ({ item, index }) => {
+        
+        if (item.empty === true) {
+            return <View style={[styles.itemBox, styles.invisibleItem]} />;
+        }
+        return (
+            <View style={styles.itemBox}>
+                <TouchableOpacity onPress={() => {
+                    navigate('Home')
+                }}>
+                    <Image
+                        source={item.image}
+                        style={styles.imageBox} />
+                </TouchableOpacity>
+            </View>
+        );
+    };
+
+    // Format date
+    Moment.locale('en');
+
+    // Return the whole layout for profile
+    return (
+        <>
+            <React.Fragment>
+                <View style={styles.profileBox}>
+                    <Image
+                        source={{uri: profile.pictureUrl}}
+                        style={styles.image}
+                    />
+                    <View style={styles.textBox}>
+                        <Text 
+                            style={styles.nameText}>Name: {profile.name}</Text>
+                        <Text
+                            style={styles.nameText}>Date of Birth: {Moment(profile.dob).format('L')}</Text>
+                    </View>
+                </View>
+                <View style={styles.settingBox}>
+                    <View style={styles.settingButton}>
+                        <TouchableOpacity
+                            onPress={() => navigate('Home')}>
+                            <Text
+                                style={styles.nameText}>
+                                Profile Setting</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.settingButton}>
+                        <TouchableOpacity
+                            onPress={() => navigate('Welcome')}>
+                            <Text
+                                style={styles.nameText}>
+                                Logout</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={styles.artefactsBox}>
+                    <Text style={styles.artText}>My Artefacts</Text>
+                    <FlatList
+                        data={formatData(data, numColumns)}
+                        numColumns={3}
+                        renderItem={this.renderItem}
+                    />
+                </View>
+            </React.Fragment>
+        </>
+    );
+}
+
+
 
 // export default function ProfileScreen() {
 //     const [profile, setProfile] = useState({});

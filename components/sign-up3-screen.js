@@ -77,11 +77,13 @@ export default function SignUp3({ navigation }) {
 		axios.post('http://localhost:3000/user/create', data);
 	}
 
+	// automatically login to have give available acct details
 	async function login() {
-		axios.post('http://localhost:3000/login/local', {
+		  axios.post('http://localhost:3000/login/local',{
 			email: await AsyncStorage.getItem('email'),
 			password: await AsyncStorage.getItem('password')
 		})
+		.then((result) => navigate('Home'));
 	}
 
 	async function finishSignUp() {
@@ -93,8 +95,6 @@ export default function SignUp3({ navigation }) {
 		}
 		await uploadSignUpData();
 		await login()
-		.then((result) => console.log(resul))
-		navigate('Home');
 	}
 
 	return (

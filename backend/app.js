@@ -157,7 +157,10 @@ app.get('/artefact/find', (req, res) => {
 });
 
 // create an artefact
-app.post('/artefact/create', ({ body: { name, date, owner, value, description, file } }, res) => {
+app.post('/artefact/create', ({ 
+	body: { name, date, value, description, file }, 
+	session: {passport: {user: {_id : owner} }}}, res) => {
+	console.log(owner);
 	const artefact = artefactModel({
 		name,
 		date,
