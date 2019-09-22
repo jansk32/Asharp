@@ -127,6 +127,7 @@ const baseWidth = 6 * (radius + margin);
 const verticalGap = 4 * (radius + margin);
 
 
+// Recursively find the most distant ancestors of a certain individual
 function up(family, divisibles, nonDivisibles) {
 	// Base case: no one to divide
 	if (divisibles.length === 0) {
@@ -148,12 +149,14 @@ function up(family, divisibles, nonDivisibles) {
 	return up(family, divisibles, nonDivisibles);
 }
 
+// Get the most distant ancestors of the target person
 function getAncestors(family, targetId) {
 	const node = family.find(person => person.id === targetId);
 	node.tempGen = 0;
 	return up(family, [node], []);
 }
 
+// Recursively find children of a person and also the children's children
 function down(family, ancestors, results, parents) {
 	if (parents.length === 0) {
 		if (ancestors.length === 0) {
@@ -186,16 +189,19 @@ function down(family, ancestors, results, parents) {
 	return down(family, ancestors, results, parents);
 }
 
+// Find all members of a family starting from the ancestors
 function getDescendants(family, ancestors) {
 	return down(family, ancestors, [], []);
 }
 
-
+/* Set the most distant ancestor's generation to 0
+ * and everyone else's accordingly */
 function normalizeAncestorGen(ancestors) {
 	const offset = -Math.min(...ancestors.map(node => node.tempGen));
 	ancestors.forEach(node => node.gen = node.tempGen + offset);
 }
 
+// Return a family tree object without SVG positions
 function buildFamilyTree(family, id) {
 	const ancestors = getAncestors(family, id);
 	normalizeAncestorGen(ancestors);
@@ -204,6 +210,7 @@ function buildFamilyTree(family, id) {
 	return familyTree;
 }
 
+// Assign SVG positions to each family member
 function mainArrangeFamilyTree(familyTree, ancestors, targetId) {
 	const targetPerson = familyTree.find(person => person.id === targetId);
 	for (let ancestor of ancestors) {
@@ -213,6 +220,8 @@ function mainArrangeFamilyTree(familyTree, ancestors, targetId) {
 	}
 }
 
+/* Recursively assign SVG positions to a person and their children,
+ * then the children's children */
 function recursiveArrangeFamilyTree(familyTree, node, targetPerson) {
 	// Base case: no spouse
 	if (!node.spouse) {
@@ -274,6 +283,7 @@ function recursiveArrangeFamilyTree(familyTree, node, targetPerson) {
 	return totalWidth > baseWidth ? totalWidth : baseWidth;
 }
 
+// Assign x coordinates for each family member for drawing on SVG
 function mainAssignX(familyTree, ancestors) {
 	const initialAncestor = ancestors.splice(ancestors.findIndex(ancestor => ancestor.gen === 0), 1)[0];
 	initialAncestor;
@@ -304,12 +314,15 @@ function assignX(familyTree, node) {
 	spouse.isTraversed = true;
 }
 
+/* Find an already traversed child who has their x coordinate assigned so we can
+ * assign x coordinates to the people who are connected to the child relative
+ * to the child's x coordinate */
 function mainFindTraversedChild(familyTree, node) {
 	return findTraversedChild(familyTree, [node]);
 }
 
 function findTraversedChild(familyTree, parents) {
-	// breadth first, add to the start
+	// Breadth first, so add to the start
 	// Base case: parents is empty -> failed to find any traversed child
 	if (!parents.length) {
 		return null;
@@ -341,16 +354,22 @@ function assignXUp(familyTree, node) {
 	assignXUp(familyTree, mother);
 }
 
-
+// Shift the x coordinates of all family members so they're all positive
 function shiftToFitScreen(familyTree) {
 	const offset = -Math.min(...familyTree.map(node => node.x)) + radius + margin;
 	familyTree.forEach(node => node.x += offset);
 }
 
+// Assign y coordinate based on generation
 function assignY(familyTree) {
 	familyTree.forEach(node => node.y = node.gen * verticalGap);
 }
 
+/* Accepts a family object and the id of the target person.
+ * The family tree will be generated for people who are related by blood to 
+ * the target person and their spouses.
+ * Returns an object consisting of the family tree itself and ancestors 
+ * of the target person (used for other functions) */
 export default function generateFamilyTree(family, targetId) {
 	const familyTree = buildFamilyTree(family, targetId);
 	const ancestors = getAncestors(family, targetId);
@@ -362,7 +381,7 @@ export default function generateFamilyTree(family, targetId) {
 	return { familyTree, ancestors };
 }
 
-// Draw lines for family tree
+// Create lines for family tree which consist of a pair of coordinates
 export function mainDrawLines(familyTree, ancestors) {
 	let lines = [];
 	for (let ancestor of ancestors) {
@@ -372,6 +391,7 @@ export function mainDrawLines(familyTree, ancestors) {
 	return lines;
 }
 
+// Recursively create lines starting from person, spouse, then children
 function recursiveDrawLines(familyTree, node) {
 	let lines = [];
 	// Check for parents

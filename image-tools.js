@@ -40,7 +40,3 @@ export async function uploadImage(uri) {
     const url = await imageRef.getDownloadURL();
     return url;
 }
-
-async function downloadImage(filename) {
-    const imageRef = firebase.storage().ref('images/test.jpg');
-}
