@@ -6,7 +6,7 @@ const artefactSchema = new mongoose.Schema({
     owner: String,
     value: String,
     description: String,
-    file: [String]
+    file: String
 });
 
 module.exports = artefactSchema;

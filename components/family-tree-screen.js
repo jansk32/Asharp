@@ -1,19 +1,184 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, PanResponder } from 'react-native';
+import React, { useState, Component } from 'react';
+import { View, PanResponder, Dimensions } from 'react-native';
 import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text } from 'react-native-svg';
 import generateFamilyTree, { family, mainDrawLines } from '../build-family-tree';
 
-function Node({ cx, cy, id }) {
-    const radius = 50;
-    return (
-        <>
-            <Defs>
-                <ClipPath id={id.toString()}>
-                    <Circle cx={cx} cy={cy} r={radius} />
-                </ClipPath>
-            </Defs>
+/* SVG panning and zooming was taken from https://snack.expo.io/@msand/svg-pinch-to-pan-and-zoom
+ * Written by Mikael Sand */
 
-            {/* <Image
+function calcDistance(x1, y1, x2, y2) {
+	const dx = x1 - x2;
+	const dy = y1 - y2;
+	return Math.sqrt(dx * dx + dy * dy);
+}
+
+function middle(p1, p2) {
+	return (p1 + p2) / 2;
+}
+
+function calcCenter(x1, y1, x2, y2) {
+	return {
+		x: middle(x1, x2),
+		y: middle(y1, y2),
+	};
+}
+
+class ZoomableSvg extends Component {
+	state = {
+		zoom: 1,
+		left: 0,
+		top: 0,
+	};
+
+	processPinch(x1, y1, x2, y2) {
+		const distance = calcDistance(x1, y1, x2, y2);
+		const { x, y } = calcCenter(x1, y1, x2, y2);
+
+		if (!this.state.isZooming) {
+			const { top, left, zoom } = this.state;
+			this.setState({
+				isZooming: true,
+				initialX: x,
+				initialY: y,
+				initialTop: top,
+				initialLeft: left,
+				initialZoom: zoom,
+				initialDistance: distance,
+			});
+		} else {
+			const {
+				initialX,
+				initialY,
+				initialTop,
+				initialLeft,
+				initialZoom,
+				initialDistance,
+			} = this.state;
+
+			const touchZoom = distance / initialDistance;
+			const dx = x - initialX;
+			const dy = y - initialY;
+
+			const left = (initialLeft + dx - x) * touchZoom + x;
+			const top = (initialTop + dy - y) * touchZoom + y;
+			const zoom = initialZoom * touchZoom;
+
+			this.setState({
+				zoom,
+				left,
+				top,
+			});
+		}
+	}
+
+	processTouch(x, y) {
+		if (!this.state.isMoving || this.state.isZooming) {
+			const { top, left } = this.state;
+			this.setState({
+				isMoving: true,
+				isZooming: false,
+				initialLeft: left,
+				initialTop: top,
+				initialX: x,
+				initialY: y,
+			});
+		} else {
+			const { initialX, initialY, initialLeft, initialTop } = this.state;
+			const dx = x - initialX;
+			const dy = y - initialY;
+			this.setState({
+				left: initialLeft + dx,
+				top: initialTop + dy,
+			});
+		}
+	}
+
+	componentWillMount() {
+		this._panResponder = PanResponder.create({
+			onPanResponderGrant: () => { },
+			onPanResponderTerminate: () => { },
+			onMoveShouldSetPanResponder: () => true,
+			onStartShouldSetPanResponder: () => true,
+			onShouldBlockNativeResponder: () => true,
+			onPanResponderTerminationRequest: () => true,
+			onMoveShouldSetPanResponderCapture: () => true,
+			onStartShouldSetPanResponderCapture: () => true,
+			onPanResponderMove: evt => {
+				const touches = evt.nativeEvent.touches;
+				const length = touches.length;
+				if (length === 1) {
+					const [{ locationX, locationY }] = touches;
+					this.processTouch(locationX, locationY);
+				} else if (length === 2) {
+					const [touch1, touch2] = touches;
+					this.processPinch(
+						touch1.locationX,
+						touch1.locationY,
+						touch2.locationX,
+						touch2.locationY
+					);
+				}
+			},
+			onPanResponderRelease: () => {
+				this.setState({
+					isZooming: false,
+					isMoving: false,
+				});
+			},
+		});
+	}
+
+	render() {
+		const viewBoxSize = 1200;
+		const { height, width, familyTree, lines } = this.props;
+		const { left, top, zoom } = this.state;
+		const resolution = viewBoxSize / Math.min(height, width);
+		return (
+			<View {...this._panResponder.panHandlers}>
+				<Svg
+					width={width}
+					height={height}
+					viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
+					preserveAspectRatio="xMinYMin meet">
+					<G
+						transform={{
+							translateX: left * resolution,
+							translateY: top * resolution,
+							scale: zoom,
+						}}>
+						{
+							familyTree.map(node => <Node cx={node.x} cy={node.y} id={node.id} key={node.id} />)
+						}
+						{
+							lines.map((line, i) =>
+								<Line
+									x1={line.x1}
+									y1={line.y1}
+									x2={line.x2}
+									y2={line.y2}
+									stroke="black"
+									strokeWidth="3"
+									key={i}
+								/>)
+						}
+					</G>
+				</Svg>
+			</View>
+		);
+	}
+}
+
+function Node({ cx, cy, id }) {
+	const radius = 50;
+	return (
+		<>
+			<Defs>
+				<ClipPath id={id.toString()}>
+					<Circle cx={cx} cy={cy} r={radius} />
+				</ClipPath>
+			</Defs>
+
+			{/* <Image
                 height={radius * 2}
                 width={radius * 2}
                 x={cx - radius}
@@ -22,198 +187,45 @@ function Node({ cx, cy, id }) {
                 clipPath={`url(#${id})`}
             /> */}
 
-            <Circle
-                cx={cx}
-                cy={cy}
-                r={radius}
-                stroke="black"
-                fill="white"
-            />
+			<Circle
+				cx={cx}
+				cy={cy}
+				r={radius}
+				stroke="black"
+				fill="white"
+			/>
 
-            <Text
-                x={cx}
-                y={cy}
-                fill="black"
-                stroke="black"
-                fontSize="30"
-                textAnchor="middle"
-            >{id}</Text>
-
-        </>
-    );
+			<Text
+				x={cx}
+				y={cy}
+				fill="black"
+				stroke="black"
+				fontSize="30"
+				textAnchor="middle"
+			>
+				{id}
+			</Text>
+		</>
+	);
 }
 
 export default function FamilyTreeScreen() {
-    const [familyTreeInfo] = useState(() => generateFamilyTree(family, 'th'));
-    const [familyTree] = useState(familyTreeInfo.familyTree);
-    const [ancestors] = useState(familyTreeInfo.ancestors);
-    const [lines] = useState(() => mainDrawLines(familyTree, ancestors));
+	const [familyTreeInfo] = useState(() => generateFamilyTree(family, 'th'));
+	const [familyTree] = useState(familyTreeInfo.familyTree);
+	const [ancestors] = useState(familyTreeInfo.ancestors);
+	const [lines] = useState(() => mainDrawLines(familyTree, ancestors));
 
-    const isMoving = useRef(false);
-    const isZooming = useRef(false);
+	const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-    const startingViewBoxCoords = useRef({ x: 0, y: 0 });
-    const [viewBoxCoords, setViewBoxCoords] = useState({ x: 0, y: 0 });
-
-    const [zoom, setZoom] = useState(1);
-    const initialZoom = useRef(1);
-    const initialDistance = useRef(0);
-    const lastDistance = useRef(0);
-
-    function distanceFromTwoTouches(touches) {
-        return Math.hypot(
-            touches[0].locationX - touches[1].locationX,
-            touches[0].locationY - touches[1].locationY
-        );
-    }
-
-    function calcCenter(touches) {
-        return {
-            x: (touches[0].locationX + touches[1].locationX) / 2,
-            y: (touches[0].locationY + touches[1].locationY) / 2
-        };
-    }
-
-    const [panResponder] = useState(() => PanResponder.create({
-        onMoveShouldSetResponderCapture: () => true,
-        onMoveShouldSetPanResponderCapture: () => true,
-        onPanResponderGrant: (event, gestureState) => {
-            console.log('GRANT: ' + event.nativeEvent.touches.length);
-            const touches = event.nativeEvent.touches;
-            if (touches.length === 1) {
-                isMoving.current = true;
-            } else if (touches.length === 2) {
-            }
-        },
-        onPanResponderMove: (event, gestureState) => {
-            const touches = event.nativeEvent.touches;
-            if (touches.length === 1) {
-                if (isZooming.current) {
-                    // Transition from zooming to panning
-                    const scale = lastDistance.current / initialDistance.current;
-                    initialZoom.current *= scale;
-                    isZooming.current = false;
-                }
-                console.log('**MOVE**');
-                console.log(`start coords is ${JSON.stringify(startingViewBoxCoords)}`);
-                console.log(`dx is ${(gestureState.dx)}`);
-                setViewBoxCoords({
-                    x: startingViewBoxCoords.current.x + gestureState.dx,
-                    y: startingViewBoxCoords.current.y + gestureState.dy
-                });
-            } else if (touches.length === 2) {
-                if (!isZooming.current) {
-                    // Start zooming mode
-                    initialDistance.current = distanceFromTwoTouches(touches);
-                    isZooming.current = true;
-                } else {
-                    // Continuing zooming mode
-                    lastDistance.current = distanceFromTwoTouches(touches);
-                    const scale = lastDistance.current / initialDistance.current;
-                    const currZoom = initialZoom.current * scale;
-                    setZoom(currZoom);
-
-                    // Offset to keep screen in center of zooming center
-                    setViewBoxCoords(currCoords => {
-                        return {
-                            x: currCoords.x - (1 - currZoom) * center.x,
-                            y: currCoords.y - (1 - currZoom) * center.y
-                        };
-                    })
-
-                    // Also pan according to center of touches
-                    const center = calcCenter(touches);
-                    
-                }
-            }
-        },
-        onPanResponderRelease: (event, { dx, dy }) => {
-            if (isMoving.current) {
-                // Update starting coords
-                startingViewBoxCoords.current.x += dx;
-                startingViewBoxCoords.current.y += dy;
-                isMoving.current = false;
-            }
-            if (isZooming.current) {
-                // Update initial zoom
-                const scale = lastDistance.current / initialDistance.current;
-                initialZoom.current *= scale;
-                isZooming.current = false;
-            }
-        }
-    }));
-    // console.log(familyTree.map(node => [node.id, node.x, node.marriageOffset, node.xOffset, node.width]));
-
-
-    return (
-        <View {...panResponder.panHandlers}>
-            <Svg height="100%" width="100%" viewBox={'0 0 700 900'}>
-
-                {/*
-                <Defs>
-                    <ClipPath id="circleView">
-                        <Circle cx="125" cy="200" r="70" />
-                    </ClipPath>
-                </Defs>
-
-                <Image
-                    height="140"
-                    width="140"
-                    x="55"
-                    y="130"
-                    clipPath="url(#circleView)"
-                    href={require('../tim_derp.jpg')}
-                />
-
-                <Rect
-                    height="100"
-                    width="100"
-                    x="300"
-                    y="200"
-                    clipPath="url(#circleView)"
-                    fill="green"
-                /> */}
-
-                <G
-                    translateX={viewBoxCoords.x}
-                    translateY={viewBoxCoords.y}
-                    scale={zoom}>
-                    {/* {
-                        familyTree.map(node => <Node cx={node.x} cy={node.y} id={node.id} key={node.id} />)
-                    } */}
-                    {/* {
-                        lines.map((line, i) =>
-                            <Line
-                                x1={line.x1}
-                                y1={line.y1}
-                                x2={line.x2}
-                                y2={line.y2}
-                                stroke="black"
-                                strokeWidth="3"
-                                key={i}
-                            />)
-                    } */}
-                    <Rect
-                        height="100"
-                        width="100"
-                        x="300"
-                        y="200"
-                        fill="green"
-                    />
-                    <Line
-                        x1="350"
-                        y1="250"
-                        x2="450"
-                        y2="300"
-                        stroke="purple"
-                        strokeWidth="5"
-                    />
-                </G>
-            </Svg>
-        </View>
-    );
+	return (
+		<ZoomableSvg
+			width={screenWidth}
+			height={screenHeight}
+			familyTree={familyTree}
+			lines={lines} />
+	);
 }
 
 FamilyTreeScreen.navigationOptions = {
-    title: 'Family tree'
+	title: 'Family tree'
 };
