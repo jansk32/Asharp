@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
     },
 })
 
+// To format data
 const formatData = (data, numColumns) => {
 
     const fullRowsNum = Math.floor(data.length / numColumns);
@@ -124,7 +125,6 @@ export default function ProfileScreen({ navigation }) {
         axios.get('http://localhost:3000/user', { withCredentials: true })
         .then((res) => {
             setProfile(res.data);
-            // console.log('FOUND');
         })
         .catch(error => console.error(error));
     }, []);
@@ -168,8 +168,7 @@ export default function ProfileScreen({ navigation }) {
         <>
             <React.Fragment>
                 <View style={styles.profileBox}>
-                
-<Image
+                    <Image
                         source={{uri: profile.pictureUrl}}
                         style={styles.image}
                     />
@@ -211,49 +210,3 @@ export default function ProfileScreen({ navigation }) {
         </>
     );
 }
-
-
-
-// export default function ProfileScreen() {
-//     const [profile, setProfile] = useState({});
-
-//     useEffect(() => {
-//         console.log('Sending request');
-//         axios.get('http://localhost:3000/user')
-//         .then((res) => {
-//             setProfile(res.data);
-//             console.log(res.data);
-//             // console.log('FOUND');
-//         })
-//         .catch(error => console.error(error));
-//     }, []);
-
-//     return (
-//         <>
-//             <React.Fragment>
-//                 <View style={styles.profileBox}>
-//                     <Image 
-//                         source={require('../tim_derp.jpg')} 
-//                         style={styles.image}
-//                     />
-//                     <View style={styles.textBox}>
-//                         <Text style = {styles.nameText}>Name: {profile.name}</Text>
-//                         <Text style = {styles.nameText}>Date of Birth: {profile.dob}</Text>
-//                     </View>
-//                 </View>
-//                 <View style={styles.settingBox}>
-//                     <View style={styles.settingButton}>
-//                         <Text style = {styles.nameText}>Profile Setting</Text>
-//                     </View>  
-//                 </View>
-//                 <View style={styles.artefactsBox}>
-//                     <Text style = {styles.nameText}>My Artefacts</Text>
-//                 </View>
-//             </React.Fragment>
-//         </>
-//     );
-// }
-
-// ProfileScreen.navigationOptions = {
-//     title: 'Profile'
-// };

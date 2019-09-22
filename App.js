@@ -1,8 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import {
-	Text, View, Image, StyleSheet, TextInput, Alert, Button, ScrollView,
-	FlatList, SectionList, ToastAndroid, Picker,
-} from 'react-native';
+import React from 'react';
 
 // Importing all existing screens for navigation
 import HomeScreen from './components/home-screen';
@@ -18,7 +14,7 @@ import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
 
-// Import react navigation tools.
+// Import react navigation tools
 import {
 	createBottomTabNavigator,
 	createAppContainer,
@@ -30,7 +26,7 @@ var tintColor = 'black';
 // Import icons
 import Icon from 'react-native-vector-icons/Ionicons';
 
-// Import firebase.
+// Import Firebase.
 import * as firebase from 'firebase';
 
 // Initialize Firebase
@@ -46,35 +42,34 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const MainNavigator = createBottomTabNavigator({
-	
-	Timeline: { 
+	Timeline: {
 		screen: TimelineScreen,
 		navigationOptions: {
-			tabBarIcon: ({tintColor}) => <Icon name="md-hourglass" color={tintColor} size={30} />
-		}, 
+			tabBarIcon: ({ tintColor }) => <Icon name="md-hourglass" color={tintColor} size={30} />
+		},
 	},
-	FamilyTree: { 
+	FamilyTree: {
 		screen: FamilyTreeScreen,
 		navigationOptions: {
-			tabBarIcon: ({tintColor}) => <Icon name="md-leaf" color={tintColor} size={30} />
+			tabBarIcon: ({ tintColor }) => <Icon name="md-leaf" color={tintColor} size={30} />
 		},
-	 },
-	Home: { 
+	},
+	Home: {
 		screen: HomeScreen,
 		navigationOptions: {
-			tabBarIcon: ({tintColor}) => <Icon name="md-add" color={tintColor} size={30} />
+			tabBarIcon: ({ tintColor }) => <Icon name="md-add" color={tintColor} size={30} />
 		},
-	 },
-	Gallery: { 
+	},
+	Gallery: {
 		screen: GalleryScreen,
 		navigationOptions: {
-			tabBarIcon: ({tintColor}) => <Icon name="md-images" color={tintColor} size={30} />
+			tabBarIcon: ({ tintColor }) => <Icon name="md-images" color={tintColor} size={30} />
 		},
 	},
 	Profile: {
 		screen: ProfileScreen,
 		navigationOptions: {
-			tabBarIcon: ({tintColor}) => <Icon name="md-person" color={tintColor} size={30} />
+			tabBarIcon: ({ tintColor }) => <Icon name="md-person" color={tintColor} size={30} />
 		},
 	},
 },
@@ -122,14 +117,14 @@ const SignUpStack = createStackNavigator({
 
 const itemStack = createStackNavigator({
 	MainNavigator,
-	ItemDetail: {screen: ItemDetailScreen},
-	Gallery: {screen: GalleryScreen},
+	ItemDetail: { screen: ItemDetailScreen },
+	Gallery: { screen: GalleryScreen },
 })
 
 const itemStackProfile = createStackNavigator({
 	MainNavigator,
-	ItemDetail: {screen: ItemDetailScreen},
-	Profile: {screen: ProfileScreen},
+	ItemDetail: { screen: ItemDetailScreen },
+	Profile: { screen: ProfileScreen },
 })
 
 const Stack = createSwitchNavigator({
@@ -141,7 +136,6 @@ const Stack = createSwitchNavigator({
 	itemStack,
 	itemStackProfile
 })
-
 
 const App = createAppContainer(Stack);
 

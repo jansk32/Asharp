@@ -71,6 +71,7 @@ export default function SignUp3({ navigation }) {
 	const { navigate } = navigation;
 	const [image, setImage] = useState({});
 
+	// Upload sign up data
 	async function uploadSignUpData() {
 		let dataKeys = ['email', 'name', 'dob', 'password', 'pictureUrl'];
 		let data = {};
@@ -93,6 +94,7 @@ export default function SignUp3({ navigation }) {
 		.then((result) => navigate('Home'));
 	}
 
+	// Finish sign up and log in straight into the home page
 	async function finishSignUp() {
 		const pictureUrl = await uploadImage(image.uri);
 		try {

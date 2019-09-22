@@ -91,6 +91,7 @@ export default function UploadImageScreen({ navigation }) {
   const [date, setDate] = useState('');
   const [image, setImage] = useState();
 
+  // Function to create artefact
   async function createArtefact() {
     // let dataKeys = ['value', 'name', 'date', 'description','pictureUrl'];
     let data = {
