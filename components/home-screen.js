@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, Image, StyleSheet, TextInput, Alert, Button, ScrollView,
-	FlatList, SectionList, ToastAndroid, Picker, TouchableOpacity, Dimensions,
+	Text, View, Image, StyleSheet, ToastAndroid, Picker, TouchableOpacity, Dimensions,
 } from 'react-native';
 import { throwStatement } from '@babel/types';
 import { pickImage, uploadImage } from '../image-tools';

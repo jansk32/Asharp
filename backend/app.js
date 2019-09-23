@@ -144,6 +144,12 @@ app.get('/artefact', (req,res) => {
 		res.send(result);
 	})
 })
+// Get ALL users
+app.get('/users', (req,res) => {
+	userModel.find({}, (err,result) => {
+		res.send(result);
+	})
+})
 
 
 // Get a single artefact by id

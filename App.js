@@ -13,6 +13,7 @@ import SignUp1 from './components/sign-up1-screen';
 import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
+import MyFamilyScreen from './components/my-family-screen';
 
 // Import react navigation tools
 import {
@@ -40,6 +41,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
+// Main bottom tab navigator to navigate the main functionalities of the application
 const MainNavigator = createBottomTabNavigator({
 	Timeline: {
 		screen: TimelineScreen,
@@ -72,17 +74,23 @@ const MainNavigator = createBottomTabNavigator({
 		},
 	},
 },
+	// Tab bar configuration
 	{
 		initialRouteName: 'Home',
 		tabBarOptions: {
 			activeTintColor: '#579B93',
 			inactiveTintColor: 'black',
-			showLabel: false,
+			showLabel: true,
 			showIcon: true,
+			// Edit the tab bar style and UI
 			style: {
 				backgroundColor: 'white',
 				borderTopColor: '#579B93',
 				borderTopWidth: .5,
+			},
+			// Edit the navigation bar label
+			labelStyle: {
+				fontSize: 12,
 			}
 		},
 		navigationOptions: {
@@ -91,11 +99,13 @@ const MainNavigator = createBottomTabNavigator({
 	},
 );
 
+// Stack navigator for uploading artefact
 const uploadArtefactStack = createStackNavigator({
 	MainNavigator,
 	AddImageDetails: { screen: AddImageDetailsScreen },
 });
 
+// Authentication stack navigator for sign up
 const SignUpStack = createStackNavigator({
 	SignUp1: { screen: SignUp1 },
 	SignUp2: {
@@ -114,28 +124,34 @@ const SignUpStack = createStackNavigator({
 	},
 });
 
+// Stack navigator for looking at item details from gallery
 const itemStack = createStackNavigator({
 	MainNavigator,
-	ItemDetail: { screen: ItemDetailScreen },
 	Gallery: { screen: GalleryScreen },
-})
+	ItemDetail: { screen: ItemDetailScreen },
+});
 
+// Stack navigator for looking at item details from profile
 const itemStackProfile = createStackNavigator({
 	MainNavigator,
-	ItemDetail: { screen: ItemDetailScreen },
 	Profile: { screen: ProfileScreen },
-})
+	ItemDetail: { screen: ItemDetailScreen },
+	MyFamily: {screen: MyFamilyScreen},
+});
 
-const Stack = createSwitchNavigator({
-	MainNavigator,	
+
+
+// Root switch navigator to connect all the navigation paths in the app
+const rootNavigator = createSwitchNavigator({
+	itemStackProfile,	
 	Welcome: { screen: WelcomeScreen },
 	Login: { screen: Login },
 	SignUpStack,
+	MainNavigator,	
 	uploadArtefactStack,
 	itemStack,
-	itemStackProfile
-})
+});
 
-const App = createAppContainer(Stack);
+const App = createAppContainer(rootNavigator);
 
 export default App;
