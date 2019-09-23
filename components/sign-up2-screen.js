@@ -118,6 +118,7 @@ export default function LoginScreen({ navigation }) {
 						<View style={styles.textInput}>
 							<TextInput
 								placeholder='Enter Password'
+								secureTextEntry={true}
 								onChangeText={setPassword}
 								value={password}
 							/>
