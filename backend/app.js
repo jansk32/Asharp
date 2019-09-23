@@ -155,7 +155,7 @@ app.get('/artefact/find/:artefactId', (req, res) => {
 	})
 });
 
-// create an artefact
+// Create an artefact
 app.post('/artefact/create', ({ 
 	body: { name, date, value, description, file }, 
 	session: {passport: {user: {_id : owner} }}}, res) => {
@@ -176,7 +176,7 @@ app.post('/artefact/create', ({
 	})
 });
 
-// assign artefact to a person
+// Assign artefact to a person
 app.put('/user/assign/:id', (req, res) => {
 	userModel.update({ id: req.params.id }, { $push: { artefact: req.body } }, (err, resp) => {
 		if (err) {
@@ -186,11 +186,19 @@ app.put('/user/assign/:id', (req, res) => {
 	})
 });
 
+// Get artefact by owner id
+app.get('/artefact/find/owner', (req,res) => {
+	artefactModel.find(req.body, (err,result) => {
+		if (err) throw err;
+		res.send(result);
+	})
+})
+
 // Tim: this will be replaced by the single route called /user/create so
 // the front end will make only one request to the back end
 
 
-// login page [in progress]
+// Login page [in progress]
 app.get('/login', (req, res) => {
 
 });
@@ -211,7 +219,7 @@ app.post('/login/local', passport.authenticate('local'),(req,res) => {
 // }
 // );
 
-// login success or not 
+// Login success or not 
 app.get('login/success/:isFail', (req,res) => {
 	console.log(req.params.isFail);
 	res.send(req.params.isFail);

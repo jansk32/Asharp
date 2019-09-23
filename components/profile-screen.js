@@ -131,9 +131,11 @@ export default function ProfileScreen({ navigation }) {
     
     const [artefact, setArtefact] = useState([]);
 
-    // Get all the artefact
+    // Get the artefact of the user
     useEffect(() => {
-        axios.get("http://localhost:3000/artefact")
+        axios.get("http://localhost:3000/artefact/find/owner", {
+            owner: profile._id
+        })
         .then((result) => {
             console.log(result.data);
             setArtefact(result.data);
