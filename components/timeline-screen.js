@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, FlatList, View, Image } from 'react-native';
 import Timeline from 'react-native-timeline-feed';
 import axios from 'axios';
+import Moment from 'moment';
 
+// Import date formatting module moment.js
+Moment.locale('en');
 
 export default function TimelineScreen({ navigation }) {
 	const { navigate } = navigation;
@@ -22,15 +25,18 @@ export default function TimelineScreen({ navigation }) {
 		fetchArtefacts();
     }, []);
 	
-	// TODO: Format the date and so it will show up
+  // Sort date in descending order in the timeline
 	const formatData = (data) => {
 		data.sort(function (a, b) {
 			if (a.date === b.date) {
 				b.date = '';
 			}
-			return (new Date(a.date)) > (new Date(b.date)) ? 1 : -1;
+			// Change the name to time so we cann edit
+			a.time = Moment(a.date).format("YYYY-MM-DD");
+			b.time = Moment(b.date).format("YYYY-MM-DD");
+			return a.time > b.time ? 1 : -1;
 		});
-		return data;
+		return data.reverse();
 	};
 
 	// Custom render event title and event description

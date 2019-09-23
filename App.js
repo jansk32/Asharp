@@ -22,7 +22,6 @@ import {
 	createStackNavigator,
 } from 'react-navigation';
 
-var tintColor = 'black';
 // Import icons
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -128,10 +127,10 @@ const itemStackProfile = createStackNavigator({
 })
 
 const Stack = createSwitchNavigator({
+	MainNavigator,	
 	Welcome: { screen: WelcomeScreen },
 	Login: { screen: Login },
 	SignUpStack,
-	MainNavigator,
 	uploadArtefactStack,
 	itemStack,
 	itemStackProfile
