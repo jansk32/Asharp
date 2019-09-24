@@ -126,6 +126,12 @@ const itemStackProfile = createStackNavigator({
 	Profile: { screen: ProfileScreen },
 })
 
+const itemStackTimeline = createStackNavigator({
+	MainNavigator,
+	ItemDetail: {screen: ItemDetailScreen},
+	Timeline: {screen: TimelineScreen}
+})
+
 const Stack = createSwitchNavigator({
 	MainNavigator,	
 	Welcome: { screen: WelcomeScreen },
@@ -133,7 +139,8 @@ const Stack = createSwitchNavigator({
 	SignUpStack,
 	uploadArtefactStack,
 	itemStack,
-	itemStackProfile
+	itemStackProfile,
+	itemStackTimeline
 })
 
 const App = createAppContainer(Stack);
