@@ -139,19 +139,24 @@ const itemStackProfile = createStackNavigator({
 	MyFamily: {screen: MyFamilyScreen},
 });
 
+const itemStackTimeline = createStackNavigator({
+	MainNavigator,
+	ItemDetail: {screen: ItemDetailScreen},
+	Timeline: {screen: TimelineScreen}
+})
 
-
-// Root switch navigator to connect all the navigation paths in the app
-const rootNavigator = createSwitchNavigator({
-	itemStackProfile,	
+const Stack = createSwitchNavigator({
+	MainNavigator,	
 	Welcome: { screen: WelcomeScreen },
 	Login: { screen: Login },
 	SignUpStack,
 	MainNavigator,	
 	uploadArtefactStack,
 	itemStack,
-});
+	itemStackProfile,
+	itemStackTimeline
+})
 
-const App = createAppContainer(rootNavigator);
+const App = createAppContainer(Stack);
 
 export default App;
