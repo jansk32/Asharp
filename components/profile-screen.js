@@ -183,7 +183,7 @@ export default function ProfileScreen({ navigation }) {
                 <View style={styles.settingBox}>
                     <View style={styles.settingButton}>
                         <TouchableOpacity
-                            onPress={() => navigate('MyFamily')}>
+                            onPress={() => navigate('Home')}>
                             <Text
                                 style={styles.nameText}>
                                 My Family</Text>

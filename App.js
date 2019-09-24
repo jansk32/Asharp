@@ -1,5 +1,4 @@
 import React from 'react';
-
 // Importing all existing screens for navigation
 import HomeScreen from './components/home-screen';
 import FamilyTreeScreen from './components/family-tree-screen';
@@ -13,7 +12,6 @@ import SignUp1 from './components/sign-up1-screen';
 import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
-import MyFamilyScreen from './components/my-family-screen';
 
 // Import react navigation tools
 import {
@@ -28,6 +26,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 // Import Firebase.
 import * as firebase from 'firebase';
+import { Dimensions } from 'react-native';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -87,6 +86,7 @@ const MainNavigator = createBottomTabNavigator({
 				backgroundColor: 'white',
 				borderTopColor: '#579B93',
 				borderTopWidth: .5,
+				height: Dimensions.get('window').height / 14,
 			},
 			// Edit the navigation bar label
 			labelStyle: {
@@ -136,7 +136,6 @@ const itemStackProfile = createStackNavigator({
 	MainNavigator,
 	Profile: { screen: ProfileScreen },
 	ItemDetail: { screen: ItemDetailScreen },
-	MyFamily: {screen: MyFamilyScreen},
 });
 
 const itemStackTimeline = createStackNavigator({
