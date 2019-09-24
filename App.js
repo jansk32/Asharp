@@ -127,9 +127,9 @@ const itemStackProfile = createStackNavigator({
 })
 
 const Stack = createSwitchNavigator({
-	MainNavigator,	
 	Welcome: { screen: WelcomeScreen },
 	Login: { screen: Login },
+	MainNavigator,
 	SignUpStack,
 	uploadArtefactStack,
 	itemStack,

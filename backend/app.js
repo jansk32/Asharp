@@ -15,7 +15,6 @@ passport.use(new LocalStrategy(
 	passwordField: 'password'},
 	function (username, password, done) {
 		userModel.findOne({ email: username }, function (err, found) {
-			console.log(found);
 			if (err) { return done(err); }
 			// if no username found
 			if (!found) {
@@ -95,9 +94,7 @@ app.get('/', (req, res) => {
 
 // get a user
 app.get('/user', (req, res) => {
-	// change later
 	let id = req.session.passport.user._id;
-	console.log(req.session.passport.user._id);
 	userModel.find({ _id: id }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp[0]);
@@ -187,11 +184,12 @@ app.put('/user/assign/:id', (req, res) => {
 });
 
 // Get artefact by owner id
-app.get('/artefact/find/owner', (req,res) => {
-	artefactModel.find(req.body, (err,result) => {
+app.get('/artefact/findbyowner/', (req,res) => {
+	let id = req.session.passport.user._id;
+	artefactModel.find({ owner: id }, (err, resp) => {
 		if (err) throw err;
-		res.send(result);
-	})
+		res.send(resp);
+	});
 })
 
 // Tim: this will be replaced by the single route called /user/create so

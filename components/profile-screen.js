@@ -117,31 +117,35 @@ const formatData = (data, numColumns) => {
 
 export default function ProfileScreen({ navigation }) {
     const { navigate } = navigation;
-    const [profile, setProfile] = useState({});
+    var [profile, setProfile] = useState({});
+    const [artefact, setArtefact] = useState([]);
 
     // Get profile details
-    useEffect(() => {
+    async function getProfile() {
         console.log('Sending request');
         axios.get('http://localhost:3000/user', { withCredentials: true })
         .then((res) => {
             setProfile(res.data);
         })
         .catch(error => console.error(error));
-    }, []);
-    
-    const [artefact, setArtefact] = useState([]);
-
+    }
     // Get the artefact of the user
-    useEffect(() => {
-        axios.get("http://localhost:3000/artefact/find/owner", {
-            owner: profile._id
-        })
+    async function getArtefact() {
+        console.log(profile);
+        axios.get("http://localhost:3000/artefact/findbyowner/")
         .then((result) => {
             console.log(result.data);
             setArtefact(result.data);
         })
         .catch(err => console.log(error));
-    },[])
+    }
+
+    // Get profile and artefacts by owner
+    useEffect(async () => {
+       await getProfile();
+       await getArtefact();
+    }, []);
+
     
     // Render Item invisible if it's just a placeholder for columns in the grid,
     // if not, render the picture for each grid
