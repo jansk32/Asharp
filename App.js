@@ -13,7 +13,7 @@ import SignUp1 from './components/sign-up1-screen';
 import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
-
+import AddFamilyMemberScreen from './components/add-family-member-screen';
 // Import react navigation tools
 import {
 	createBottomTabNavigator,
@@ -52,6 +52,7 @@ const MainNavigator = createBottomTabNavigator({
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon name="md-leaf" color={tintColor} size={30} />
 		},
+		header: 'Family Tree',
 	},
 	Home: {
 		screen: HomeScreen,
@@ -132,15 +133,22 @@ const itemStackTimeline = createStackNavigator({
 	Timeline: {screen: TimelineScreen}
 })
 
+const addMemberStack = createStackNavigator({
+	MainNavigator,
+	AddFamilyMember: {screen: AddFamilyMemberScreen},
+	FamilyTree: {screen: FamilyTreeScreen}
+})
+
 const Stack = createSwitchNavigator({
-	MainNavigator,	
+	MainNavigator,
 	Welcome: { screen: WelcomeScreen },
 	Login: { screen: Login },
 	SignUpStack,
 	uploadArtefactStack,
 	itemStack,
 	itemStackProfile,
-	itemStackTimeline
+	itemStackTimeline,
+	addMemberStack,
 })
 
 const App = createAppContainer(Stack);
