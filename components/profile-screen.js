@@ -140,11 +140,13 @@ export default function ProfileScreen({ navigation }) {
         .catch(err => console.log(error));
     }
 
-    // Get profile and artefacts by owner
-    useEffect(async () => {
+    async function fetchProfile(){
        await getProfile();
        await getArtefact();
-    }, []);
+    }
+
+    // Get profile and artefacts by owner
+    useEffect( () => { fetchProfile()}, []);
 
     
     // Render Item invisible if it's just a placeholder for columns in the grid,
