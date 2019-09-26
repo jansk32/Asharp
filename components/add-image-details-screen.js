@@ -89,7 +89,14 @@ export default function UploadImageScreen({ navigation }) {
   const [value, setValue] = useState('');
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
-  const [image, setImage] = useState();
+  const [image, setImage] = useState('');
+
+//   useEffect(() => {
+//     // createArtefact();
+//     console.log("I am in the add image details screen");
+//     // console.log(await AsyncStorage.getItem('artefactPictureUrl'));
+//     // setImage(downloadImage());
+// },[]);
 
   // Function to create artefact
   async function createArtefact() {
@@ -101,7 +108,10 @@ export default function UploadImageScreen({ navigation }) {
       description: description
 };
     try {
-          data.file = await AsyncStorage.getItem('artefactPictureUrl');
+          var file = await AsyncStorage.getItem('artefactPictureUrl');
+          // setImage(downloadImage(data.file));
+          console.log(file);
+
         } catch (e) {
           ToastAndroid.show('Error getting pictureUrl' , ToastAndroid.SHORT);
         }
@@ -109,10 +119,26 @@ export default function UploadImageScreen({ navigation }) {
     .then((result) => {if(result) {navigate('Home')}});
   }
 
-  // useEffect(async () => {
-  //     console.log(await AsyncStorage.getItem('artefactPictureUrl'));
-  //     setImage(downloadImage(await AsyncStorage.getItem('artefactPictureUrl')));
-  // }, []);
+  // Validate input of the item details
+  function validateInput() {
+    if(name === "" || name === null){
+      alert("Please input a name");
+      return false;
+    }
+    if (description === ""){
+      alert("Please give a small description");
+      return false;
+    }
+    if (value === ""){
+      alert("No value inputed");
+      return false;
+    }
+    return true;
+  }
+
+  useEffect(() => {
+    console.log('Im batman');
+  },[])
 
   return (
     <>

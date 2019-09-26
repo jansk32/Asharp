@@ -101,6 +101,7 @@ export default function LoginScreen({ navigation }) {
 		
 	}
 
+	// Validate email textinput
 	function validateInput() {
 		if(email === ''){
 			alert("Email is empty");
