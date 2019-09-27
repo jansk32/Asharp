@@ -1,5 +1,4 @@
 import React from 'react';
-
 // Importing all existing screens for navigation
 import HomeScreen from './components/home-screen';
 import FamilyTreeScreen from './components/family-tree-screen';
@@ -27,6 +26,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 // Import Firebase.
 import * as firebase from 'firebase';
+import { Dimensions } from 'react-native';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -40,6 +40,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
+// Main bottom tab navigator to navigate the main functionalities of the application
 const MainNavigator = createBottomTabNavigator({
 	Timeline: {
 		screen: TimelineScreen,
@@ -72,17 +73,24 @@ const MainNavigator = createBottomTabNavigator({
 		},
 	},
 },
+	// Tab bar configuration
 	{
 		initialRouteName: 'Home',
 		tabBarOptions: {
 			activeTintColor: '#579B93',
 			inactiveTintColor: 'black',
-			showLabel: false,
+			showLabel: true,
 			showIcon: true,
+			// Edit the tab bar style and UI
 			style: {
 				backgroundColor: 'white',
 				borderTopColor: '#579B93',
 				borderTopWidth: .5,
+				height: Dimensions.get('window').height / 14,
+			},
+			// Edit the navigation bar label
+			labelStyle: {
+				fontSize: 12,
 			}
 		},
 		navigationOptions: {
@@ -91,11 +99,13 @@ const MainNavigator = createBottomTabNavigator({
 	},
 );
 
+// Stack navigator for uploading artefact
 const uploadArtefactStack = createStackNavigator({
 	MainNavigator,
 	AddImageDetails: { screen: AddImageDetailsScreen },
 });
 
+// Authentication stack navigator for sign up
 const SignUpStack = createStackNavigator({
 	SignUp1: { screen: SignUp1 },
 	SignUp2: {
@@ -114,26 +124,36 @@ const SignUpStack = createStackNavigator({
 	},
 });
 
+// Stack navigator for looking at item details from gallery
 const itemStack = createStackNavigator({
 	MainNavigator,
-	ItemDetail: { screen: ItemDetailScreen },
 	Gallery: { screen: GalleryScreen },
-})
+	ItemDetail: { screen: ItemDetailScreen },
+});
 
+// Stack navigator for looking at item details from profile
 const itemStackProfile = createStackNavigator({
 	MainNavigator,
-	ItemDetail: { screen: ItemDetailScreen },
 	Profile: { screen: ProfileScreen },
+	ItemDetail: { screen: ItemDetailScreen },
+});
+
+const itemStackTimeline = createStackNavigator({
+	MainNavigator,
+	ItemDetail: {screen: ItemDetailScreen},
+	Timeline: {screen: TimelineScreen}
 })
 
 const Stack = createSwitchNavigator({
-	MainNavigator,	
 	Welcome: { screen: WelcomeScreen },
 	Login: { screen: Login },
+	MainNavigator,
 	SignUpStack,
+	MainNavigator,	
 	uploadArtefactStack,
 	itemStack,
-	itemStackProfile
+	itemStackProfile,
+	itemStackTimeline
 })
 
 const App = createAppContainer(Stack);

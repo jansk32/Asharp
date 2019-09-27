@@ -117,29 +117,37 @@ const formatData = (data, numColumns) => {
 
 export default function ProfileScreen({ navigation }) {
     const { navigate } = navigation;
-    const [profile, setProfile] = useState({});
+    var [profile, setProfile] = useState({});
+    const [artefact, setArtefact] = useState([]);
 
     // Get profile details
-    useEffect(() => {
+    async function getProfile() {
         console.log('Sending request');
         axios.get('http://localhost:3000/user', { withCredentials: true })
         .then((res) => {
             setProfile(res.data);
         })
         .catch(error => console.error(error));
-    }, []);
-    
-    const [artefact, setArtefact] = useState([]);
-
-    // Get all the artefact
-    useEffect(() => {
-        axios.get("http://localhost:3000/artefact")
+    }
+    // Get the artefact of the user
+    async function getArtefact() {
+        console.log(profile);
+        axios.get("http://localhost:3000/artefact/findbyowner/")
         .then((result) => {
             console.log(result.data);
             setArtefact(result.data);
         })
         .catch(err => console.log(error));
-    },[])
+    }
+
+    async function fetchProfile(){
+       await getProfile();
+       await getArtefact();
+    }
+
+    // Get profile and artefacts by owner
+    useEffect( () => { fetchProfile()}, []);
+
     
     // Logout function
     function logout() {
@@ -193,7 +201,7 @@ export default function ProfileScreen({ navigation }) {
                             onPress={() => navigate('Home')}>
                             <Text
                                 style={styles.nameText}>
-                                Profile Setting</Text>
+                                My Family</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.settingButton}>
