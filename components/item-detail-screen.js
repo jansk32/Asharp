@@ -71,7 +71,7 @@ export default function ItemDetailScreen({ navigation }) {
         async function fetchArtefact() {
             const res = await axios.get(`http://localhost:3000/artefact/find/${artefactId}`);
             setArtefact(res.data);
-            console.log("owner id:"+ res.data.owner);
+            // console.log("owner id:"+ res.data.owner);
             const ownerObj = await axios.post('http://localhost:3000/user/artefact', {
                _id: res.data.owner
             });
