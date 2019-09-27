@@ -107,21 +107,24 @@ export default function UploadImageScreen({ navigation }) {
       value: value,
       description: description
 };
+  if (validateInput() === true){
     try {
-          var file = await AsyncStorage.getItem('artefactPictureUrl');
-          // setImage(downloadImage(data.file));
-          console.log(file);
+          data.file = await AsyncStorage.getItem('artefactPictureUrl');
+          setImage(data.file);
 
         } catch (e) {
           ToastAndroid.show('Error getting pictureUrl' , ToastAndroid.SHORT);
         }
     await axios.post('http://localhost:3000/artefact/create', data)
     .then((result) => {if(result) {navigate('Home')}});
+}else{
+  navigate('AddImageDetails');
+}
   }
 
   // Validate input of the item details
   function validateInput() {
-    if(name === "" || name === null){
+    if(name === ""){
       alert("Please input a name");
       return false;
     }
@@ -135,16 +138,23 @@ export default function UploadImageScreen({ navigation }) {
     }
     return true;
   }
-
+  
+  // Initialise image
+  async function getImage() {
+    var file = await AsyncStorage.getItem('artefactPictureUrl')
+    await setImage(file);
+    await console.log(file);
+  }
+  // get image to show on the screen
   useEffect(() => {
-    console.log('Im batman');
-  },[])
+        getImage();
+      },[]);
 
   return (
     <>
       <ScrollView>
         <Image
-        source={image}
+        source={{uri:image}}
         style={{height: 200, width: 200}}
         />
         <View style={styles.container}>

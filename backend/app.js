@@ -106,7 +106,7 @@ app.get('/user', (req, res) => {
 
 // Get user by id for artefacts
 app.post('/user/artefact', (req,res) => {
-	console.log(req.body);
+	// console.log(req.body);
 	userModel.findOne(req.body, (err, result) => {
 		if(err) throw err;
 		res.send(result);
