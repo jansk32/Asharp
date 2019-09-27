@@ -4,7 +4,6 @@ import {
 } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import AsyncStorage from '@react-native-community/async-storage';
-import { validate } from '@babel/types';
 
 const styles = StyleSheet.create({
 	container: {

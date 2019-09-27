@@ -64,13 +64,19 @@ export default function ItemDetailScreen({ navigation }) {
     const { navigate } = navigation;
     var artefactId = navigation.getParam('artefactId');
     const [artefact, setArtefact] = useState({});
+    const [owner, setOwner] = useState('');
 
     // Get all artefacts
     useEffect(() => {
         async function fetchArtefact() {
             const res = await axios.get(`http://localhost:3000/artefact/find/${artefactId}`);
             setArtefact(res.data);
-            console.log(res.data);
+            console.log("owner id:"+ res.data.owner);
+            const ownerObj = await axios.post('http://localhost:3000/user/artefact', {
+               _id: res.data.owner
+            });
+            await setOwner(ownerObj.data.name);
+            // await console.log(ownerObj.data.name);
         }
         fetchArtefact();
     }, []);
@@ -80,7 +86,7 @@ export default function ItemDetailScreen({ navigation }) {
             <View style={styles.container}>
                 <View style={styles.headerDesc}>
                     <Text style={styles.title}>{artefact.name}</Text>
-                    <Text style={styles.owner}>Owned by: {artefact.owner}</Text>
+                    <Text style={styles.owner}>Owned by: {owner}</Text>
                 </View>
                 <Image
                     style={styles.image}

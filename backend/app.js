@@ -15,7 +15,7 @@ passport.use(new LocalStrategy(
 	passwordField: 'password'},
 	function (username, password, done) {
 		userModel.findOne({ email: username }, function (err, found) {
-			console.log(found);
+			// console.log(found);
 			if (err) { return done(err); }
 			// if no username found
 			if (!found) {
@@ -97,11 +97,20 @@ app.get('/', (req, res) => {
 app.get('/user', (req, res) => {
 	// change later
 	let id = req.session.passport.user._id;
-	console.log(req.session.passport.user._id);
+	// console.log(req.session.passport.user._id);
 	userModel.find({ _id: id }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp[0]);
 	});
+})
+
+// Get user by id for artefacts
+app.post('/user/artefact', (req,res) => {
+	console.log(req.body);
+	userModel.findOne(req.body, (err, result) => {
+		if(err) throw err;
+		res.send(result);
+	})
 })
 
 // Create a user
