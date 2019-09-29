@@ -101,6 +101,15 @@ app.get('/user', (req, res) => {
 	});
 })
 
+// Get user by id for artefacts
+app.post('/user/artefact', (req,res) => {
+	// console.log(req.body);
+	userModel.findOne(req.body, (err, result) => {
+		if(err) throw err;
+		res.send(result);
+	})
+})
+
 // Create a user
 app.post('/user/create', ({ body: {
 	name,
@@ -179,15 +188,25 @@ app.post('/artefact/create', ({
 	})
 });
 
-// Assign artefact to a person
-app.put('/user/assign/:id', (req, res) => {
-	userModel.update({ id: req.params.id }, { $push: { artefact: req.body } }, (err, resp) => {
-		if (err) {
-			throw err;
-		}
-		res.send('updated');
+// // Assign artefact to a person
+// app.put('/user/assign/:id', (req, res) => {
+// 	// Update the user with new artefact
+// 	userModel.update({ id: req.params.id }, { $push: { artefact: req.body.id } }, (err, resp) => {
+// 		if (err) {
+// 			throw err;
+// 		}
+// 		res.send('updated');
+// 	})
+// });
+
+// Re-assign artefact to certain user
+app.put('/artefact/assign', (req,res) => {
+	// Request should include id of artefact, and id of new owner
+	artefactModel.updateOne({_id: req.body.id}, {owner : req.body.owner}, (err, resp) => {
+		if (err) throw err;
+		res.send(resp);
 	})
-});
+})
 
 // Get artefact by owner id
 app.get('/artefact/findbyowner/', (req,res) => {
@@ -214,20 +233,33 @@ app.post('/login/local', passport.authenticate('local'),(req,res) => {
 	res.send(req.user);
 });
 
-// app.post('/login/local', (req,res) => {
-// 	console.log(req.body);
-// 	userModel.findOne({userName: req.body.userName}, (err, result) => {
-// 		if(err) throw err;
-// 		console.log(result);
-// 	})
-// }
-// );
+// login success or not 
 
-// Login success or not 
 app.get('login/success/:isFail', (req,res) => {
 	console.log(req.params.isFail);
 	res.send(req.params.isFail);
 })
+
+app.get('/logout', (req,res) => {
+	console.log("logging out");
+	if (req.session) {
+		// delete session object
+		req.session.destroy(function(err) {
+		  if(err) {
+			return next(err);
+		  } else {
+			return res.send("Success");
+		  }
+		});
+	  }
+})
+
+const port = process.env.PORT || 3000;
+app.listen(port);
+console.log('Listening to port ' + port);
+
+module.exports = app;
+
 
 // login Facebook
 // app.get('/login/facebook',
@@ -239,9 +271,3 @@ app.get('login/success/:isFail', (req,res) => {
 // 		// Successful authentication, redirect home.
 // 		res.redirect('/');
 // 	});
-
-const port = process.env.PORT || 3000;
-app.listen(port);
-console.log('Listening to port ' + port);
-
-module.exports = app;

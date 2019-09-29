@@ -149,6 +149,13 @@ export default function ProfileScreen({ navigation }) {
     useEffect( () => { fetchProfile()}, []);
 
     
+    // Logout function
+    function logout() {
+        axios.get('http://localhost:3000/logout')
+        .then((result) => navigate('Welcome'))
+        .catch((err) => console.log(err));
+    }
+
     // Render Item invisible if it's just a placeholder for columns in the grid,
     // if not, render the picture for each grid
     renderItem = ({ item, index }) => {
@@ -199,7 +206,7 @@ export default function ProfileScreen({ navigation }) {
                     </View>
                     <View style={styles.settingButton}>
                         <TouchableOpacity
-                            onPress={() => navigate('Welcome')}>
+                            onPress={logout}>
                             <Text
                                 style={styles.nameText}>
                                 Logout</Text>

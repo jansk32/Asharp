@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
+import { validate } from '@babel/types';
 
 const styles = StyleSheet.create({
 	container: {
@@ -92,7 +93,26 @@ export default function LoginScreen({ navigation }) {
 	// So that sign in screen signups and sends axios req
 	async function goToNextPage() {
 		await storeEmail();
-		navigate('SignUp2');
+		if(validateInput() == true){
+			navigate('SignUp2');
+		} else {
+			navigate('SignUp1');
+		}
+		
+	}
+
+	// Validate email textinput
+	function validateInput() {
+		if(email === ''){
+			alert("Email is empty");
+			return false;
+		}
+		if(email.indexOf('@') === -1){
+			alert("Invalid email");
+			return false;
+		}else{
+			return true;
+		}
 	}
 
 	return (

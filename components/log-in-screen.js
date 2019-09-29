@@ -85,13 +85,17 @@ export default function LoginScreen({ navigation }) {
     console.log(objData);
     axios.post("http://localhost:3000/login/local",objData)
     .then((data) => navigate('Home'))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      alert("Email or Password is incorrect");
+      navigate('Login');
+    });
   };
 
   // Axios third party authentication
   function axiosThirdParty(obj) {
     axios.get("http://localhost:3000/login/facebook")
   }
+
 
   return (
     <>
