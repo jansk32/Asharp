@@ -127,33 +127,21 @@ const SignUpStack = createStackNavigator({
 // Stack navigator for looking at item details from gallery
 const itemStack = createStackNavigator({
 	MainNavigator,
-	Gallery: { screen: GalleryScreen },
-	ItemDetail: { screen: ItemDetailScreen },
-});
-
-// Stack navigator for looking at item details from profile
-const itemStackProfile = createStackNavigator({
-	MainNavigator,
+	Timeline: { screen: TimelineScreen },
 	Profile: { screen: ProfileScreen },
-	ItemDetail: { screen: ItemDetailScreen },
-});
+	Gallery: { screen: GalleryScreen },
+	ItemDetail: { screen: ItemDetailScreen},
+},
+	{
+		headerMode: 'none',
+	});
 
-const itemStackTimeline = createStackNavigator({
-	MainNavigator,
-	ItemDetail: {screen: ItemDetailScreen},
-	Timeline: {screen: TimelineScreen}
-})
-
-const Stack = createSwitchNavigator({
+const Stack = createSwitchNavigator({	
 	Welcome: { screen: WelcomeScreen },
-	Login: { screen: Login },
-	MainNavigator,
 	SignUpStack,
-	MainNavigator,	
+	Login: { screen: Login },
+	itemStack,	
 	uploadArtefactStack,
-	itemStack,
-	itemStackProfile,
-	itemStackTimeline
 })
 
 const App = createAppContainer(Stack);
