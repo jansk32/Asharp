@@ -1,9 +1,13 @@
-import React, { useState, Component } from 'react';
-import { View, PanResponder, Dimensions } from 'react-native';
+import React, { useState, useEffect, Component } from 'react';
+import { View, PanResponder, Dimensions, ToastAndroid } from 'react-native';
 import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text } from 'react-native-svg';
-import generateFamilyTree, { family, mainDrawLines } from '../build-family-tree';
+import generateFamilyTree, { mainDrawLines } from '../build-family-tree';
+import axios from 'axios';
+import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
+const { SlideInMenu } = renderers;
 
-/* SVG panning and zooming was taken from https://snack.expo.io/@msand/svg-pinch-to-pan-and-zoom
+const NODE_RADIUS = 50;
+/* SVG panning and zooming is taken from https://snack.expo.io/@msand/svg-pinch-to-pan-and-zoom
  * Written by Mikael Sand */
 
 function calcDistance(x1, y1, x2, y2) {
@@ -28,6 +32,7 @@ class ZoomableSvg extends Component {
 		zoom: 1,
 		left: 0,
 		top: 0,
+		isGesture: false,
 	};
 
 	processPinch(x1, y1, x2, y2) {
@@ -93,37 +98,80 @@ class ZoomableSvg extends Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this._panResponder = PanResponder.create({
-			onPanResponderGrant: () => { },
-			onPanResponderTerminate: () => { },
-			onMoveShouldSetPanResponder: () => true,
 			onStartShouldSetPanResponder: () => true,
+			onStartShouldSetPanResponderCapture: () => true,
+			onMoveShouldSetPanResponder: () => true,
+			onMoveShouldSetPanResponderCapture: () => true,
+			onPanResponderGrant: (e, gesture) => {
+				const { locationX, locationY } = e.nativeEvent;
+				const viewBoxSize = 1200;
+				const { height, width } = this.props;
+				const { left, top, zoom } = this.state;
+				const resolution = viewBoxSize / Math.min(height, width);
+
+				const tapX = (locationX - left) * resolution / zoom;
+				const tapY = (locationY - top) * resolution / zoom;
+
+				// Look for any node that was tapped
+				const tappedNode = this.props.familyTree.find(node => Math.hypot(node.x - tapX, node.y - tapY) <= NODE_RADIUS);
+				if (tappedNode) {
+					this.setState({ tappedNode });
+					// Set long press timeout to open menu if a node was tapped
+					const LONG_PRESS_DURATION = 1000;
+					this.longPressTimeout = setTimeout(() => {
+						this.props.ctx.menuActions.openMenu('menu');
+						// Null long press timeout to signal that the timeout has been resolved
+						// so on touch release, a tap isn't registered
+						this.longPressTimeout = null;
+					}, LONG_PRESS_DURATION);
+				}
+			},
+			onPanResponderTerminate: () => { },
 			onShouldBlockNativeResponder: () => true,
 			onPanResponderTerminationRequest: () => true,
-			onMoveShouldSetPanResponderCapture: () => true,
-			onStartShouldSetPanResponderCapture: () => true,
-			onPanResponderMove: evt => {
-				const touches = evt.nativeEvent.touches;
-				const length = touches.length;
-				if (length === 1) {
-					const [{ locationX, locationY }] = touches;
-					this.processTouch(locationX, locationY);
-				} else if (length === 2) {
-					const [touch1, touch2] = touches;
-					this.processPinch(
-						touch1.locationX,
-						touch1.locationY,
-						touch2.locationX,
-						touch2.locationY
-					);
+			onPanResponderMove: (evt, gesture) => {
+				if (this.state.isGesture) {
+					const touches = evt.nativeEvent.touches;
+					const length = touches.length;
+					if (length === 1) {
+						const [{ locationX, locationY }] = touches;
+						this.processTouch(locationX, locationY);
+					} else if (length === 2) {
+						const [touch1, touch2] = touches;
+						this.processPinch(
+							touch1.locationX,
+							touch1.locationY,
+							touch2.locationX,
+							touch2.locationY
+						);
+					}
+				} else {
+					if (Math.hypot(gesture.dx, gesture.dy) > 5) {
+						this.setState({ isGesture: true });
+						clearTimeout(this.longPressTimeout);
+					}
 				}
 			},
 			onPanResponderRelease: () => {
+				clearTimeout(this.longPressTimeout);
+
 				this.setState({
 					isZooming: false,
 					isMoving: false,
+					isGesture: false,
 				});
+
+				if (!this.state.isGesture) {
+					if (this.state.tappedNode && this.longPressTimeout) {
+						// Register touch release as a tap if long press timeout hasn't
+						// been nulled by itself which means it hasn't resolved
+
+						// Go to family member details page
+						alert('Navigating to family member details page of ' + this.state.tappedNode.id);
+					}
+				}
 			},
 		});
 	}
@@ -133,13 +181,22 @@ class ZoomableSvg extends Component {
 		const { height, width, familyTree, lines } = this.props;
 		const { left, top, zoom } = this.state;
 		const resolution = viewBoxSize / Math.min(height, width);
+
 		return (
 			<View {...this._panResponder.panHandlers}>
+				<Menu name="menu" renderer={SlideInMenu}>
+					<MenuTrigger>
+					</MenuTrigger>
+					<MenuOptions customStyles={{ optionText: { fontSize: 30, margin: 8 } }}>
+						<MenuOption onSelect={() => alert('Adding spouse to ' + this.state.tappedNode.id)} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
+						<MenuOption onSelect={() => alert('Adding a child')} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
+					</MenuOptions>
+				</Menu>
 				<Svg
 					width={width}
 					height={height}
 					viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
-					preserveAspectRatio="xMinYMin meet">
+					preserveAspectRatio="xMinYMin meet" >
 					<G
 						transform={{
 							translateX: left * resolution,
@@ -169,12 +226,11 @@ class ZoomableSvg extends Component {
 }
 
 function Node({ cx, cy, id }) {
-	const radius = 50;
 	return (
 		<>
 			<Defs>
 				<ClipPath id={id.toString()}>
-					<Circle cx={cx} cy={cy} r={radius} />
+					<Circle cx={cx} cy={cy} r={NODE_RADIUS} />
 				</ClipPath>
 			</Defs>
 
@@ -187,12 +243,14 @@ function Node({ cx, cy, id }) {
                 clipPath={`url(#${id})`}
             /> */}
 
+
 			<Circle
 				cx={cx}
 				cy={cy}
-				r={radius}
+				r={NODE_RADIUS}
 				stroke="black"
 				fill="white"
+				onLongPress={() => alert('long press')}
 			/>
 
 			<Text
@@ -209,23 +267,39 @@ function Node({ cx, cy, id }) {
 	);
 }
 
-export default function FamilyTreeScreen() {
-	const [familyTreeInfo] = useState(() => generateFamilyTree(family, 'th'));
-	const [familyTree] = useState(familyTreeInfo.familyTree);
-	const [ancestors] = useState(familyTreeInfo.ancestors);
-	const [lines] = useState(() => mainDrawLines(familyTree, ancestors));
+function FamilyTreeScreen({ ctx }) {
+	const [familyTree, setFamilyTree] = useState([]);
+	const [lines, setLines] = useState([]);
 
 	const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
+	useEffect(() => {
+		async function fetchFamilyMembers() {
+			const res = await axios.get('http://localhost:3000/family-member');
+			const familyMembers = res.data;
+			const familyTreeInfo = generateFamilyTree(familyMembers, 'th');
+			const familyTree = familyTreeInfo.familyTree;
+			const ancestors = familyTreeInfo.ancestors;
+			const lines = mainDrawLines(familyTree, ancestors);
+
+			setFamilyTree(familyTree);
+			setLines(lines);
+		}
+		fetchFamilyMembers();
+	}, []);
 
 	return (
 		<ZoomableSvg
 			width={screenWidth}
 			height={screenHeight}
 			familyTree={familyTree}
-			lines={lines} />
+			lines={lines}
+			ctx={ctx} />
 	);
 }
 
 FamilyTreeScreen.navigationOptions = {
 	title: 'Family tree'
 };
+
+export default withMenuContext(FamilyTreeScreen);

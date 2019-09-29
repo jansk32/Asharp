@@ -14,6 +14,8 @@ import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
 
+import { MenuProvider } from 'react-native-popup-menu';
+
 // Import react navigation tools
 import {
 	createBottomTabNavigator,
@@ -119,24 +121,30 @@ const itemStack = createStackNavigator({
 	MainNavigator,
 	ItemDetail: { screen: ItemDetailScreen },
 	Gallery: { screen: GalleryScreen },
-})
+});
 
 const itemStackProfile = createStackNavigator({
 	MainNavigator,
 	ItemDetail: { screen: ItemDetailScreen },
 	Profile: { screen: ProfileScreen },
-})
+});
 
 const Stack = createSwitchNavigator({
+	MainNavigator,
 	Welcome: { screen: WelcomeScreen },
 	Login: { screen: Login },
 	SignUpStack,
-	MainNavigator,
 	uploadArtefactStack,
 	itemStack,
 	itemStackProfile
-})
+});
 
-const App = createAppContainer(Stack);
+const NavigationContainer = createAppContainer(Stack);
+
+const App = () => (
+	<MenuProvider>
+		<NavigationContainer />
+	</MenuProvider>
+);
 
 export default App;
