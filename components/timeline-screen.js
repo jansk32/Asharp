@@ -26,18 +26,22 @@ export default function TimelineScreen({ navigation }) {
 		fetchArtefacts();
     }, []);
 	
-  // Sort date in descending order in the timeline
 	const formatData = (data) => {
+		// Sort date in descending order in the timeline
 		data.sort(function (a, b) {
-			if (a.date === b.date) {
-				b.date = '';
-			}
-			// Change the name to time so we cann edit
-			a.time = Moment(a.date).format("DD-MM-YYYY");
-			b.time = Moment(b.date).format("DD-MM-YYYY");
-			return a.time > b.time ? 1 : -1;
+			return a.date > b.date ? -1 : 1;
 		});
-		return data.reverse();
+		
+		// Format date DD-MM-YYYY
+		data.forEach(entry => {entry.time = Moment(entry.date).format("DD-MM-YYYY")});
+
+		// Display only one date under several artefacts with the same date
+		for (let i = data.length - 1; i > 0; i--) {
+			if (data[i].time === data[i-1].time) {
+				data[i].time = '';
+			} 
+		}
+		return data;
 	};
 
 	// Custom render event title and event description
