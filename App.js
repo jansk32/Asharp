@@ -14,6 +14,7 @@ import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
 import AddFamilyMemberScreen from './components/add-family-member-screen';
+import ViewFamilyMemberScreen from './components/view-family-member-screen';
 // Import react navigation tools
 import {
 	createBottomTabNavigator,
@@ -140,6 +141,8 @@ const addMemberStack = createStackNavigator({
 })
 
 const Stack = createSwitchNavigator({
+	AddFamilyMember: {screen: AddFamilyMemberScreen},
+	// viewFamilyMember: {screen: ViewFamilyMemberScreen},
 	MainNavigator,
 	Welcome: { screen: WelcomeScreen },
 	Login: { screen: Login },
