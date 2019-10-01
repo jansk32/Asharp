@@ -56,6 +56,7 @@ export default function ProfileSettingScreen({ navigation }) {
       .then((result) => {
         console.log(result.data);
 		setUser(result.data);
+		setImage({uri : result.data.pictureUrl});
       });
     // await console.log(user);
   }
@@ -86,10 +87,10 @@ export default function ProfileSettingScreen({ navigation }) {
     <>
       <ScrollView>
         <View style={styles.container}>
-          <Image source={{ uri: user.pictureUrl }} style={styles.imageStyle} />
+          <Image source={{ uri: image.uri}} style={styles.imageStyle} />
           <View style={styles.buttonBox}>
             <TouchableOpacity
-              onPress={async () => setImage(await pickImage())}>
+              onPress={async () => await setImage(await pickImage())}>
               <View style={styles.picButton}>
                 <Text
                   style={styles.text}>
