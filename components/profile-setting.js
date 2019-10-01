@@ -62,6 +62,7 @@ export default function ProfileSettingScreen({ navigation }) {
   }
 
   // Post profile
+  // TODO: FIX ERROR -> AFTER CHANGING SETTING, RELOGIN THE PERSON
   async function updateProfile() {
     await validateInput();
     // Upload current image
@@ -75,7 +76,7 @@ export default function ProfileSettingScreen({ navigation }) {
 	  console.log(newImage);
     } : image;
 	await console.log(data);
-    let updatedData = await axios.post("http://localhost:3000/user/update", data)
+    let updatedData = await axios.put("http://localhost:3000/user/update", data)
     console.log(updatedData);
   }
 
@@ -118,9 +119,9 @@ export default function ProfileSettingScreen({ navigation }) {
                 date={dob}
                 mode="date"
                 placeholder={Moment(user.dob).format('L')}
-                format="DD-MM-YYYY"
-                minDate="01-01-1900"
-                maxDate="01-01-2019"
+                format="YYYY-MM-DD"
+                minDate="1900-01-01"
+                maxDate="2019-01-01"
                 confirmBtnText="Confirm"
                 cancelBtnText="Cancel"
                 androidMode="spinner"

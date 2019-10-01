@@ -197,7 +197,7 @@ export default function UploadImageScreen({ navigation }) {
       						/>
             </View>
             <View style={styles.usernameBox}>
-              <Text style={styles.text}>Desription</Text>
+              <Text style={styles.text}>Description</Text>
               <View style={styles.textInput}>
                 <TextInput
                   placeholder='Describe the item.'

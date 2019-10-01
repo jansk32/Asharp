@@ -139,7 +139,9 @@ app.post('/user/create', ({ body: {
 app.put('/user/update', (req,res) => {
 	let id = req.session.passport.user._id;
 	console.log(req.body);
-	userModel.updateOne({_id: id}, {$set: req.body}, (err,result) => {
+	console.log(req.params);
+	console.log(req.query);
+	userModel.findOneAndUpdate({_id: id}, req.body, (err,result) => {
 		if(err) throw err;
 		res.send(result);
 	})
@@ -224,8 +226,6 @@ app.get('/artefact/findbyowner/', (req,res) => {
 
 // login local
 app.post('/login/local', passport.authenticate('local'),(req,res) => {
-	console.log("posted");
-	console.log(req.user);
 	res.send(req.user);
 });
 
