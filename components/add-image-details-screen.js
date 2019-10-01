@@ -202,6 +202,8 @@ export default function UploadImageScreen({ navigation }) {
                 <TextInput
                   placeholder='Describe the item.'
                   onChangeText={setDescription}
+                  maxLength={40}
+                  multiline={true}
                 />
               </View>
             </View>
@@ -211,6 +213,8 @@ export default function UploadImageScreen({ navigation }) {
                 <TextInput
                   placeholder='Write down the memory and value this item holds.'
                   onChangeText= {setValue}
+                  maxLength={40}
+                  multiline={true}
                 />
               </View>
             </View>
