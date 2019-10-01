@@ -11,7 +11,8 @@ const userSchema = new mongoose.Schema({
     father: String,
     mother: String,
     artefact: [String],
-    pictureUrl: String 
+    pictureUrl: String,
+    isUser: Boolean
 });
 
 module.exports = userSchema;

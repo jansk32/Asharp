@@ -112,8 +112,9 @@ app.post('/user/create', ({ body: {
 	father,
 	mother,
 	artefact,
-	pictureUrl } }, res) => {
-	const user = userModel({
+	pictureUrl,
+	isUser} }, res) => {
+	let user = userModel({
 		name,
 		userName,
 		dob,
@@ -124,9 +125,9 @@ app.post('/user/create', ({ body: {
 		father,
 		mother,
 		artefact,
-		pictureUrl
+		pictureUrl,
+		isUser
 	});
-
 	user.save((err, resp) => {
 		if (err) {
 			throw err;
