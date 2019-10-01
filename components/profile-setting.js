@@ -39,7 +39,7 @@ export default function ProfileSettingScreen({ navigation }) {
       return false;
     }
     // Check if old password is the same as the new password
-    if (use.password !== oldPassword) {
+    if (user.password !== oldPassword) {
       alert("Old password does not match! >:)");
       return false;
     }
@@ -144,8 +144,8 @@ export default function ProfileSettingScreen({ navigation }) {
               <TextInput
                 placeholder={'Enter Old Password'}
                 secureTextEntry={true}
-                onChangeText={setPassword}
-                value={password}
+                onChangeText={setOldPassword}
+                value={oldPassword}
                 style={styles.textInput}
               />
             </View>
