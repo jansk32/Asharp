@@ -87,11 +87,7 @@ export default function ProfileSettingScreen({ navigation }) {
     <>
       <ScrollView>
         <View style={styles.container}>
-<<<<<<< HEAD
           <Image source={{ uri: image.uri}} style={styles.imageStyle} />
-=======
-          <Image source={image} style={styles.imageStyle} />
->>>>>>> 96f994fd878be7be99cd58b03714f0e05cc24cc8
           <View style={styles.buttonBox}>
             <TouchableOpacity
               onPress={async () => await setImage(await pickImage())}>
