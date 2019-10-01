@@ -92,9 +92,8 @@ app.get('/user', (req, res) => {
 })
 
 // Get user by id for artefacts
-app.post('/user/artefact', (req,res) => {
-	// console.log(req.body);
-	userModel.findOne(req.body, (err, result) => {
+app.get('/user/artefact', (req,res) => {
+	userModel.findOne(req.query, (err, result) => {
 		if(err) throw err;
 		res.send(result);
 	})
@@ -212,11 +211,6 @@ app.get('/artefact/findbyowner/', (req,res) => {
 // the front end will make only one request to the back end
 
 
-// Login page [in progress]
-app.get('/login', (req, res) => {
-
-});
-
 // login local
 app.post('/login/local', passport.authenticate('local'),(req,res) => {
 	console.log("posted");
@@ -225,11 +219,10 @@ app.post('/login/local', passport.authenticate('local'),(req,res) => {
 });
 
 // login success or not 
-
-app.get('login/success/:isFail', (req,res) => {
-	console.log(req.params.isFail);
-	res.send(req.params.isFail);
-})
+// app.get('login/success/:isFail', (req,res) => {
+// 	console.log(req.params.isFail);
+// 	res.send(req.params.isFail);
+// })
 
 app.get('/logout', (req,res) => {
 	console.log("logging out");
