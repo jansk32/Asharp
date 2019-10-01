@@ -134,6 +134,16 @@ app.post('/user/create', ({ body: {
 		res.send(resp);
 	})
 })
+
+// Update user
+app.put('/user/update', (req,res) => {
+	let id = req.session.passport.user._id;
+	userModel.updateOne({_id: id}, {$set: req.body}, (err,result) => {
+		if(err) throw err;
+		res.send(result);
+	})
+})
+
 // Get ALL artefacts
 app.get('/artefact', (req,res) => {
 	artefactModel.find({}, (err,result) => {
