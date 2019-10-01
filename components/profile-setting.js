@@ -69,11 +69,12 @@ export default function ProfileSettingScreen({ navigation }) {
     await name !== '' ? data.name = name : name;
     await dob !== '' ? data.dob = dob : dob;
     await password !== '' ? data.password = password : password;
-    await image !== {} ? async function () {
+    await image !== user.pictureUrl ? async function () {
       let newImage = await uploadImage(image.uri);
-      data.pictureUrl = newImage;
+	  data.pictureUrl = newImage;
+	  console.log(newImage);
     } : image;
-
+	await console.log(data);
     let updatedData = await axios.post("http://localhost:3000/user/update", data)
     console.log(updatedData);
   }

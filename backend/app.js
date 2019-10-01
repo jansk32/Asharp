@@ -82,7 +82,7 @@ app.get('/', (req, res) => {
 	res.send('Hello World');
 })
 
-// get a user
+// Get a user
 app.get('/user', (req, res) => {
 	let id = req.session.passport.user._id;
 	userModel.find({ _id: id }, (err, resp) => {
@@ -138,6 +138,7 @@ app.post('/user/create', ({ body: {
 // Update user
 app.put('/user/update', (req,res) => {
 	let id = req.session.passport.user._id;
+	console.log(req.body);
 	userModel.updateOne({_id: id}, {$set: req.body}, (err,result) => {
 		if(err) throw err;
 		res.send(result);
