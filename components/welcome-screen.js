@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Dimensions, ToastAndroid } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import { axiosLocal } from './log-in-screen';
 
 const styles = StyleSheet.create({
     title: {
@@ -40,17 +42,33 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'space-evenly',
         alignItems: 'center',
-		paddingVertical: '5%',
+        paddingVertical: '5%',
     },
     buttonText: {
-		fontSize: 16,
-		textAlign: 'center',
-	},
+        fontSize: 16,
+        textAlign: 'center',
+    },
 });
 
 // Welcome screen to go to login and sign in
 export default function WelcomeScreen({ navigation }) {
     const { navigate } = navigation;
+
+    useEffect(() => {
+        async function rememberLogin() {
+            ToastAndroid.show('Retrieving stored credentials', ToastAndroid.SHORT);
+            const email = await AsyncStorage.getItem('email');
+            const password = await AsyncStorage.getItem('password');
+            if (await axiosLocal({email, password})) {
+                ToastAndroid.show('Successfully logged in with stored credentials', ToastAndroid.SHORT);
+                navigate('Home');
+            } else {
+                alert('Stored credentials are no longer valid, please log in again');
+            }
+        }
+        rememberLogin();
+    });
+
     return (
         <>
             <View style={styles.container}>

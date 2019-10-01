@@ -97,14 +97,26 @@ app.get('/', (req, res) => {
 
 /* User routes */
 
-// Get a user by id
+// Get a user
 app.get('/user', (req, res) => {
-	// change later
-	let id = req.session.passport.user._id;
+	// Change later
+	const id = req.session.passport.user._id;
 	console.log(req.session.passport.user._id);
 	userModel.find({ _id: id }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp[0]);
+	});
+});
+
+// Get limited information about another user
+app.get('/user/find/:id', (req, res) => {
+	userModel.findById(req.params.id, (err, user) => {
+		if (err) {
+			throw err;
+		}
+		delete user.email;
+		delete user.password;
+		res.send(user);
 	});
 });
 
@@ -145,7 +157,133 @@ app.post('/user/create', ({ body: {
 
 // Get all users (registered and non-registered)
 // The front end will decide which ones are relevant to the user
-app.get('/user', (req, res) => {
+app.get('/users', (req, res) => {
+	const family = [{
+		_id: 'th',
+		gender: 'm',
+		m: 'yb',
+		f: 'ah'
+	}, {
+		_id: 'fh',
+		gender: 'f',
+		spouse: 'mg',
+		m: 'yb',
+		f: 'ah'
+	}, {
+		_id: 'mg',
+		gender: 'm',
+		spouse: 'fh'
+	}, {
+		_id: 'yb',
+		gender: 'f',
+		spouse: 'ah',
+		m: 'pp',
+		f: 'gg'
+	}, {
+		_id: 'vb',
+		gender: 'f',
+		spouse: 'tk',
+		m: 'pp',
+		f: 'gg'
+	}, {
+		_id: 'tk',
+		gender: 'm',
+		spouse: 'vb',
+	}, {
+		_id: 'j0',
+		gender: 'm',
+		m: 'vb',
+		f: 'tk'
+	}, {
+		_id: 'j1',
+		gender: 'f',
+		m: 'vb',
+		f: 'tk'
+	}, {
+		_id: 'j2',
+		gender: 'f',
+		m: 'vb',
+		f: 'tk'
+	}, {
+		_id: 'lb',
+		gender: 'f',
+		spouse: 'ak',
+		m: 'pp',
+		f: 'gg'
+	}, {
+		_id: 'ak',
+		gender: 'm',
+		spouse: 'lb',
+	}, {
+		_id: 'ad',
+		gender: 'm',
+		m: 'lb',
+		f: 'ak'
+	}, {
+		_id: 'nd',
+		gender: 'f',
+		m: 'lb',
+		f: 'ak'
+	}, {
+		_id: 'ah',
+		gender: 'm',
+		spouse: 'yb',
+		m: 'gm',
+		f: 'gf'
+	}, {
+		_id: 'lh',
+		gender: 'f',
+		spouse: 'jk',
+		f: 'gf',
+		m: 'gm'
+	}, {
+		_id: 'jk',
+		gender: 'm',
+		spouse: 'lh'
+	}, {
+		_id: 'dh',
+		gender: 'm',
+		spouse: 'yh',
+		m: 'gm',
+		f: 'gf'
+	}, {
+		_id: 'yh',
+		gender: 'f',
+		spouse: 'dh'
+	}, {
+		_id: 'pp',
+		gender: 'f',
+		spouse: 'gg'
+	},
+	{
+		_id: 'gg',
+		gender: 'm',
+		spouse: 'pp'
+	},
+	{
+		_id: 'gm',
+		gender: 'f',
+		spouse: 'gf',
+		f: 'ggf',
+		m: 'ggm'
+	}, {
+		_id: 'ggf',
+		gender: 'm',
+		spouse: 'ggm'
+	}, {
+		_id: 'ggm',
+		gender: 'f',
+		spouse: 'ggf'
+	}, {
+		_id: 'gf',
+		gender: 'm',
+		spouse: 'gm'
+	},
+	];
+
+	// res.send(family);
+	// return;
+
 	userModel.find({}, (err, result) => {
 		if (err) {
 			throw err;

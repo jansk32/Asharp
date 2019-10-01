@@ -169,7 +169,8 @@ class ZoomableSvg extends Component {
 						// been nulled by itself which means it hasn't resolved
 
 						// Go to family member details page
-						alert('Navigating to family member details page of ' + this.state.tappedNode.id);
+						const {navigate} = this.props;
+						navigate('ViewFamilyMember', {userId: this.state.tappedNode._id});
 					}
 				}
 			},
@@ -188,7 +189,7 @@ class ZoomableSvg extends Component {
 					<MenuTrigger>
 					</MenuTrigger>
 					<MenuOptions customStyles={{ optionText: { fontSize: 30, margin: 8 } }}>
-						<MenuOption onSelect={() => alert('Adding spouse to ' + this.state.tappedNode.id)} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
+						<MenuOption onSelect={() => navigate('AddFamilyMember', {linkedNode: this.state.tappedNode})} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
 						<MenuOption onSelect={() => alert('Adding a child')} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
 					</MenuOptions>
 				</Menu>
@@ -204,7 +205,7 @@ class ZoomableSvg extends Component {
 							scale: zoom,
 						}}>
 						{
-							familyTree.map(node => <Node cx={node.x} cy={node.y} id={node.id} key={node.id} />)
+							familyTree.map(node => <Node cx={node.x} cy={node.y} _id={node._id} key={node._id} />)
 						}
 						{
 							lines.map((line, i) =>
@@ -225,11 +226,11 @@ class ZoomableSvg extends Component {
 	}
 }
 
-function Node({ cx, cy, id }) {
+function Node({ cx, cy, _id }) {
 	return (
 		<>
 			<Defs>
-				<ClipPath id={id.toString()}>
+				<ClipPath id={_id.toString()}>
 					<Circle cx={cx} cy={cy} r={NODE_RADIUS} />
 				</ClipPath>
 			</Defs>
@@ -261,13 +262,14 @@ function Node({ cx, cy, id }) {
 				fontSize="30"
 				textAnchor="middle"
 			>
-				{id}
+				{_id}
 			</Text>
 		</>
 	);
 }
 
-function FamilyTreeScreen({ ctx }) {
+function FamilyTreeScreen({ ctx, navigation }) {
+	const {navigate} = navigation;
 	const [familyTree, setFamilyTree] = useState([]);
 	const [lines, setLines] = useState([]);
 
@@ -275,9 +277,16 @@ function FamilyTreeScreen({ ctx }) {
 
 	useEffect(() => {
 		async function fetchFamilyMembers() {
-			const res = await axios.get('http://localhost:3000/family-member');
-			const familyMembers = res.data;
-			const familyTreeInfo = generateFamilyTree(familyMembers, 'th');
+			const res = await axios.get('http://localhost:3000/users');
+			let familyMembers = res.data;
+			familyMembers = familyMembers.filter(node => node.email === 'New');
+			console.log(familyMembers);
+
+			// Get user document of current user
+			const userRes = await axios.get('http://localhost:3000/user', { withCredentials: true });
+			const user = userRes.data;
+
+			const familyTreeInfo = generateFamilyTree(familyMembers, user._id);
 			const familyTree = familyTreeInfo.familyTree;
 			const ancestors = familyTreeInfo.ancestors;
 			const lines = mainDrawLines(familyTree, ancestors);
@@ -294,7 +303,8 @@ function FamilyTreeScreen({ ctx }) {
 			height={screenHeight}
 			familyTree={familyTree}
 			lines={lines}
-			ctx={ctx} />
+			ctx={ctx}
+			navigate={navigate} />
 	);
 }
 

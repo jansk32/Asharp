@@ -139,23 +139,22 @@ const itemStackTimeline = createStackNavigator({
 
 const addMemberStack = createStackNavigator({
 	MainNavigator,
+	FamilyTree: {screen: FamilyTreeScreen},
 	AddFamilyMember: {screen: AddFamilyMemberScreen},
-	FamilyTree: {screen: FamilyTreeScreen}
-})
+});
 
 const Stack = createSwitchNavigator({
-	AddFamilyMember: {screen: AddFamilyMemberScreen},
-	// viewFamilyMember: {screen: ViewFamilyMemberScreen},
-	MainNavigator,
 	Welcome: { screen: WelcomeScreen },
 	Login: { screen: Login },
 	SignUpStack,
+	addMemberStack,
+	ViewFamilyMember: {screen: ViewFamilyMemberScreen},
 	uploadArtefactStack,
 	itemStack,
 	itemStackProfile,
 	itemStackTimeline,
 	addMemberStack,
-})
+});
 
 const NavigationContainer = createAppContainer(Stack);
 

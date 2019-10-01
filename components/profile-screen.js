@@ -133,7 +133,7 @@ export default function ProfileScreen({ navigation }) {
 
     // Get all the artefact
     useEffect(() => {
-        axios.get("http://localhost:3000/artefact")
+        axios.get('http://localhost:3000/artefact')
         .then((result) => {
             console.log(result.data);
             setArtefact(result.data);
