@@ -55,7 +55,7 @@ export default function ProfileSettingScreen({ navigation }) {
     await axios.get("http://localhost:3000/user")
       .then((result) => {
         console.log(result.data);
-		setUser(result.data);
+        setUser(result.data);
       });
     // await console.log(user);
   }
@@ -86,37 +86,39 @@ export default function ProfileSettingScreen({ navigation }) {
     <>
       <ScrollView>
         <View style={styles.container}>
-          <Image source={{ uri: user.pictureUrl }} style={styles.imageStyle} />
+          <Image source={image} style={styles.imageStyle} />
           <View style={styles.buttonBox}>
             <TouchableOpacity
               onPress={async () => setImage(await pickImage())}>
               <View style={styles.picButton}>
                 <Text
-                  style={styles.text}>
+                  style={styles.buttonText}>
                   Pick Picture
               </Text>
               </View>
             </TouchableOpacity>
           </View>
+          <View style={styles.inputBox}>
             <View style={styles.inputElem}>
-              <Text style={styles.text}>Name</Text>
-              <View style={styles.textInput}>
-                <TextInput
-                  placeholder={user.name}
-                  onChangeText={setName}
-                  value={name}
-                />
-              </View>
+              <Text style={styles.text}>Full Name:</Text>
+              <TextInput
+                placeholder={user.name}
+                onChangeText={setName}
+                value={name}
+                style={styles.textInput}
+              />
             </View>
             <View style={styles.inputElem}>
+              <Text style={styles.text}>Date of Birth:</Text>
+
               <DatePicker
-                style={styles.dateInput}
+                style={styles.dateInputs}
                 date={dob}
                 mode="date"
                 placeholder={Moment(user.dob).format('L')}
                 format="DD-MM-YYYY"
-                minDate="1900-01-01"
-                maxDate="2019-01-01"
+                minDate="01-01-1900"
+                maxDate="01-01-2019"
                 confirmBtnText="Confirm"
                 cancelBtnText="Cancel"
                 androidMode="spinner"
@@ -128,35 +130,36 @@ export default function ProfileSettingScreen({ navigation }) {
                     marginLeft: 0
                   },
                   dateInput: {
-                    marginLeft: 36
+                    // borderColor: 'white',
                   }
                 }}
+                showIcon={false}
                 onDateChange={setDob}
                 value={dob}
               />
             </View>
             <View style={styles.inputElem}>
-              <Text style={styles.text}>Old Password</Text>
-              <View style={styles.textInput}>
-                <TextInput
-                  placeholder={'Enter Old Password'}
-                  secureTextEntry={true}
-                  onChangeText={setPassword}
-                  value={password}
-                />
-              </View>
+              <Text style={styles.text}>Old Password:</Text>
+              <TextInput
+                placeholder={'Enter Old Password'}
+                secureTextEntry={true}
+                onChangeText={setPassword}
+                value={password}
+                style={styles.textInput}
+              />
             </View>
             <View style={styles.inputElem}>
-              <Text style={styles.text}> New Password</Text>
-              <View style={styles.textInput}>
-                <TextInput
-                  placeholder='Enter New Password'
-                  secureTextEntry={true}
-                  onChangeText={setPassword}
-                  value={password}
-                />
-              </View>
+              <Text style={styles.text}> New Password:</Text>
+              <TextInput
+                placeholder='Enter New Password'
+                secureTextEntry={true}
+                onChangeText={setPassword}
+                value={password}
+                style={styles.textInput}
+              />
             </View>
+          </View>
+
           <TouchableOpacity
             onPress={() => {
               updateProfile();
@@ -186,6 +189,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
     textAlign: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  buttonText: {
+    fontSize: 16,
+    color: 'black',
+    textAlign: 'center',
+    justifyContent: 'center',
   },
   whiteText: {
     fontSize: 20,
@@ -234,9 +245,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flex: 1,
   },
-  text: {
-    fontSize: 18,
-  },
   whiteText: {
     fontSize: 20,
     color: 'white',
@@ -244,7 +252,8 @@ const styles = StyleSheet.create({
   },
   inputBox: {
     justifyContent: 'space-between',
-    padding: 40,
+    paddingHorizontal: 40,
+    marginBottom: 40,
   },
   redButton: {
     backgroundColor: '#EC6268',
@@ -255,18 +264,22 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   textInput: {
-    paddingLeft: 10,
-    borderBottomColor: 'black',
-    borderBottomWidth: 0.5,
-  },
-  dateInput: {
+    borderColor: 'black',
+    borderWidth: 0.5,
+    borderRadius: 3,
     alignContent: 'center',
-    marginTop: 10,
-    width: 330,
+    padding: 5,
+    paddingLeft: 10,
+    width: Dimensions.get('window').width / 2,
+  },
+  dateInputs: {
+    alignContent: 'center',
+    width: Dimensions.get('window').width / 2,
   },
   inputElem: {
-    // marginBottom: 18,
+    marginBottom: 18,
     flexDirection: 'row',
+    justifyContent: 'space-between',
   }
 }
 )
