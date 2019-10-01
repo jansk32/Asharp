@@ -76,16 +76,6 @@ app.use(session({
 }))
 
 
-// app.use(function(req, res, next) {
-// 	res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-// 	res.header(
-// 		'Access-Control-Allow-Headers',
-// 		'Origin, X-Requested-With, Content-Type, Accept'
-// 	);
-// 	next();
-// });
-
-
 // need to change this later not sure to what though
 // '/' should be the home page 
 app.get('/', (req, res) => {
@@ -102,9 +92,8 @@ app.get('/user', (req, res) => {
 })
 
 // Get user by id for artefacts
-app.post('/user/artefact', (req,res) => {
-	// console.log(req.body);
-	userModel.findOne(req.body, (err, result) => {
+app.get('/user/artefact', (req,res) => {
+	userModel.findOne(req.query, (err, result) => {
 		if(err) throw err;
 		res.send(result);
 	})
@@ -122,8 +111,9 @@ app.post('/user/create', ({ body: {
 	father,
 	mother,
 	artefact,
-	pictureUrl } }, res) => {
-	const user = userModel({
+	pictureUrl,
+	isUser} }, res) => {
+	let user = userModel({
 		name,
 		userName,
 		dob,
@@ -134,9 +124,9 @@ app.post('/user/create', ({ body: {
 		father,
 		mother,
 		artefact,
-		pictureUrl
+		pictureUrl,
+		isUser
 	});
-
 	user.save((err, resp) => {
 		if (err) {
 			throw err;
@@ -144,6 +134,16 @@ app.post('/user/create', ({ body: {
 		res.send(resp);
 	})
 })
+
+// Update user
+app.put('/user/update', (req,res) => {
+	let id = req.session.passport.user._id;
+	userModel.updateOne({_id: id}, {$set: req.body}, (err,result) => {
+		if(err) throw err;
+		res.send(result);
+	})
+})
+
 // Get ALL artefacts
 app.get('/artefact', (req,res) => {
 	artefactModel.find({}, (err,result) => {
@@ -221,11 +221,6 @@ app.get('/artefact/findbyowner/', (req,res) => {
 // the front end will make only one request to the back end
 
 
-// Login page [in progress]
-app.get('/login', (req, res) => {
-
-});
-
 // login local
 app.post('/login/local', passport.authenticate('local'),(req,res) => {
 	console.log("posted");
@@ -234,11 +229,10 @@ app.post('/login/local', passport.authenticate('local'),(req,res) => {
 });
 
 // login success or not 
-
-app.get('login/success/:isFail', (req,res) => {
-	console.log(req.params.isFail);
-	res.send(req.params.isFail);
-})
+// app.get('login/success/:isFail', (req,res) => {
+// 	console.log(req.params.isFail);
+// 	res.send(req.params.isFail);
+// })
 
 app.get('/logout', (req,res) => {
 	console.log("logging out");

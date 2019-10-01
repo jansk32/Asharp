@@ -82,6 +82,7 @@ export default function SignUp3({ navigation }) {
 				ToastAndroid.show('Error getting ' + key, ToastAndroid.SHORT);
 			}
 		}
+		data.isUser = true;
 		axios.post('http://localhost:3000/user/create', data);
 	}
 
