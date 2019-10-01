@@ -118,11 +118,10 @@ export default function ProfileScreen({ navigation }) {
                     </View>
 
 
-{/* 
                     <View style={styles.settingBox}>
                         <View style={styles.settingButton}>
                             <TouchableOpacity
-                                onPress={() => navigate('Home')}>
+                                onPress={() => navigate('ProfileSetting')}>
                                 <Text
                                     style={styles.buttonText}>
                                     Settings</Text>
@@ -136,7 +135,7 @@ export default function ProfileScreen({ navigation }) {
                                     Logout</Text>
                             </TouchableOpacity>
                         </View>
-                    </View> */}
+                    </View>
                 </View>
                
 
