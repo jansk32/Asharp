@@ -12,6 +12,7 @@ import SignUp1 from './components/sign-up1-screen';
 import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
+import ProfileSettingScreen from './components/profile-setting';
 
 // Import react navigation tools
 import {
@@ -127,8 +128,9 @@ const SignUpStack = createStackNavigator({
 // Stack navigator for looking at item details from gallery
 const itemStack = createStackNavigator({
 	MainNavigator,
-	Timeline: { screen: TimelineScreen },
 	Profile: { screen: ProfileScreen },
+	ProfileSetting: {screen: ProfileSettingScreen},
+	Timeline: { screen: TimelineScreen },
 	Gallery: { screen: GalleryScreen },
 	ItemDetail: { screen: ItemDetailScreen},
 },
@@ -140,7 +142,8 @@ const Stack = createSwitchNavigator({
 	Welcome: { screen: WelcomeScreen },
 	SignUpStack,
 	Login: { screen: Login },
-	itemStack,	
+	itemStack,		
+
 	uploadArtefactStack,
 })
 
