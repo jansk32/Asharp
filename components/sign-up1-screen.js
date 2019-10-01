@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
 }
 )
 
+// Enter email.
 export default function LoginScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [email, setEmail] = useState('');
@@ -88,7 +89,7 @@ export default function LoginScreen({ navigation }) {
 		}
 	}
 
-	// so that sign in screen signups and sends axios req
+	// So that sign in screen signups and sends axios req
 	async function goToNextPage() {
 		await storeEmail();
 		navigate('SignUp2');

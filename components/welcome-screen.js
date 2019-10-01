@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
 	},
 });
 
+// Welcome screen to go to login and sign in
 export default function WelcomeScreen({ navigation }) {
     const { navigate } = navigation;
     return (

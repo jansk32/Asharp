@@ -16,6 +16,8 @@ import AddImageDetailsScreen from './components/add-image-details-screen';
 
 import { MenuProvider } from 'react-native-popup-menu';
 
+import AddFamilyMemberScreen from './components/add-family-member-screen';
+import ViewFamilyMemberScreen from './components/view-family-member-screen';
 // Import react navigation tools
 import {
 	createBottomTabNavigator,
@@ -24,7 +26,6 @@ import {
 	createStackNavigator,
 } from 'react-navigation';
 
-var tintColor = 'black';
 // Import icons
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -55,6 +56,7 @@ const MainNavigator = createBottomTabNavigator({
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon name="md-leaf" color={tintColor} size={30} />
 		},
+		header: 'Family Tree',
 	},
 	Home: {
 		screen: HomeScreen,
@@ -129,15 +131,31 @@ const itemStackProfile = createStackNavigator({
 	Profile: { screen: ProfileScreen },
 });
 
+const itemStackTimeline = createStackNavigator({
+	MainNavigator,
+	ItemDetail: {screen: ItemDetailScreen},
+	Timeline: {screen: TimelineScreen}
+})
+
+const addMemberStack = createStackNavigator({
+	MainNavigator,
+	AddFamilyMember: {screen: AddFamilyMemberScreen},
+	FamilyTree: {screen: FamilyTreeScreen}
+})
+
 const Stack = createSwitchNavigator({
+	AddFamilyMember: {screen: AddFamilyMemberScreen},
+	// viewFamilyMember: {screen: ViewFamilyMemberScreen},
 	MainNavigator,
 	Welcome: { screen: WelcomeScreen },
 	Login: { screen: Login },
 	SignUpStack,
 	uploadArtefactStack,
 	itemStack,
-	itemStackProfile
-});
+	itemStackProfile,
+	itemStackTimeline,
+	addMemberStack,
+})
 
 const NavigationContainer = createAppContainer(Stack);
 

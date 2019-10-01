@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, FlatList, View, Image } from 'react-native';
+import { Text, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import Timeline from 'react-native-timeline-feed';
+import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
+import Moment from 'moment';
 
+// Import date formatting module moment.js
+Moment.locale('en');
 
 export default function TimelineScreen({ navigation }) {
 	const { navigate } = navigation;
@@ -22,15 +26,18 @@ export default function TimelineScreen({ navigation }) {
 		fetchArtefacts();
     }, []);
 	
-	// TODO: Format the date and so it will show up
+  // Sort date in descending order in the timeline
 	const formatData = (data) => {
 		data.sort(function (a, b) {
 			if (a.date === b.date) {
 				b.date = '';
 			}
-			return (new Date(a.date)) > (new Date(b.date)) ? 1 : -1;
+			// Change the name to time so we cann edit
+			a.time = Moment(a.date).format("DD-MM-YYYY");
+			b.time = Moment(b.date).format("DD-MM-YYYY");
+			return a.time > b.time ? 1 : -1;
 		});
-		return data;
+		return data.reverse();
 	};
 
 	// Custom render event title and event description
@@ -38,7 +45,9 @@ export default function TimelineScreen({ navigation }) {
 		return (
 			<View style={{ flex: 1 }}>
 				<View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-					<Image source={{uri: item.file}} style={styles.image} />
+					<TouchableOpacity onPress={() => navigate('ItemDetail',{artefactId: item._id})}>
+						<Image source={{uri: item.file}} style={styles.image} />
+					</TouchableOpacity>
 					<Text style={[styles.itemTitle]}>{item.name}</Text>
 				</View>
 			</View>
@@ -47,12 +56,14 @@ export default function TimelineScreen({ navigation }) {
 
 	return (
 		<>
-			<Text style={styles.title}>Timeline</Text>
+			<LinearGradient colors={['#50D5B7','#067D68']} style={styles.container}>
+				<Text  style={styles.title}>Timeline</Text>				
+			</LinearGradient>
 			<Timeline
 				style={styles.list}
 				data={formatData(artefacts)}
 				circleSize={15}
-				circleColor='#FBC074'
+				circleColor='#EC6268'
 				lineColor='grey'
 				innerCircleType='dot'
 				renderDetail={renderDetail}
@@ -70,16 +81,27 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 35,
 		textAlign: 'center',
+		// backgroundColor: '#EC6268',
+		// borderBottomLeftRadius:75,
+		color:'white',
+		paddingBottom:'15%',
+		paddingTop:'10%'
 	},
 	image: {
 		width: 50,
 		height: 50,
-		borderRadius: 25
+		borderRadius: 10
 	},
 	list: {
 		flex: 1,
 		marginTop: 20,
+		// backgroundColor: '#ebecf1',
 	},
+	container:{
+		borderBottomLeftRadius: 75,
+		borderColor:'black',
+	}
+
 });
 
 TimelineScreen.navigationOptions = {

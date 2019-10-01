@@ -7,7 +7,6 @@ import { throwStatement } from '@babel/types';
 import { pickImage, uploadImage } from '../image-tools';
 import AsyncStorage from '@react-native-community/async-storage';
 
-
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: 'white',
@@ -65,6 +64,7 @@ export default function HomeScreen({ navigation }) {
 	const [condition, setCondition] = useState('');
 	const [image, setImage] = useState({});
 
+	// upload the pictures to database
     async function uploadImageArtefact() {
         const pictureUrl = await uploadImage(image.uri);
         console.log(pictureUrl);
@@ -75,7 +75,7 @@ export default function HomeScreen({ navigation }) {
             ToastAndroid.show('Error storing picture URL', ToastAndroid.SHORT);
         }
     }
-
+	// go to image detail page once you upload the picture
     async function upload() {
         await uploadImageArtefact()
         .then(() => navigate('AddImageDetails'));
