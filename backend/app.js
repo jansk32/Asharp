@@ -53,24 +53,24 @@ passport.deserializeUser(function (user, done) {
 // 	}
 // ));
 
-// schemas
+// Schemas
 const userSchema = require('../schema/userSchema');
 const artSchema = require('../schema/artefactSchema');
 
-// creates the mongoose model 
+// Create the mongoose model 
 let userModel = mongoose.model('user', userSchema);
 let artefactModel = mongoose.model('artefact', artSchema);
 
-// to connect to mongodb
+// Connect to mongodb
 require('../controller/mongooseController');
 
-// app.use
+// app.use middlewares
 app.use(bodyParser.json({ type: 'application/json' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// cookies
+// Cookies
 app.set('trust proxy', 1);
 app.use(session({
 	secret: 'secret',
@@ -95,7 +95,9 @@ app.get('/', (req, res) => {
 	res.send('Hello World');
 });
 
-// Get a user
+/* User routes */
+
+// Get a user by id
 app.get('/user', (req, res) => {
 	// change later
 	let id = req.session.passport.user._id;
@@ -141,167 +143,28 @@ app.post('/user/create', ({ body: {
 	});
 });
 
-/* Family member routes */
-
-// Get all family members (users and non-users)
+// Get all users (registered and non-registered)
 // The front end will decide which ones are relevant to the user
-app.get('/family-member', (req, res) => {
-	const family = [{
-		id: 'th',
-		gender: 'm',
-		m: 'yb',
-		f: 'ah'
-	}, {
-		id: 'fh',
-		gender: 'f',
-		spouse: 'mg',
-		m: 'yb',
-		f: 'ah'
-	}, {
-		id: 'mg',
-		gender: 'm',
-		spouse: 'fh'
-	}, {
-		id: 'yb',
-		gender: 'f',
-		spouse: 'ah',
-		m: 'pp',
-		f: 'gg'
-	}, {
-		id: 'vb',
-		gender: 'f',
-		spouse: 'tk',
-		m: 'pp',
-		f: 'gg'
-	}, {
-		id: 'tk',
-		gender: 'm',
-		spouse: 'vb',
-	}, {
-		id: 'j0',
-		gender: 'm',
-		m: 'vb',
-		f: 'tk'
-	}, {
-		id: 'j1',
-		gender: 'f',
-		m: 'vb',
-		f: 'tk'
-	}, {
-		id: 'j2',
-		gender: 'f',
-		m: 'vb',
-		f: 'tk'
-	}, {
-		id: 'lb',
-		gender: 'f',
-		spouse: 'ak',
-		m: 'pp',
-		f: 'gg'
-	}, {
-		id: 'ak',
-		gender: 'm',
-		spouse: 'lb',
-	}, {
-		id: 'ad',
-		gender: 'm',
-		m: 'lb',
-		f: 'ak'
-	}, {
-		id: 'nd',
-		gender: 'f',
-		m: 'lb',
-		f: 'ak'
-	}, {
-		id: 'ah',
-		gender: 'm',
-		spouse: 'yb',
-		m: 'gm',
-		f: 'gf'
-	}, {
-		id: 'lh',
-		gender: 'f',
-		spouse: 'jk',
-		f: 'gf',
-		m: 'gm'
-	}, {
-		id: 'jk',
-		gender: 'm',
-		spouse: 'lh'
-	}, {
-		id: 'dh',
-		gender: 'm',
-		spouse: 'yh',
-		m: 'gm',
-		f: 'gf'
-	}, {
-		id: 'yh',
-		gender: 'f',
-		spouse: 'dh'
-	}, {
-		id: 'pp',
-		gender: 'f',
-		spouse: 'gg'
-	},
-	{
-		id: 'gg',
-		gender: 'm',
-		spouse: 'pp'
-	},
-	{
-		id: 'gm',
-		gender: 'f',
-		spouse: 'gf',
-		f: 'ggf',
-		m: 'ggm'
-	}, {
-		id: 'ggf',
-		gender: 'm',
-		spouse: 'ggm'
-	}, {
-		id: 'ggm',
-		gender: 'f',
-		spouse: 'ggf'
-	}, {
-		id: 'gf',
-		gender: 'm',
-		spouse: 'gm'
-	},
-	];
-	res.send(family);
-	return;
-
-	familyMember.find({}, (err, result) => {
+app.get('/user', (req, res) => {
+	userModel.find({}, (err, result) => {
+		if (err) {
+			throw err;
+		}
 		res.send(result);
 	});
 });
 
-app.post('/family-member', ({ body: {
-	name,
-	dob,
-	gender,
-	spouse,
-	father,
-	mother,
-	pictureUrl } }, res) => {
-	const familyMember = familyMemberModel({
-		name,
-		dob,
-		gender,
-		spouse,
-		father,
-		mother,
-		pictureUrl
-	});
-
-	familyMember.save((err, res) => {
+// Assign artefact to a person
+app.put('/user/assign/:id', (req, res) => {
+	userModel.update({ id: req.params.id }, { $push: { artefact: req.body } }, (err, resp) => {
 		if (err) {
 			throw err;
 		}
-		res.send(resp);
+		res.send('updated');
 	});
 });
 
+/* Artefact routes */
 // Get ALL artefacts
 app.get('/artefact', (req, res) => {
 	artefactModel.find({}, (err, result) => {
@@ -340,19 +203,9 @@ app.post('/artefact/create', ({
 	});
 });
 
-// assign artefact to a person
-app.put('/user/assign/:id', (req, res) => {
-	userModel.update({ id: req.params.id }, { $push: { artefact: req.body } }, (err, resp) => {
-		if (err) {
-			throw err;
-		}
-		res.send('updated');
-	});
-});
 
 // Tim: this will be replaced by the single route called /user/create so
 // the front end will make only one request to the back end
-
 
 // login page [in progress]
 app.get('/login', (req, res) => {
