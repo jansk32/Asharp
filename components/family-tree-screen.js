@@ -206,7 +206,7 @@ class ZoomableSvg extends Component {
 							scale: zoom,
 						}}>
 						{
-							familyTree.map(node => <Node cx={node.x} cy={node.y} _id={node._id} key={node._id} />)
+							familyTree.map(node => <Node cx={node.x} cy={node.y} _id={node.name} key={node.name} />)
 						}
 						{
 							lines.map((line, i) =>
@@ -256,7 +256,7 @@ function Node({ cx, cy, _id }) {
 
 			<Text
 				x={cx}
-				y={cy}
+				y={cy + 100}
 				fill="black"
 				stroke="black"
 				fontSize="30"
