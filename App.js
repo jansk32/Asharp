@@ -24,6 +24,7 @@ import {
 
 // Import icons
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/Entypo';
 
 // Import Firebase.
 import * as firebase from 'firebase';
@@ -52,7 +53,7 @@ const MainNavigator = createBottomTabNavigator({
 	FamilyTree: {
 		screen: FamilyTreeScreen,
 		navigationOptions: {
-			tabBarIcon: ({ tintColor }) => <Icon name="md-leaf" color={tintColor} size={30} />
+			tabBarIcon: ({ tintColor }) => <Icon2 name="tree" color={tintColor} size={30} />
 		},
 	},
 	Home: {
@@ -142,8 +143,7 @@ const Stack = createSwitchNavigator({
 	Welcome: { screen: WelcomeScreen },
 	SignUpStack,
 	Login: { screen: Login },
-	itemStack,		
-
+	itemStack,
 	uploadArtefactStack,
 })
 

@@ -197,11 +197,13 @@ export default function UploadImageScreen({ navigation }) {
       						/>
             </View>
             <View style={styles.usernameBox}>
-              <Text style={styles.text}>Desription</Text>
+              <Text style={styles.text}>Description</Text>
               <View style={styles.textInput}>
                 <TextInput
                   placeholder='Describe the item.'
                   onChangeText={setDescription}
+                  maxLength={40}
+                  multiline={true}
                 />
               </View>
             </View>
@@ -211,6 +213,8 @@ export default function UploadImageScreen({ navigation }) {
                 <TextInput
                   placeholder='Write down the memory and value this item holds.'
                   onChangeText= {setValue}
+                  maxLength={40}
+                  multiline={true}
                 />
               </View>
             </View>

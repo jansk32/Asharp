@@ -82,7 +82,7 @@ app.get('/', (req, res) => {
 	res.send('Hello World');
 })
 
-// get a user
+// Get a user
 app.get('/user', (req, res) => {
 	let id = req.session.passport.user._id;
 	userModel.find({ _id: id }, (err, resp) => {
@@ -138,7 +138,10 @@ app.post('/user/create', ({ body: {
 // Update user
 app.put('/user/update', (req,res) => {
 	let id = req.session.passport.user._id;
-	userModel.updateOne({_id: id}, {$set: req.body}, (err,result) => {
+	console.log(req.body);
+	console.log(req.params);
+	console.log(req.query);
+	userModel.findOneAndUpdate({_id: id}, req.body, (err,result) => {
 		if(err) throw err;
 		res.send(result);
 	})
@@ -223,8 +226,6 @@ app.get('/artefact/findbyowner/', (req,res) => {
 
 // login local
 app.post('/login/local', passport.authenticate('local'),(req,res) => {
-	console.log("posted");
-	console.log(req.user);
 	res.send(req.user);
 });
 
