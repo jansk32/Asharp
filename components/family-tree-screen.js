@@ -206,7 +206,7 @@ class ZoomableSvg extends Component {
 							scale: zoom,
 						}}>
 						{
-							familyTree.map(node => <Node cx={node.x} cy={node.y} _id={node.name} key={node.name} />)
+							familyTree.map(node => <Node cx={node.x} cy={node.y} _id={node.name} key={node.name} pic={node.pictureUrl}/>)
 						}
 						{
 							lines.map((line, i) =>
@@ -227,7 +227,7 @@ class ZoomableSvg extends Component {
 	}
 }
 
-function Node({ cx, cy, _id }) {
+function Node({ cx, cy, _id, pic }) {
 	return (
 		<>
 			<Defs>
@@ -236,14 +236,7 @@ function Node({ cx, cy, _id }) {
 				</ClipPath>
 			</Defs>
 
-			{/* <Image
-                height={radius * 2}
-                width={radius * 2}
-                x={cx - radius}
-                y={cy - radius}
-                href={require('../tim_derp.jpg')}
-                clipPath={`url(#${id})`}
-            /> */}
+			  
 
 
 			<Circle
@@ -253,6 +246,15 @@ function Node({ cx, cy, _id }) {
 				stroke="black"
 				fill="white"
 			/>
+			<Image
+                height={NODE_RADIUS * 2}
+                width={NODE_RADIUS * 2}
+                x={cx - NODE_RADIUS}
+                y={cy - NODE_RADIUS}
+                href={{uri: pic ? pic : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}}
+								clipPath={`url(#${_id})`}
+								preserveAspectRatio="xMidYMid slice"
+            />
 
 			<Text
 				x={cx}
@@ -261,6 +263,8 @@ function Node({ cx, cy, _id }) {
 				stroke="black"
 				fontSize="30"
 				textAnchor="middle"
+				
+
 			>
 				{_id}
 			</Text>
