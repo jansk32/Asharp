@@ -60,18 +60,25 @@ export default function TimelineScreen({ navigation }) {
 
 	return (
 		<>
-			<LinearGradient colors={['#50D5B7','#067D68']} style={styles.container}>
+			{/* <LinearGradient colors={['#50D5B7','#067D68']} style={styles.container}>
 				<Text  style={styles.title}>Timeline</Text>				
-			</LinearGradient>
+			</LinearGradient> */}
+
+			<View style={styles.container}>
+				<Text style={styles.title}>Artefact</Text>
+				<Text style={styles.timelineTitle}>Timeline</Text>
+			</View>	
+			
 			<Timeline
 				style={styles.list}
 				data={formatData(artefacts)}
 				circleSize={15}
 				circleColor='#EC6268'
-				lineColor='grey'
+				lineColor='#e3e3e3'
 				innerCircleType='dot'
 				renderDetail={renderDetail}
 				timeContainerStyle={{ minWidth: 72, marginLeft: 10 }}
+				timeStyle={{color:'#2d2e33'}}
 			/>
 		</>
 	);
@@ -83,17 +90,25 @@ const styles = StyleSheet.create({
 		paddingLeft: 5,
 	},
 	title: {
-		fontSize: 35,
-		textAlign: 'center',
+		fontSize: 20,
+		marginLeft:10,
+		// fontWeight:'bold',
+		// textAlign: 'center',
 		// backgroundColor: '#EC6268',
 		// borderBottomLeftRadius:75,
-		color:'white',
-		paddingBottom:'15%',
-		paddingTop:'10%'
+		color:'#2d2e33',
+		paddingTop:'8%'
+	},
+	timelineTitle:{
+		fontSize: 30,
+		marginLeft:10,
+		fontWeight:'bold',
+		paddingBottom:'8%',
+
 	},
 	image: {
-		width: 50,
-		height: 50,
+		width: 75,
+		height: 75,
 		borderRadius: 10
 	},
 	list: {
@@ -102,8 +117,9 @@ const styles = StyleSheet.create({
 		// backgroundColor: '#ebecf1',
 	},
 	container:{
-		borderBottomLeftRadius: 75,
-		borderColor:'black',
+		borderBottomLeftRadius:25,
+		borderBottomRightRadius:25,
+		backgroundColor:'#f5f7fb',
 	}
 
 });
