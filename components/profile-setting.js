@@ -34,16 +34,12 @@ export default function ProfileSettingScreen({ navigation }) {
 
   // Validate name and new password
   function validateInput() {
-    if (!(name) || name === "") {
-      alert("Please insert name");
-      return false;
-    }
     // Check if old password is the same as the new password
-    if (user.password !== oldPassword) {
+    if (password && user.password !== oldPassword) {
       alert("Old password does not match! >:)");
       return false;
     }
-    if (password.length < 6) {
+    if (password && password.length < 6) {
       alert("Password must be at least 6 characters long");
       return false
     }
@@ -70,12 +66,11 @@ export default function ProfileSettingScreen({ navigation }) {
     await name !== '' ? data.name = name : name;
     await dob !== '' ? data.dob = dob : dob;
     await password !== '' ? data.password = password : password;
-    await image !== user.pictureUrl ? async function () {
+    if(image.uri.includes('firebase') === false){
       let newImage = await uploadImage(image.uri);
-	  data.pictureUrl = newImage;
-	  console.log(newImage);
-    } : image;
-	await console.log(data);
+      data.pictureUrl = newImage;
+    }
+	  await console.log(data);
     let updatedData = await axios.put("http://localhost:3000/user/update", data)
     console.log(updatedData);
   }
@@ -166,7 +161,7 @@ export default function ProfileSettingScreen({ navigation }) {
           <TouchableOpacity
             onPress={() => {
               updateProfile();
-              navigation.goBack()
+              navigation.goBack();
             }}>
             <View style={styles.redButton}>
               <Text

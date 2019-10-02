@@ -138,9 +138,6 @@ app.post('/user/create', ({ body: {
 // Update user
 app.put('/user/update', (req,res) => {
 	let id = req.session.passport.user._id;
-	console.log(req.body);
-	console.log(req.params);
-	console.log(req.query);
 	userModel.findOneAndUpdate({_id: id}, req.body, (err,result) => {
 		if(err) throw err;
 		res.send(result);
