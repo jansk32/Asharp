@@ -31,7 +31,7 @@ export default function GalleryScreen({navigation}) {
 			try {
 				const res = await axios.get('http://localhost:3000/artefact');
 				setArtefacts(res.data);
-				console.log(res.data)
+				// console.log(res.data)
 			} catch (e) {
 				console.error(e);
 			}

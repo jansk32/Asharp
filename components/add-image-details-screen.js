@@ -89,7 +89,14 @@ export default function UploadImageScreen({ navigation }) {
   const [value, setValue] = useState('');
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
-  const [image, setImage] = useState();
+  const [image, setImage] = useState('');
+
+//   useEffect(() => {
+//     // createArtefact();
+//     console.log("I am in the add image details screen");
+//     // console.log(await AsyncStorage.getItem('artefactPictureUrl'));
+//     // setImage(downloadImage());
+// },[]);
 
   // Function to create artefact
   async function createArtefact() {
@@ -100,25 +107,54 @@ export default function UploadImageScreen({ navigation }) {
       value: value,
       description: description
 };
+  if (validateInput() === true){
     try {
           data.file = await AsyncStorage.getItem('artefactPictureUrl');
+          setImage(data.file);
+
         } catch (e) {
           ToastAndroid.show('Error getting pictureUrl' , ToastAndroid.SHORT);
         }
     await axios.post('http://localhost:3000/artefact/create', data)
     .then((result) => {if(result) {navigate('Home')}});
+}else{
+  navigate('AddImageDetails');
+}
   }
 
-  // useEffect(async () => {
-  //     console.log(await AsyncStorage.getItem('artefactPictureUrl'));
-  //     setImage(downloadImage(await AsyncStorage.getItem('artefactPictureUrl')));
-  // }, []);
+  // Validate input of the item details
+  function validateInput() {
+    if(name === ""){
+      alert("Please input a name");
+      return false;
+    }
+    if (description === ""){
+      alert("Please give a small description");
+      return false;
+    }
+    if (value === ""){
+      alert("No value inputed");
+      return false;
+    }
+    return true;
+  }
+  
+  // Initialise image
+  async function getImage() {
+    var file = await AsyncStorage.getItem('artefactPictureUrl')
+    await setImage(file);
+    await console.log(file);
+  }
+  // get image to show on the screen
+  useEffect(() => {
+        getImage();
+      },[]);
 
   return (
     <>
       <ScrollView>
         <Image
-        source={image}
+        source={{uri:image}}
         style={{height: 200, width: 200}}
         />
         <View style={styles.container}>

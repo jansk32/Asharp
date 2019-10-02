@@ -117,30 +117,46 @@ const formatData = (data, numColumns) => {
 
 export default function ProfileScreen({ navigation }) {
     const { navigate } = navigation;
-    const [profile, setProfile] = useState({});
+    var [profile, setProfile] = useState({});
+    const [artefact, setArtefact] = useState([]);
 
     // Get profile details
-    useEffect(() => {
+    async function getProfile() {
         console.log('Sending request');
         axios.get('http://localhost:3000/user', { withCredentials: true })
         .then((res) => {
             setProfile(res.data);
         })
         .catch(error => console.error(error));
-    }, []);
+    }
     
-    const [artefact, setArtefact] = useState([]);
-
-    // Get all the artefact
-    useEffect(() => {
-        axios.get('http://localhost:3000/artefact')
+    // Get the artefact of the user
+    async function getArtefact() {
+        console.log(profile);
+        axios.get("http://localhost:3000/artefact/findbyowner/")
         .then((result) => {
             console.log(result.data);
             setArtefact(result.data);
         })
         .catch(err => console.log(error));
-    },[])
+    }
+
+    async function fetchProfile(){
+       await getProfile();
+       await getArtefact();
+    }
+
+    // Get profile and artefacts by owner
+    useEffect( () => { fetchProfile()}, []);
+
     
+    // Logout function
+    function logout() {
+        axios.get('http://localhost:3000/logout')
+        .then((result) => navigate('Welcome'))
+        .catch((err) => console.log(err));
+    }
+
     // Render Item invisible if it's just a placeholder for columns in the grid,
     // if not, render the picture for each grid
     renderItem = ({ item, index }) => {
@@ -186,12 +202,12 @@ export default function ProfileScreen({ navigation }) {
                             onPress={() => navigate('Home')}>
                             <Text
                                 style={styles.nameText}>
-                                Profile Setting</Text>
+                                My Family</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.settingButton}>
                         <TouchableOpacity
-                            onPress={() => navigate('Welcome')}>
+                            onPress={logout}>
                             <Text
                                 style={styles.nameText}>
                                 Logout</Text>
