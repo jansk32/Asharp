@@ -179,7 +179,7 @@ class ZoomableSvg extends Component {
 
 	render() {
 		const viewBoxSize = 1200;
-		const { height, width, familyTree, lines } = this.props;
+		const { height, width, familyTree, lines, navigate } = this.props;
 		const { left, top, zoom } = this.state;
 		const resolution = viewBoxSize / Math.min(height, width);
 
@@ -189,8 +189,9 @@ class ZoomableSvg extends Component {
 					<MenuTrigger>
 					</MenuTrigger>
 					<MenuOptions customStyles={{ optionText: { fontSize: 30, margin: 8 } }}>
+						<MenuOption onSelect={() => navigate('AddFamilyMember', {linkedNode: this.state.tappedNode})} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
 						<MenuOption onSelect={() => navigate('AddFamilyMember', {linkedNode: this.state.tappedNode})} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
-						<MenuOption onSelect={() => alert('Adding a child')} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
+						<MenuOption onSelect={() => navigate('AddFamilyMember', {linkedNode: this.state.tappedNode})} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
 					</MenuOptions>
 				</Menu>
 				<Svg
@@ -251,7 +252,6 @@ function Node({ cx, cy, _id }) {
 				r={NODE_RADIUS}
 				stroke="black"
 				fill="white"
-				onLongPress={() => alert('long press')}
 			/>
 
 			<Text
@@ -279,7 +279,6 @@ function FamilyTreeScreen({ ctx, navigation }) {
 		async function fetchFamilyMembers() {
 			const res = await axios.get('http://localhost:3000/users');
 			let familyMembers = res.data;
-			familyMembers = familyMembers.filter(node => node.email === 'New');
 			console.log(familyMembers);
 
 			// Get user document of current user

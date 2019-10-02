@@ -121,9 +121,8 @@ app.get('/user/find/:id', (req, res) => {
 });
 
 // Create a user
-app.post('/user/create', ({ body: {
+app.post('/user/create', async ({ body: {
 	name,
-	userName,
 	dob,
 	email,
 	password,
@@ -135,7 +134,6 @@ app.post('/user/create', ({ body: {
 	pictureUrl } }, res) => {
 	const user = userModel({
 		name,
-		userName,
 		dob,
 		email,
 		password,
@@ -147,12 +145,15 @@ app.post('/user/create', ({ body: {
 		pictureUrl
 	});
 
-	user.save((err, resp) => {
-		if (err) {
-			throw err;
-		}
-		res.send(resp);
-	});
+	// Await save so we can use the new document's id
+	const savedUser = await user.save();
+
+	// If new user has a spouse, add them as a spouse to their spouse
+	if (spouse) {
+		const spouseNode = await userModel.findById(spouse);
+		spouseNode.spouse = savedUser._id;
+		spouseNode.save();
+	}
 });
 
 // Get all users (registered and non-registered)

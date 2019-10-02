@@ -135,10 +135,10 @@ function up(family, divisibles, nonDivisibles) {
 	}
 	// Look for parents of the first element in divisibles
 	const divisibleNode = divisibles[0];
-	if (divisibleNode.f && divisibleNode.m) {
+	if (divisibleNode.father && divisibleNode.mother) {
 		// Can be further divided
-		const father = family.find(node => node._id === divisibleNode.f);
-		const mother = family.find(node => node._id === divisibleNode.m);
+		const father = family.find(node => node._id === divisibleNode.father);
+		const mother = family.find(node => node._id === divisibleNode.mother);
 		father.tempGen = mother.tempGen = divisibleNode.tempGen - 1;
 		divisibles.splice(0, 1, father, mother);
 	} else {
@@ -181,7 +181,7 @@ function down(family, ancestors, results, parents) {
 			spouse.gen = parent.gen;
 			results.push(spouse);
 			// Then look for children, add children to parents to check them as parents
-			const children = family.filter(node => node.f === parent._id || node.m === parent._id);
+			const children = family.filter(node => node.father === parent._id || node.mother === parent._id);
 			children.forEach(child => child.gen = parent.gen + 1);
 			parents.unshift(...children);
 		}
@@ -239,13 +239,13 @@ function recursiveArrangeFamilyTree(familyTree, node, targetPerson) {
 	// and is father or mother themself, ignore since it's been handled by the default case
 	if (node.gen === targetPerson.gen - 1) {
 		// Father of the target person
-		const father = familyTree.find(person => person._id === targetPerson.f);
-		if (node._id !== father._id && node.f === father.f) {
+		const father = familyTree.find(person => person._id === targetPerson.father);
+		if (node._id !== father._id && node.father === father.father) {
 			node.marriageOffset = -baseMarriageOffset;
 		}
 		// Mother of the target person
-		const mother = familyTree.find(person => person._id === targetPerson.m);
-		if (node._id !== mother._id && node.f === mother.f) {
+		const mother = familyTree.find(person => person._id === targetPerson.mother);
+		if (node._id !== mother._id && node.father === mother.father) {
 			node.marriageOffset = baseMarriageOffset;
 		}
 	}
@@ -253,7 +253,7 @@ function recursiveArrangeFamilyTree(familyTree, node, targetPerson) {
 
 	const spouse = familyTree.find(spouse => spouse._id === node.spouse);
 	spouse.marriageOffset = -node.marriageOffset;
-	const children = familyTree.filter(child => child.f === node._id || child.m === node._id);
+	const children = familyTree.filter(child => child.father === node._id || child.mother === node._id);
 	// Base case: no children
 	if (!children.length) {
 		return baseWidth;
@@ -264,12 +264,12 @@ function recursiveArrangeFamilyTree(familyTree, node, targetPerson) {
 
 	// Manually reorder siblings if it's the target person's parent generation
 	if (children[0].gen === targetPerson.gen - 1) {
-		if (children.some(child => child._id === targetPerson.f)) {
+		if (children.some(child => child._id === targetPerson.father)) {
 			// Father's cluster, move father to the end
-			children.push(children.splice(children.findIndex(child => child._id === targetPerson.f), 1)[0]);
+			children.push(children.splice(children.findIndex(child => child._id === targetPerson.father), 1)[0]);
 		} else {
 			// Mother's cluster, move mother to the start
-			children.unshift(children.splice(children.findIndex(child => child._id === targetPerson.m), 1)[0]);
+			children.unshift(children.splice(children.findIndex(child => child._id === targetPerson.mother), 1)[0]);
 		}
 	}
 	children[0].xOffset = 0;
@@ -310,7 +310,7 @@ function assignX(familyTree, node) {
 	}
 	const spouse = familyTree.find(spouse => spouse._id === node.spouse);
 	spouse.x = node.x + spouse.marriageOffset - node.marriageOffset;
-	const children = familyTree.filter(child => child.f === node._id || child.m === node._id);
+	const children = familyTree.filter(child => child.father === node._id || child.mother === node._id);
 	children.forEach(child => child.x = node.x - node.marriageOffset + child.xOffset);
 	children.forEach(child => assignX(familyTree, child));
 	node.isTraversed = true;
@@ -336,7 +336,7 @@ function findTraversedChild(familyTree, parents) {
 	if (parent.isTraversed) {
 		return parent;
 	}
-	const children = familyTree.filter(child => child.f === parent._id || child.m === parent._id);
+	const children = familyTree.filter(child => child.father === parent._id || child.mother === parent._id);
 	parents.unshift(...children);
 	return findTraversedChild(familyTree, parents);
 }
@@ -344,11 +344,11 @@ function findTraversedChild(familyTree, parents) {
 // Assign x but don't set isTraversed to true
 function assignXUp(familyTree, node) {
 	// Base case: no parents
-	if (!node.f || !node.m) {
+	if (!node.father || !node.mother) {
 		return;
 	}
-	const father = familyTree.find(parent => parent._id === node.f);
-	const mother = familyTree.find(parent => parent._id === node.m);
+	const father = familyTree.find(parent => parent._id === node.father);
+	const mother = familyTree.find(parent => parent._id === node.mother);
 
 	father.x = node.x - node.xOffset + father.marriageOffset;
 	mother.x = node.x - node.xOffset + mother.marriageOffset;
@@ -397,7 +397,7 @@ function recursiveDrawLines(familyTree, node) {
 	let lines = [];
 	// Check for parents
 	console.log('Looking at ' + node._id);
-	if (node.f && node.m) {
+	if (node.father && node.mother) {
 		// If yes, draw vertical line up
 		console.log('registering line');
 		lines.push({
@@ -429,7 +429,7 @@ function recursiveDrawLines(familyTree, node) {
 		spouseNode.hasLines = true;
 	}
 	// Check for kids
-	const children = familyTree.filter(child => child.f === node._id || child.m === node._id);
+	const children = familyTree.filter(child => child.father === node._id || child.mother === node._id);
 	if (children.length) {
 		// Draw single vertical line down for kids
 		lines.push({

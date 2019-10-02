@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, Image, TouchableOpacity, TextInput, Dimensions } from 'react-native';
+import { Text, StyleSheet, View, Image, TouchableOpacity, TextInput, Dimensions, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
@@ -13,7 +13,7 @@ export default function AddFamilyMemberScreen({ navigation }) {
 
     return (
         <>
-            <View style={styles.allContainer}>
+            <ScrollView style={styles.allContainer}>
                 <View style={styles.container}>
                     <Text style={styles.add}>Find your</Text>
                     <Text style={styles.title}>Family Member</Text>
@@ -81,11 +81,12 @@ export default function AddFamilyMemberScreen({ navigation }) {
                                 newUserInfo.gender = linkedNode.gender === 'm' ? 'f' : 'm';
                             }
                             axios.post('http://localhost:3000/user/create', newUserInfo);
+                            navigation.goBack();
                         }}>
                         Add
                         </Text>
                 </View>
-            </View>
+            </ScrollView>
         </>
     )
 };
