@@ -220,6 +220,7 @@ export default function ProfileScreen({ navigation }) {
                         data={formatData(artefact, numColumns)}
                         numColumns={3}
                         renderItem={this.renderItem}
+                        keyExtractor={item => item._id}
                     />
                 </View>
             </React.Fragment>

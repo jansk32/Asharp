@@ -64,7 +64,7 @@ export default function GalleryScreen({navigation}) {
         </View>
         <FlatList
 			data={formatData(artefacts, numColumns)}
-            keyExtractor={(item, index) => item._id}
+            keyExtractor={item => item._id}
             renderItem={renderItem}
             numColumns={numColumns}
             style={styles.container}
