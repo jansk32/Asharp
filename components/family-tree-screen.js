@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import { View, PanResponder, Dimensions, ToastAndroid } from 'react-native';
+import { View, PanResponder, Dimensions, ToastAndroid, TextInput } from 'react-native';
 import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text } from 'react-native-svg';
 import generateFamilyTree, { mainDrawLines } from '../build-family-tree';
 import axios from 'axios';
@@ -184,7 +184,7 @@ class ZoomableSvg extends Component {
 		 * half the display width minus half the width of the family tree in pixels.
 		 * Same with the y coordinate of the top left corner but uses height instead of width.
 		*/
-		if (prevProps.familyTree !== this.props.familyTree) {
+		if (prevProps.familyTree.length === 0) {
 			const { height, width, familyTree } = this.props;
 			const xCoords = familyTree.map(node => node.x);
 			const familyTreeWidth = (Math.max(...xCoords) - Math.min(...xCoords)) / this.resolution;
@@ -224,7 +224,7 @@ class ZoomableSvg extends Component {
 							scale: zoom,
 						}}>
 						{
-							familyTree.map(node => <Node cx={node.x} cy={node.y} _id={node.name} key={node.name} pic={node.pictureUrl} />)
+							familyTree.map(node => <Node data={node} key={node._id} />)
 						}
 						{
 							lines.map((line, i) =>
@@ -245,42 +245,43 @@ class ZoomableSvg extends Component {
 	}
 }
 
-function Node({ cx, cy, _id, pic }) {
+function Node({ data: { x, y, name, _id, pictureUrl, matchesSearch } }) {
 	return (
 		<>
 			<Defs>
 				<ClipPath id={_id.toString()}>
-					<Circle cx={cx} cy={cy} r={NODE_RADIUS} />
+					<Circle cx={x} cy={y} r={NODE_RADIUS} />
 				</ClipPath>
 			</Defs>
 
 			<Circle
-				cx={cx}
-				cy={cy}
+				cx={x}
+				cy={y}
 				r={NODE_RADIUS}
-				stroke="black"
+				stroke={matchesSearch ? 'red' : 'black'}
+				strokeWidth="8"
 				fill="white"
 			/>
 
 			<Image
 				height={NODE_RADIUS * 2}
 				width={NODE_RADIUS * 2}
-				x={cx - NODE_RADIUS}
-				y={cy - NODE_RADIUS}
-				href={{ uri: pic ? pic : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
+				x={x - NODE_RADIUS}
+				y={y - NODE_RADIUS}
+				href={{ uri: pictureUrl ? pictureUrl : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
 				clipPath={`url(#${_id})`}
 				preserveAspectRatio="xMidYMid slice"
 			/>
 
 			<Text
-				x={cx}
-				y={cy + 100}
+				x={x}
+				y={y + 100}
 				fill="black"
 				stroke="black"
 				fontSize="30"
 				textAnchor="middle"
 			>
-				{_id}
+				{name}
 			</Text>
 		</>
 	);
@@ -290,6 +291,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 	const { navigate } = navigation;
 	const [familyTree, setFamilyTree] = useState([]);
 	const [lines, setLines] = useState([]);
+	const [familyMemberSearch, setFamilyMemberSearch] = useState('');
 
 	const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -313,14 +315,33 @@ function FamilyTreeScreen({ ctx, navigation }) {
 		fetchFamilyMembers();
 	}, []);
 
+	// Family tree searching and highlighting
+	useEffect(() => {
+		if (familyTree.length) {
+			// Highlight the nodes that match the search string
+			// If the search string is empty, there are no matches
+			setFamilyTree(familyTree
+				.map(node =>
+					({ ...node, matchesSearch: familyMemberSearch ? node.name.toLowerCase().includes(familyMemberSearch.toLowerCase()) : false })));
+		}
+	}, [familyMemberSearch]);
+
+	console.log('RENDERING');
 	return (
-		<ZoomableSvg
-			width={screenWidth}
-			height={screenHeight}
-			familyTree={familyTree}
-			lines={lines}
-			ctx={ctx}
-			navigate={navigate} />
+		<>
+			<TextInput
+				placeholder="Search family member"
+				value={familyMemberSearch}
+				onChangeText={setFamilyMemberSearch}
+			/>
+			<ZoomableSvg
+				width={screenWidth}
+				height={screenHeight}
+				familyTree={familyTree}
+				lines={lines}
+				ctx={ctx}
+				navigate={navigate} />
+		</>
 	);
 }
 
