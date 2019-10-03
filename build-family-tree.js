@@ -213,7 +213,7 @@ function buildFamilyTree(family, _id) {
 // Assign SVG positions to each family member
 function mainArrangeFamilyTree(familyTree, ancestors, targetId) {
 	const targetPerson = familyTree.find(person => person._id === targetId);
-	for (let ancestor of ancestors) {
+	for (const ancestor of ancestors) {
 		if (!('marriageOffset' in ancestor)) {
 			ancestor.width = recursiveArrangeFamilyTree(familyTree, ancestor, targetPerson);
 		}
@@ -232,7 +232,6 @@ function recursiveArrangeFamilyTree(familyTree, node, targetPerson) {
 	// By default, marriageOffset is determined by gender
 	// This is for father, mother, and everyone who is not in their generation
 	node.marriageOffset = node.gender === 'm' ? -baseMarriageOffset : baseMarriageOffset;
-	console.log('done with first marr off');
 	// But, if current parent is in the generation of the target person's parent:
 	// and is sibling of father, put to the left in marriage
 	// and is sibling of mother, put to the right in marriage
@@ -258,7 +257,7 @@ function recursiveArrangeFamilyTree(familyTree, node, targetPerson) {
 	if (!children.length) {
 		return baseWidth;
 	}
-	for (let child of children) {
+	for (const child of children) {
 		child.width = recursiveArrangeFamilyTree(familyTree, child, targetPerson);
 	}
 
@@ -288,12 +287,12 @@ function recursiveArrangeFamilyTree(familyTree, node, targetPerson) {
 
 // Assign x coordinates for each family member for drawing on SVG
 function mainAssignX(familyTree, ancestors) {
-	const initialAncestor = ancestors.splice(ancestors.findIndex(ancestor => ancestor.gen === 0), 1)[0];
-	initialAncestor;
+	const ancestorsCopy = [...ancestors];
+	const initialAncestor = ancestorsCopy.splice(ancestorsCopy.findIndex(ancestor => ancestor.gen === 0), 1)[0];
 	initialAncestor.x = 0;
 	assignX(familyTree, initialAncestor);
 
-	for (let ancestor of ancestors) {
+	for (const ancestor of ancestorsCopy) {
 		// Boomerang (down and up) then waterfall (down)
 		const traversedChild = mainFindTraversedChild(familyTree, ancestor);
 		assignXUp(familyTree, traversedChild);
@@ -386,20 +385,17 @@ export default function generateFamilyTree(family, targetId) {
 // Create lines for family tree
 export function mainDrawLines(familyTree, ancestors) {
 	let lines = [];
-	for (let ancestor of ancestors) {
+	for (const ancestor of ancestors) {
 		lines.push(...recursiveDrawLines(familyTree, ancestor));
 	}
-	console.log(lines);
 	return lines;
 }
 
 function recursiveDrawLines(familyTree, node) {
 	let lines = [];
 	// Check for parents
-	console.log('Looking at ' + node._id);
 	if (node.father && node.mother) {
 		// If yes, draw vertical line up
-		console.log('registering line');
 		lines.push({
 			x1: node.x,
 			y1: node.y - radius,
@@ -446,7 +442,7 @@ function recursiveDrawLines(familyTree, node) {
 			y2: node.y + verticalGap / 2
 		});
 		// Recurse into each child
-		for (let child of children) {
+		for (const child of children) {
 			lines.push(...recursiveDrawLines(familyTree, child));
 		}
 	}

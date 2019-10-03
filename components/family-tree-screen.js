@@ -236,14 +236,14 @@ function Node({ cx, cy, _id }) {
 				</ClipPath>
 			</Defs>
 
-			{/* <Image
-                height={radius * 2}
-                width={radius * 2}
-                x={cx - radius}
-                y={cy - radius}
+			<Image
+                height={NODE_RADIUS * 2}
+                width={NODE_RADIUS * 2}
+                x={cx - NODE_RADIUS}
+                y={cy - NODE_RADIUS}
                 href={require('../tim_derp.jpg')}
-                clipPath={`url(#${id})`}
-            /> */}
+                clipPath={`url(#${_id})`}
+            />
 
 
 			<Circle
@@ -278,7 +278,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 	useEffect(() => {
 		async function fetchFamilyMembers() {
 			const res = await axios.get('http://localhost:3000/users');
-			let familyMembers = res.data;
+			const familyMembers = res.data;
 			console.log(familyMembers);
 
 			// Get user document of current user
