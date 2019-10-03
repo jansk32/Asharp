@@ -28,6 +28,10 @@ function calcCenter(x1, y1, x2, y2) {
 }
 
 class ZoomableSvg extends Component {
+	viewBoxSize = 1200;
+	// { height, width } = this.props;
+	resolution = this.viewBoxSize / Math.min(this.props.height, this.props.width);
+
 	state = {
 		zoom: 1,
 		left: 0,
@@ -106,13 +110,10 @@ class ZoomableSvg extends Component {
 			onMoveShouldSetPanResponderCapture: () => true,
 			onPanResponderGrant: (e, gesture) => {
 				const { locationX, locationY } = e.nativeEvent;
-				const viewBoxSize = 1200;
-				const { height, width } = this.props;
 				const { left, top, zoom } = this.state;
-				const resolution = viewBoxSize / Math.min(height, width);
 
-				const tapX = (locationX - left) * resolution / zoom;
-				const tapY = (locationY - top) * resolution / zoom;
+				const tapX = (locationX - left) * this.resolution / zoom;
+				const tapY = (locationY - top) * this.resolution / zoom;
 
 				// Look for any node that was tapped
 				const tappedNode = this.props.familyTree.find(node => Math.hypot(node.x - tapX, node.y - tapY) <= NODE_RADIUS);
@@ -177,11 +178,28 @@ class ZoomableSvg extends Component {
 		});
 	}
 
+	componentDidUpdate(prevProps) {
+		/* Shift the whole family tree to center it.
+		 * The x coordinate of the top left corner of the family tree is set to
+		 * half the display width minus half the width of the family tree in pixels.
+		 * Same with the y coordinate of the top left corner but uses height instead of width.
+		*/
+		if (prevProps.familyTree !== this.props.familyTree) {
+			const { height, width, familyTree } = this.props;
+			const xCoords = familyTree.map(node => node.x);
+			const familyTreeWidth = (Math.max(...xCoords) - Math.min(...xCoords)) / this.resolution;
+			const yCoords = familyTree.map(node => node.y);
+			const familyTreeHeight = (Math.max(...yCoords) - Math.min(...yCoords)) / this.resolution;
+			this.setState({
+				left: (width - familyTreeWidth) / 2,
+				top: (height - familyTreeHeight) / 2
+			});
+		}
+	}
+
 	render() {
-		const viewBoxSize = 1200;
 		const { height, width, familyTree, lines, navigate } = this.props;
 		const { left, top, zoom } = this.state;
-		const resolution = viewBoxSize / Math.min(height, width);
 
 		return (
 			<View {...this._panResponder.panHandlers}>
@@ -197,12 +215,12 @@ class ZoomableSvg extends Component {
 				<Svg
 					width={width}
 					height={height}
-					viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
+					viewBox={`0 0 ${this.viewBoxSize} ${this.viewBoxSize}`}
 					preserveAspectRatio="xMinYMin meet" >
 					<G
 						transform={{
-							translateX: left * resolution,
-							translateY: top * resolution,
+							translateX: left * this.resolution,
+							translateY: top * this.resolution,
 							scale: zoom,
 						}}>
 						{
@@ -286,8 +304,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 			const user = userRes.data;
 
 			const familyTreeInfo = generateFamilyTree(familyMembers, user._id);
-			const familyTree = familyTreeInfo.familyTree;
-			const ancestors = familyTreeInfo.ancestors;
+			const { familyTree, ancestors } = familyTreeInfo;
 			const lines = mainDrawLines(familyTree, ancestors);
 
 			setFamilyTree(familyTree);

@@ -356,12 +356,6 @@ function assignXUp(familyTree, node) {
 	assignXUp(familyTree, mother);
 }
 
-
-function shiftToFitScreen(familyTree) {
-	const offset = -Math.min(...familyTree.map(node => node.x)) + radius + margin;
-	familyTree.forEach(node => node.x += offset);
-}
-
 function assignY(familyTree) {
 	familyTree.forEach(node => node.y = node.gen * verticalGap);
 }
@@ -377,7 +371,6 @@ export default function generateFamilyTree(family, targetId) {
 	mainArrangeFamilyTree(familyTree, ancestors, targetId);
 	console.log(familyTree.map(node => [node._id, node.xOffset]));
 	mainAssignX(familyTree, ancestors);
-	shiftToFitScreen(familyTree);
 	assignY(familyTree);
 	return { familyTree, ancestors };
 }
