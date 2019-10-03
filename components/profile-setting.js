@@ -161,7 +161,7 @@ export default function ProfileSettingScreen({ navigation }) {
           <TouchableOpacity
             onPress={() => {
               updateProfile();
-              navigation.goBack();
+              navigate('Profile');
             }}>
             <View style={styles.redButton}>
               <Text
