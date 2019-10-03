@@ -169,8 +169,8 @@ class ZoomableSvg extends Component {
 						// been nulled by itself which means it hasn't resolved
 
 						// Go to family member details page
-						const {navigate} = this.props;
-						navigate('ViewFamilyMember', {userId: this.state.tappedNode._id});
+						const { navigate } = this.props;
+						navigate('ViewFamilyMember', { userId: this.state.tappedNode._id });
 					}
 				}
 			},
@@ -189,9 +189,9 @@ class ZoomableSvg extends Component {
 					<MenuTrigger>
 					</MenuTrigger>
 					<MenuOptions customStyles={{ optionText: { fontSize: 30, margin: 8 } }}>
-						<MenuOption onSelect={() => navigate('AddFamilyMember', {linkedNode: this.state.tappedNode})} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
-						<MenuOption onSelect={() => navigate('AddFamilyMember', {linkedNode: this.state.tappedNode})} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
-						<MenuOption onSelect={() => navigate('AddFamilyMember', {linkedNode: this.state.tappedNode})} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
+						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
+						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
+						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
 					</MenuOptions>
 				</Menu>
 				<Svg
@@ -206,7 +206,7 @@ class ZoomableSvg extends Component {
 							scale: zoom,
 						}}>
 						{
-							familyTree.map(node => <Node cx={node.x} cy={node.y} _id={node._id} key={node._id} />)
+							familyTree.map(node => <Node cx={node.x} cy={node.y} _id={node.name} key={node.name} pic={node.pictureUrl} />)
 						}
 						{
 							lines.map((line, i) =>
@@ -227,7 +227,7 @@ class ZoomableSvg extends Component {
 	}
 }
 
-function Node({ cx, cy, _id }) {
+function Node({ cx, cy, _id, pic }) {
 	return (
 		<>
 			<Defs>
@@ -235,16 +235,6 @@ function Node({ cx, cy, _id }) {
 					<Circle cx={cx} cy={cy} r={NODE_RADIUS} />
 				</ClipPath>
 			</Defs>
-
-			<Image
-                height={NODE_RADIUS * 2}
-                width={NODE_RADIUS * 2}
-                x={cx - NODE_RADIUS}
-                y={cy - NODE_RADIUS}
-                href={require('../tim_derp.jpg')}
-                clipPath={`url(#${_id})`}
-            />
-
 
 			<Circle
 				cx={cx}
@@ -254,9 +244,19 @@ function Node({ cx, cy, _id }) {
 				fill="white"
 			/>
 
+			<Image
+				height={NODE_RADIUS * 2}
+				width={NODE_RADIUS * 2}
+				x={cx - NODE_RADIUS}
+				y={cy - NODE_RADIUS}
+				href={{ uri: pic ? pic : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
+				clipPath={`url(#${_id})`}
+				preserveAspectRatio="xMidYMid slice"
+			/>
+
 			<Text
 				x={cx}
-				y={cy}
+				y={cy + 100}
 				fill="black"
 				stroke="black"
 				fontSize="30"
@@ -269,7 +269,7 @@ function Node({ cx, cy, _id }) {
 }
 
 function FamilyTreeScreen({ ctx, navigation }) {
-	const {navigate} = navigation;
+	const { navigate } = navigation;
 	const [familyTree, setFamilyTree] = useState([]);
 	const [lines, setLines] = useState([]);
 
