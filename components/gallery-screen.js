@@ -59,8 +59,9 @@ export default function GalleryScreen({navigation}) {
 	
     return (
         <>
-        <View>
-            <Text style={styles.header}>Memories left behind</Text>
+        <View style={styles.headerContainer}>
+            <Text style={styles.title}>Memories Left Behind</Text>
+            <Text style={styles.galleryTitle}>Gallery</Text>
         </View>
         <FlatList
 			data={formatData(artefacts, numColumns)}
@@ -83,12 +84,31 @@ const styles = StyleSheet.create({
       textAlign:'center',
       marginVertical:10
     },
+    title:{
+        fontSize: 20,
+		marginLeft:10,
+		color:'#2d2e33',
+        paddingTop:'8%',
+        
+    },
+    galleryTitle:{
+		fontSize: 30,
+		marginLeft:10,
+		fontWeight:'bold',
+        paddingBottom:'8%',
+    },
+    headerContainer:{
+		borderBottomLeftRadius:25,
+		borderBottomRightRadius:25,
+        backgroundColor:'#f5f7fb',
+	},
     item: {
         //backgroundColor: '#4D243D',
         alignItems: 'center',
         justifyContent: 'center',
         flex: 1,
-        margin: 1,
+        marginLeft:10,
+        marginRight:10,
         height: Dimensions.get('window').width / numColumns, // approximate a square
       },
       itemInvisible: {
