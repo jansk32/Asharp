@@ -12,7 +12,7 @@ export default function TimelineScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [artefacts, setArtefacts] = useState([]);
 
-    // Get all the artefact
+    // Get all the artefacts
     useEffect(() => {
 		async function fetchArtefacts() {
 			try {
@@ -33,7 +33,10 @@ export default function TimelineScreen({ navigation }) {
 		});
 		
 		// Format date DD-MM-YYYY
-		data.forEach(entry => {entry.time = Moment(entry.date).format("DD-MM-YYYY")});
+		data.forEach(entry => {
+			entry.time = Moment(entry.date).format('DD-MM-YYYY');
+			entry.key = entry._id;
+		});
 
 		// Display only one date under several artefacts with the same date
 		for (let i = data.length - 1; i > 0; i--) {
@@ -61,7 +64,7 @@ export default function TimelineScreen({ navigation }) {
 	return (
 		<>
 			<LinearGradient colors={['#50D5B7','#067D68']} style={styles.container}>
-				<Text  style={styles.title}>Timeline</Text>				
+				<Text style={styles.title}>Timeline</Text>				
 			</LinearGradient>
 			<Timeline
 				style={styles.list}

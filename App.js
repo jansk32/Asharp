@@ -7,7 +7,7 @@ import TimelineScreen from './components/timeline-screen';
 import GalleryScreen from './components/gallery-screen';
 import ItemDetailScreen from './components/item-detail-screen';
 import WelcomeScreen from './components/welcome-screen';
-import Login from './components/log-in-screen';
+import LoginScreen from './components/log-in-screen';
 import SignUp1 from './components/sign-up1-screen';
 import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
@@ -30,8 +30,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 // Import Firebase.
 import * as firebase from 'firebase';
+import OneSignal from 'react-native-onesignal';
 import { Dimensions } from 'react-native';
-import LoginScreen from './components/sign-up1-screen';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -44,6 +44,11 @@ const firebaseConfig = {
 	appId: "1:657679581397:web:6dbc92e3aa881c59"
 };
 firebase.initializeApp(firebaseConfig);
+
+// OneSignal
+const ONESIGNAL_APP_ID = 'f9de7906-8c82-4674-808b-a8048c4955f1';
+OneSignal.init(ONESIGNAL_APP_ID);
+OneSignal.addEventListener('received', () => console.log('RECEIVED ONESIGNAL'));
 
 // Main bottom tab navigator to navigate the main functionalities of the application
 const MainNavigator = createBottomTabNavigator({

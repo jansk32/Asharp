@@ -390,7 +390,7 @@ app.get('/login', (req, res) => {
 
 // login local
 app.post('/login/local', passport.authenticate('local'), (req, res) => {
-	console.log("posted");
+	console.log('posted');
 	console.log(req.user);
 	res.send(req.user);
 });

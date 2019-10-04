@@ -53,38 +53,44 @@ const styles = StyleSheet.create({
 // Welcome screen to go to login and sign in
 export default function WelcomeScreen({ navigation }) {
     const { navigate } = navigation;
+    const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
         async function rememberLogin() {
-            ToastAndroid.show('Retrieving stored credentials', ToastAndroid.SHORT);
             const email = await AsyncStorage.getItem('email');
             const password = await AsyncStorage.getItem('password');
-            if (await axiosLocal({email, password})) {
+            // Check if both email and password were stored previously before sending request
+            if (email && password && await axiosLocal({ email, password })) {
                 ToastAndroid.show('Successfully logged in with stored credentials', ToastAndroid.SHORT);
                 navigate('Home');
             } else {
-                alert('Stored credentials are no longer valid, please log in again');
+                setLoading(false);
             }
         }
         rememberLogin();
-    });
+    }, []);
 
     return (
         <>
             <View style={styles.container}>
                 <Text style={styles.title}>mementos</Text>
-                <View style={styles.buttonBox}>
-                    <TouchableOpacity onPress={() => navigate('SignUp1')}>
-                        <View style={styles.yellowButton}>
-                            <Text style={styles.buttonText}>I am a new user </Text>
+                {
+                    isLoading ?
+                        null
+                        :
+                        <View style={styles.buttonBox}>
+                            <TouchableOpacity onPress={() => navigate('SignUp1')}>
+                                <View style={styles.yellowButton}>
+                                    <Text style={styles.buttonText}>I am a new user </Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => navigate('Login')}>
+                                <View style={styles.whiteButton}>
+                                    <Text style={styles.buttonText}>I am an existing user</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigate('Login')}>
-                        <View style={styles.whiteButton}>
-                            <Text style={styles.buttonText}>I am an existing user</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
+                }
             </View>
         </>
     );

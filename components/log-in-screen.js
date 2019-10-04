@@ -5,6 +5,7 @@ import {
 import { NavigationEvents } from 'react-navigation';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
+import OneSignal from 'react-native-onesignal';
 
 const styles = StyleSheet.create({
 	container: {
@@ -81,9 +82,10 @@ export async function axiosLocal(objData) {
 	console.log(objData);
 	try {
 		const res = await axios.post('http://localhost:3000/login/local', objData);
+		OneSignal.setExternalUserId(res.data._id);
 		return true;
 	} catch (e) {
-		console.error(e);
+		console.log(e);
 		return false;
 	}
 }

@@ -3,6 +3,9 @@ import axios from 'axios';
 import { Text, StyleSheet, View, Image, Dimensions, TouchableOpacity, Button } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Moment from 'moment';
+import OneSignal from 'react-native-onesignal';
+import AsyncStorage from '@react-native-community/async-storage';
+import { Assets } from 'react-navigation-stack';
 
 // Number 
 const numColumns = 3;
@@ -149,12 +152,16 @@ export default function ProfileScreen({ navigation }) {
     // Get profile and artefacts by owner
     useEffect( () => { fetchProfile()}, []);
 
-    
     // Logout function
-    function logout() {
-        axios.get('http://localhost:3000/logout')
-        .then((result) => navigate('Welcome'))
-        .catch((err) => console.log(err));
+    async function logout() {
+        try {
+            await axios.get('http://localhost:3000/logout');
+            await AsyncStorage.multiRemove(['email', 'password']);
+            OneSignal.removeExternalUserId();
+            navigate('Welcome');
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     // Render Item invisible if it's just a placeholder for columns in the grid,
