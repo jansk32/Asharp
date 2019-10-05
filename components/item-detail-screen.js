@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Image, View, StyleSheet, Dimensions, ScrollView, } from 'react-native';
+import { Text, Image, View, StyleSheet, Dimensions, ScrollView, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import Moment from 'moment';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -86,12 +86,14 @@ export default function ItemDetailScreen({ navigation }) {
     var artefactId = navigation.getParam('artefactId');
     const [artefact, setArtefact] = useState({});
     const [owner, setOwner] = useState('');
+    const [hide, setHide] = useState('');
 
     // Get all artefacts
     useEffect(() => {
         async function fetchArtefact() {
             const res = await axios.get(`http://localhost:3000/artefact/find/${artefactId}`);
             setArtefact(res.data);
+            setHide('false');
             // console.log("owner id:"+ res.data.owner);
             const ownerObj = await axios.get('http://localhost:3000/user/artefact', {
                 params: {
@@ -99,7 +101,11 @@ export default function ItemDetailScreen({ navigation }) {
                 }
             });
             await setOwner(ownerObj.data.name);
+            setHide('false');
             // await console.log(ownerObj.data.name);
+        }
+        if (!artefact.name){
+            setHide('true');
         }
         fetchArtefact();
     }, []);
@@ -109,13 +115,14 @@ export default function ItemDetailScreen({ navigation }) {
     return (
         <>
             <View style={styles.container}>
+               
                 <Image
                     style={styles.image}
                     source={{ uri: artefact.file }}
                 />
 
                 <ScrollView>
-
+                <ActivityIndicator size="large" animation={hide === 'true'}/>
                     <View style={styles.headerCont}>
                     <Text style={styles.title}>{artefact.name}</Text>
 

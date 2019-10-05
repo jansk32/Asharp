@@ -209,9 +209,9 @@ app.put('/artefact/assign', (req,res) => {
 })
 
 // Get artefact by owner id
-app.get('/artefact/findbyowner/', (req,res) => {
+app.get('/artefact/findbyowner/', async (req,res) => {
 	let id = req.session.passport.user._id;
-	artefactModel.find({ owner: id }, (err, resp) => {
+	await artefactModel.find({ owner: id }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp);
 	});

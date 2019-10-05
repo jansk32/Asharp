@@ -44,7 +44,7 @@ export default function ProfileScreen({ navigation }) {
     // Get the artefact of the user
     async function getArtefact() {
         //console.log(profile);
-        axios.get("http://localhost:3000/artefact/findbyowner/")
+        axios.get("http://localhost:3000/artefact/findbyowner")
         .then((result) => {
             //console.log(result.data);
             setArtefact(result.data);
@@ -58,11 +58,13 @@ export default function ProfileScreen({ navigation }) {
         setHide("true");
        }
        await getProfile();
-       await getArtefact();
+    //    await getArtefact();
     }
 
     // Get profile and artefacts by owner
     useEffect( () => { fetchProfile()});
+
+    useEffect(() => {getArtefact()},[]);
 
     
     // Logout function
