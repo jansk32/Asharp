@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Text, StyleSheet, View, Image, Dimensions, TouchableOpacity, Button } from 'react-native';
+import { Text, ActivityIndicator,StyleSheet, View, Image, Dimensions, TouchableOpacity, Button } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import Moment from 'moment';
@@ -30,6 +30,7 @@ export default function ProfileScreen({ navigation }) {
     const { navigate } = navigation;
     var [profile, setProfile] = useState({});
     const [artefact, setArtefact] = useState([]);
+    const [hide, setHide] = useState("");
 
     // Get profile details
     async function getProfile() {
@@ -47,11 +48,15 @@ export default function ProfileScreen({ navigation }) {
         .then((result) => {
             //console.log(result.data);
             setArtefact(result.data);
+            setHide("false")
         })
         .catch(err => console.log(error));
     }
 
     async function fetchProfile(){
+       if(profile === null || artefact.length < 1){
+        setHide("true");
+       }
        await getProfile();
        await getArtefact();
     }
@@ -94,7 +99,7 @@ export default function ProfileScreen({ navigation }) {
         <>
             <React.Fragment>
                 <View style={styles.profileBox}>
-
+                <ActivityIndicator size="large" color="#0000ff" animating={hide === 'true'}/>
                     <View style={styles.header}>
                         <Text style={styles.profile}>Profile</Text>
                         <View style={styles.icon}>
