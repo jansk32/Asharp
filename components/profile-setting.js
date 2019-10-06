@@ -10,17 +10,8 @@ import { pickImage, uploadImage } from '../image-tools';
 import axios from 'axios';
 import Moment from 'moment';
 
+// Set Moment Locale
 Moment.locale('en');
-
-
-
-/*
-TODO
-- Create Page ✓
-- Link in navigation bar ✓
-- Create function
-
-*/
 
 // Edit user details: Name, DOB, password, profile picture
 export default function ProfileSettingScreen({ navigation }) {
@@ -51,8 +42,8 @@ export default function ProfileSettingScreen({ navigation }) {
     await axios.get("http://localhost:3000/user")
       .then((result) => {
         console.log(result.data);
-		setUser(result.data);
-		setImage({uri : result.data.pictureUrl});
+        setUser(result.data);
+        setImage({ uri: result.data.pictureUrl });
       });
     // await console.log(user);
   }
@@ -66,11 +57,11 @@ export default function ProfileSettingScreen({ navigation }) {
     await name !== '' ? data.name = name : name;
     await dob !== '' ? data.dob = dob : dob;
     await password !== '' ? data.password = password : password;
-    if(image.uri.includes('firebase') === false){
+    if (image.uri.includes('firebase') === false) {
       let newImage = await uploadImage(image.uri);
       data.pictureUrl = newImage;
     }
-	  await console.log(data);
+    await console.log(data);
     let updatedData = await axios.put("http://localhost:3000/user/update", data)
     console.log(updatedData);
   }
@@ -84,7 +75,7 @@ export default function ProfileSettingScreen({ navigation }) {
     <>
       <ScrollView>
         <View style={styles.container}>
-          <Image source={{ uri: image.uri}} style={styles.imageStyle} />
+          <Image source={{ uri: image.uri }} style={styles.imageStyle} />
           <View style={styles.buttonBox}>
             <TouchableOpacity
               onPress={async () => await setImage(await pickImage())}>
@@ -108,15 +99,14 @@ export default function ProfileSettingScreen({ navigation }) {
             </View>
             <View style={styles.inputElem}>
               <Text style={styles.text}>Date of Birth:</Text>
-
               <DatePicker
                 style={styles.dateInputs}
                 date={dob}
                 mode="date"
                 placeholder={Moment(user.dob).format('L')}
-                format="YYYY-MM-DD"
-                minDate="1900-01-01"
-                maxDate="2019-01-01"
+                format="DD-MM-YYYY"
+                minDate="01-01-1900"
+                maxDate="01-01-2019"
                 confirmBtnText="Confirm"
                 cancelBtnText="Cancel"
                 androidMode="spinner"
