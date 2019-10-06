@@ -134,7 +134,7 @@ export default function UploadImageScreen({ navigation }) {
                 />
                 <Text style={styles.text}>Value</Text>
                 <TextInput
-                  placeholder='Write down the value and memorythis item holds.'
+                  placeholder='Write down the value and memory this item holds.'
                   onChangeText={setValue}
                   maxLength={40}
                   multiline={true}
