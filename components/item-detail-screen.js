@@ -108,6 +108,7 @@ export default function ItemDetailScreen({ navigation }) {
             setHide('true');
         }
         fetchArtefact();
+        setHide('false');
     }, []);
 
     const backButton = <Icon name="md-home" size={30} />
