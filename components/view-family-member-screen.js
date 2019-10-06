@@ -25,7 +25,7 @@ export default function ViewFamilyMemberScreen({ navigation }) {
         </LinearGradient> */}
 
             <Image
-                source={require('../tim_derp.jpg')}
+                source={{uri: user.pictureUrl}}
                 style={styles.profilePic}
             />
 
@@ -34,6 +34,10 @@ export default function ViewFamilyMemberScreen({ navigation }) {
                 <Text style={styles.detailsTitle}>Details</Text>
                 <Text style={styles.details}>Name: {user.name}</Text>
             </View>
+            <TouchableOpacity
+                onPress={()=>navigation.goBack()}>
+                <Text>Back</Text>
+            </TouchableOpacity>
         </>
     );
 }
