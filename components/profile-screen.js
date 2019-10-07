@@ -35,7 +35,7 @@ export default function ProfileScreen({ navigation }) {
     // Get profile details
     async function getProfile() {
         //console.log('Sending request');
-        axios.get('http://localhost:3000/user', { withCredentials: true })
+        await axios.get('http://localhost:3000/user', { withCredentials: true })
         .then((res) => {
             setProfile(res.data);
         })
@@ -62,9 +62,11 @@ export default function ProfileScreen({ navigation }) {
     }
 
     // Get profile and artefacts by owner
-    useEffect( () => { fetchProfile()});
+    useEffect( () => { 
+        fetchProfile()
+        getArtefact()
+    },[]);
 
-    useEffect(() => {getArtefact()},[]);
 
     
     // Logout function
