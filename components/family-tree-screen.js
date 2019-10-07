@@ -211,7 +211,7 @@ class ZoomableSvg extends Component {
 				<Menu name="menu" renderer={SlideInMenu}>
 					<MenuTrigger>
 					</MenuTrigger>
-					<MenuOptions customStyles={{ optionText: { fontSize: 30, margin: 8 } }}>
+					<MenuOptions style={styles.menuStyle} customStyles={{ optionText:styles.menuText}}>
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
@@ -262,7 +262,7 @@ function Node({ data: { x, y, name, _id, pictureUrl, matchesSearch } }) {
 				cx={x}
 				cy={y}
 				r={NODE_RADIUS}
-				stroke={matchesSearch ? 'red' : 'black'}
+				stroke={matchesSearch ? '#EC6268' : 'white'}
 				strokeWidth="8"
 				fill="white"
 			/>
@@ -334,7 +334,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 			<Text style={styles.add}>This is your</Text>
 			<Text style={styles.title}>Family Tree</Text>
 			<View style={styles.searchContainer}>
-				<Icon name="md-search" size={30} color={'#2d2e33'} style={{paddingTop: 2,}}/>
+				<Icon name="md-search" size={30} color={'#2d2e33'} style={{paddingTop: 5,}}/>
 				<TextInput
 					placeholder="Search family member"
 					value={familyMemberSearch}
@@ -384,6 +384,23 @@ const styles = StyleSheet.create({
 		color: '#2d2e33',
 		marginLeft: 10,
 		marginTop: 10,
+	},
+	menuStyle:{
+		borderTopEndRadius: 20,
+		borderTopStartRadius: 20,
+		borderRadius: 20,
+		borderColor: 'black',
+		borderWidth: 1,
+		flex: 1/4,
+		width: Dimensions.get('window').width * 0.85,
+		alignSelf: 'center',
+		height: 150,
+		marginBottom: 30,
+		justifyContent: 'space-evenly',
+	},
+	menuText:{
+		textAlign: 'center',
+		fontSize: 20,	
 	},
 })
 
