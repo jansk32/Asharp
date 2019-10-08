@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Image, View, StyleSheet, Dimensions, ScrollView, } from 'react-native';
+import { Text, Image, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import axios from 'axios';
 import Moment from 'moment';
 import AsyncStorage from '@react-native-community/async-storage';
