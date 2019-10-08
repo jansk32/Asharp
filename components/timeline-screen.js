@@ -3,10 +3,10 @@ import { Text, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import Timeline from 'react-native-timeline-feed';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
-import Moment from 'moment';
+import moment from 'moment';
 
 // Import date formatting module moment.js
-Moment.locale('en');
+moment.locale('en');
 
 export default function TimelineScreen({ navigation }) {
 	const { navigate } = navigation;
@@ -34,7 +34,7 @@ export default function TimelineScreen({ navigation }) {
 		
 		// Format date DD-MM-YYYY
 		data.forEach(entry => {
-			entry.time = Moment(entry.date).format('DD-MM-YYYY');
+			entry.time = moment(entry.date).format('DD-MM-YYYY');
 			entry.key = entry._id;
 		});
 

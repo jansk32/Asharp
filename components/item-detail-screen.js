@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Image, View, StyleSheet, Dimensions, ScrollView, } from 'react-native';
+import { Text, Image, View, StyleSheet, Dimensions, ScrollView, Button } from 'react-native';
 import axios from 'axios';
-import Moment from 'moment';
+import moment from 'moment';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-Moment.locale('en');
+moment.locale('en');
 
 const styles = StyleSheet.create({
     image: {
@@ -74,16 +74,16 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
     },
-    value:{
+    value: {
         fontSize: 16,
     }
-})
+});
 
 
 // See the details of each individual artefacts
 export default function ItemDetailScreen({ navigation }) {
     const { navigate } = navigation;
-    var artefactId = navigation.getParam('artefactId');
+    const { artefactId } = navigation.state.params;
     const [artefact, setArtefact] = useState({});
     const [owner, setOwner] = useState('');
 
@@ -115,11 +115,11 @@ export default function ItemDetailScreen({ navigation }) {
                 <ScrollView>
 
                     <View style={styles.headerCont}>
-                    <Text style={styles.title}>{artefact.name}</Text>
+                        <Text style={styles.title}>{artefact.name}</Text>
 
                         <View style={styles.headerDesc}>
                             <Text style={styles.owner}>Owned by {owner}</Text>
-                            <Text style={styles.dateStyle}>{Moment(artefact.date).format('L')}</Text>
+                            <Text style={styles.dateStyle}>{moment(artefact.date).format('L')}</Text>
 
                         </View>
                     </View>
@@ -139,6 +139,10 @@ export default function ItemDetailScreen({ navigation }) {
                     size={22}
                     style={styles.backButt}
                     onPress={() => navigation.goBack()}
+                />
+                <Button
+                    title="Send artefact"
+                    onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
                 />
             </View>
         </>

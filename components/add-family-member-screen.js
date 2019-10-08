@@ -6,7 +6,7 @@ import axios from 'axios';
 
 export default function AddFamilyMemberScreen({ navigation }) {
     const { navigate } = navigation;
-    const linkedNode = navigation.getParam('linkedNode');
+    const { linkedNode } = navigation.state.params;
     const [name, setName] = useState('');
     const [dob, setDob] = useState('');
     const [gender, setGender] = useState('');

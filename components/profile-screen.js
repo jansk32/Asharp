@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Text, StyleSheet, View, Image, Dimensions, TouchableOpacity, Button } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import Moment from 'moment';
+import moment from 'moment';
 import OneSignal from 'react-native-onesignal';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Assets } from 'react-navigation-stack';
+
 
 // Number 
 const numColumns = 3;
@@ -184,7 +185,7 @@ export default function ProfileScreen({ navigation }) {
     };
 
     // Format date
-    Moment.locale('en');
+    moment.locale('en');
 
     // Return the whole layout for profile
     return (
@@ -200,7 +201,7 @@ export default function ProfileScreen({ navigation }) {
                         <Text 
                             style={styles.nameText}>Name: {profile.name}</Text>
                         <Text
-                            style={styles.nameText}>Date of Birth: {Moment(profile.dob).format('L')}</Text>
+                            style={styles.nameText}>Date of Birth: {moment(profile.dob).format('L')}</Text>
                     </View>
                 </View>
                 <View style={styles.settingBox}>

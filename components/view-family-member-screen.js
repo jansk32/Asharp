@@ -6,7 +6,7 @@ import axios from 'axios';
 
 export default function ViewFamilyMemberScreen({ navigation }) {
     const { navigate } = navigation;
-    const userId = navigation.getParam('userId');
+    const {userId} = navigation.state.params;
     const [user, setUser] = useState({});
 
     useEffect(() => {

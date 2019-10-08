@@ -3,6 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const axios = require('axios');
+const moment = require('moment');
 
 // passport.js
 const passport = require('passport');
@@ -54,11 +56,13 @@ passport.deserializeUser(function (user, done) {
 
 // Schemas
 const userSchema = require('../schema/userSchema');
-const artSchema = require('../schema/artefactSchema');
+const artefactSchema = require('../schema/artefactSchema');
+const notificationSchema = require('../schema/notificationSchema');
 
 // Create the mongoose model 
-let userModel = mongoose.model('user', userSchema);
-let artefactModel = mongoose.model('artefact', artSchema);
+const userModel = mongoose.model('user', userSchema);
+const artefactModel = mongoose.model('artefact', artefactSchema);
+const notificationModel = mongoose.model('notification', notificationSchema);
 
 // Connect to mongodb
 require('../controller/mongooseController');
@@ -120,13 +124,13 @@ app.get('/user/find/:id', (req, res) => {
 });
 
 // Get user by id for artefacts
-app.post('/user/artefact', (req,res) => {
+app.post('/user/artefact', (req, res) => {
 	// console.log(req.body);
 	userModel.findOne(req.body, (err, result) => {
-		if(err) throw err;
+		if (err) throw err;
 		res.send(result);
-	})
-})
+	});
+});
 
 // Create a user
 app.post('/user/create', async ({ body: {
@@ -301,15 +305,6 @@ app.get('/users', (req, res) => {
 	});
 });
 
-// Assign artefact to a person
-app.put('/user/assign/:id', (req, res) => {
-	userModel.update({ id: req.params.id }, { $push: { artefact: req.body } }, (err, resp) => {
-		if (err) {
-			throw err;
-		}
-		res.send('updated');
-	});
-});
 
 /* Artefact routes */
 // Get ALL artefacts
@@ -326,7 +321,7 @@ app.get('/artefact/find/:artefactId', (req, res) => {
 		if (err) throw err;
 		console.log(resp);
 		res.send(resp);
-	})
+	});
 });
 
 // Create an artefact
@@ -350,34 +345,47 @@ app.post('/artefact/create', ({
 	});
 });
 
-// // Assign artefact to a person
-// app.put('/user/assign/:id', (req, res) => {
-// 	// Update the user with new artefact
-// 	userModel.update({ id: req.params.id }, { $push: { artefact: req.body.id } }, (err, resp) => {
-// 		if (err) {
-// 			throw err;
-// 		}
-// 		res.send('updated');
-// 	})
-// });
 
 // Re-assign artefact to certain user
-app.put('/artefact/assign', (req,res) => {
+app.put('/artefact/assign', ({ body: { artefactId, recipientId, senderId } }, res) => {
 	// Request should include id of artefact, and id of new owner
-	artefactModel.updateOne({_id: req.body.id}, {owner : req.body.owner}, (err, resp) => {
+	artefactModel.updateOne({ artefactId }, { owner: recipientId }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp);
-	})
-})
+	});
+
+	// Send notification to recipient
+	const ONESIGNAL_ENDPOINT = 'https://onesignal.com/api/v1/notifications';
+	const ONESIGNAL_APP_ID = 'f9de7906-8c82-4674-808b-a8048c4955f1';
+	axios.post(ONESIGNAL_ENDPOINT, {
+		app_id: ONESIGNAL_APP_ID,
+		include_external_user_ids: [recipientId],
+		contents: {
+			en: 'You have received a new artefact'
+		},
+		headings: {
+			en: 'Notification title'
+		}
+	});
+
+	// Add new notification document to database
+	const notif = new notificationModel({
+		time: moment().toISOString(),
+		senderId,
+		artefactId,
+	});
+
+	notif.save();
+});
 
 // Get artefact by owner id
-app.get('/artefact/findbyowner/', (req,res) => {
+app.get('/artefact/findbyowner/', (req, res) => {
 	let id = req.session.passport.user._id;
 	artefactModel.find({ owner: id }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp);
 	});
-})
+});
 
 // Tim: this will be replaced by the single route called /user/create so
 // the front end will make only one request to the back end
@@ -401,19 +409,19 @@ app.get('login/success/:isFail', (req, res) => {
 	res.send(req.params.isFail);
 });
 
-app.get('/logout', (req,res) => {
+app.get('/logout', (req, res) => {
 	console.log("logging out");
 	if (req.session) {
 		// delete session object
-		req.session.destroy(function(err) {
-		  if(err) {
-			return next(err);
-		  } else {
-			return res.send("Success");
-		  }
+		req.session.destroy(function (err) {
+			if (err) {
+				return next(err);
+			} else {
+				return res.send("Success");
+			}
 		});
-	  }
-})
+	}
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port);

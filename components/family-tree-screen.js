@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import { View, PanResponder, Dimensions, ToastAndroid, TextInput } from 'react-native';
+import { View, PanResponder, Dimensions, ToastAndroid, TextInput, Alert } from 'react-native';
 import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text } from 'react-native-svg';
 import generateFamilyTree, { mainDrawLines } from '../build-family-tree';
 import axios from 'axios';
@@ -29,7 +29,6 @@ function calcCenter(x1, y1, x2, y2) {
 
 class ZoomableSvg extends Component {
 	viewBoxSize = 1200;
-	// { height, width } = this.props;
 	resolution = this.viewBoxSize / Math.min(this.props.height, this.props.width);
 
 	state = {
@@ -120,7 +119,7 @@ class ZoomableSvg extends Component {
 				if (tappedNode) {
 					this.setState({ tappedNode });
 					// Set long press timeout to open menu if a node was tapped
-					const LONG_PRESS_DURATION = 1000;
+					const LONG_PRESS_DURATION = 2000;
 					this.longPressTimeout = setTimeout(() => {
 						this.props.ctx.menuActions.openMenu('menu');
 						// Null long press timeout to signal that the timeout has been resolved
@@ -168,10 +167,34 @@ class ZoomableSvg extends Component {
 					if (this.state.tappedNode && this.longPressTimeout) {
 						// Register touch release as a tap if long press timeout hasn't
 						// been nulled by itself which means it hasn't resolved
-
-						// Go to family member details page
-						const { navigate } = this.props;
-						navigate('ViewFamilyMember', { userId: this.state.tappedNode._id });
+						const { navigation } = this.props;
+						if (navigation.state.params && navigation.state.params.isSendingArtefact) {
+							// Send artefact
+							Alert.alert(
+								'Send artefact',
+								`Send artefact to ${this.state.tappedNode.name}?`,
+								[{
+									text: 'Cancel'
+								},
+								{
+									text: 'OK',
+									onPress: () => {
+										try {
+											axios.put('http://localhost:3000/artefact/assign', {
+												artefactId: navigation.state.params.artefactId,
+												senderId: this.state.tappedNode._id
+											});
+										} catch (e) {
+											ToastAndroid.show('Error sending artefact', ToastAndroid.SHORT);
+										}
+										navigation.setParams(null);
+										navigation.goBack();
+									}
+								}]);
+						} else {
+							// Go to family member details page
+							navigation.navigate('ViewFamilyMember', { userId: this.state.tappedNode._id });
+						}
 					}
 				}
 			},
@@ -198,7 +221,7 @@ class ZoomableSvg extends Component {
 	}
 
 	render() {
-		const { height, width, familyTree, lines, navigate } = this.props;
+		const { height, width, familyTree, lines, navigation: { navigate } } = this.props;
 		const { left, top, zoom } = this.state;
 
 		return (
@@ -288,7 +311,6 @@ function Node({ data: { x, y, name, _id, pictureUrl, matchesSearch } }) {
 }
 
 function FamilyTreeScreen({ ctx, navigation }) {
-	const { navigate } = navigation;
 	const [familyTree, setFamilyTree] = useState([]);
 	const [lines, setLines] = useState([]);
 	const [familyMemberSearch, setFamilyMemberSearch] = useState('');
@@ -326,7 +348,6 @@ function FamilyTreeScreen({ ctx, navigation }) {
 		}
 	}, [familyMemberSearch]);
 
-	console.log('RENDERING');
 	return (
 		<>
 			<TextInput
@@ -340,7 +361,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 				familyTree={familyTree}
 				lines={lines}
 				ctx={ctx}
-				navigate={navigate} />
+				navigation={navigation} />
 		</>
 	);
 }
