@@ -4,13 +4,13 @@ import Timeline from 'react-native-timeline-feed';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import Moment from 'moment';
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+
 
 // Import date formatting module moment.js
 Moment.locale('en');
 
 const numColumns = 3;
-
 
 export default function TimelineScreen({ navigation }) {
 
@@ -24,6 +24,7 @@ export default function TimelineScreen({ navigation }) {
 		timeData.forEach(entry => 
 			{entry.time = Moment(entry.date).format("DD-MM-YYYY")});
 
+		// Sort Timeline in Descending order
 		timeData.sort(function (a,b){
 			return a.time < b.time ? 1 : -1;
 		})
@@ -34,7 +35,6 @@ export default function TimelineScreen({ navigation }) {
 				timeData[i].time = '';
 			} 
 		}
-		
 		return timeData;
 	}
 	const formatData = (data,numColumns) => {
@@ -43,30 +43,15 @@ export default function TimelineScreen({ navigation }) {
 		const numberOfFullRows = Math.floor(data.length / numColumns);
   
 		let numberOfElementsLastRow = data.length - numberOfFullRows * numColumns;
-		while (
-			numberOfElementsLastRow !== numColumns &&
-			numberOfElementsLastRow !== 0
-		) {
-			// data.push({key: `blank-${numberOfElementsLastRow}`, empty: true });
+		while (numberOfElementsLastRow !== numColumns 
+			&& numberOfElementsLastRow !== 0) {
 			numberOfElementsLastRow++;
 		}
-
-		
-		
-		// for (let i = data.length - 1 -numberOfElementsLastRow; i > 0; i--) {
-		// 	if(data[i].name === ""){
-		// 		data[i].pop();
-		// 	}
-		// }
-		
-		
-
 		return data;
 	};
 
-
 	  // Get all the artefact
-	  useEffect(() => {
+	useEffect(() => {
 		async function fetchArtefacts() {
 			try {
 				const res = await axios.get('http://localhost:3000/artefact');
@@ -115,11 +100,8 @@ export default function TimelineScreen({ navigation }) {
 		);
 	}
 
-	
-
-
 	// Layout for Gallery tab
-	const FirstRoute = () => (
+	const GalleryRoute = () => (
 		<>
 		<FlatList
 			data={formatData(artefacts, numColumns)}
@@ -132,7 +114,7 @@ export default function TimelineScreen({ navigation }) {
 	);
 
 	//Layout for Timeline tab
-	const SecondRoute = () => (
+	const TimelineRoute = () => (
 		<>			
 			<Timeline
 				style={styles.list}
@@ -148,20 +130,16 @@ export default function TimelineScreen({ navigation }) {
 		</>
 	  );
 
-
 	const [tab,setTab] = useState({
 		index: 0,
 		routes: [
-		  { key: 'first', title: 'Gallery' },
-		  { key: 'second', title: 'Timeline' },
+		  { key: 'first', title: 'Timeline' },
+		  { key: 'second', title: 'Gallery' },
 		],
 	});
 
-  
-
 	return (
 		<>
-
 			<View style={styles.containers}>
 				<Text style={styles.title}>Memories Left Behind</Text>
 				<Text style={styles.artefactTitle}>Artefact</Text>
@@ -169,33 +147,21 @@ export default function TimelineScreen({ navigation }) {
 			<TabView
 				navigationState={tab}
 				renderScene={SceneMap({
-					first: FirstRoute,
-					second: SecondRoute,
+					first: TimelineRoute,
+					second: GalleryRoute,
 				})}
+				renderTabBar={props =>
+					<TabBar
+					  {...props}
+					  indicatorStyle={{ backgroundColor: '#EC6268'}}
+					  style={{ backgroundColor: '#f5f7fb'}}
+					  bounces={true}
+					  labelStyle={{color:'#2d2e33'}}
+					/>
+				  }
 				onIndexChange={index => setTab({ ...tab,index })}
 				initialLayout={{ width: Dimensions.get('window').width }}
       		/>
-			
-			
-			{/* <LinearGradient colors={['#50D5B7','#067D68']} style={styles.container}>
-				<Text  style={styles.title}>Timeline</Text>				
-			</LinearGradient> */}
-			{/* <View style={styles.container}>
-				<Text style={styles.title}>Artefact</Text>
-				<Text style={styles.timelineTitle}>Timeline</Text>
-			</View>	
-			
-			<Timeline
-				style={styles.list}
-				data={formatData(artefacts)}
-				circleSize={15}
-				circleColor='#EC6268'
-				lineColor='#e3e3e3'
-				innerCircleType='dot'
-				renderDetail={renderDetail}
-				timeContainerStyle={{ minWidth: 72, marginLeft: 10 }}
-				timeStyle={{color:'#2d2e33'}}
-			/> */}
 		</>
 	);
 }
@@ -211,16 +177,10 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 20,
 		marginLeft:10,
-		// fontWeight:'bold',
-		// textAlign: 'center',
-		// backgroundColor: '#EC6268',
-		// borderBottomLeftRadius:75,
 		color:'#2d2e33',
 		paddingTop:'8%'
 	},
 	containers:{
-		// borderBottomLeftRadius:25,
-		// borderBottomRightRadius:25,
         backgroundColor:'#f5f7fb',
 	},
 	artefactTitle:{
@@ -228,7 +188,6 @@ const styles = StyleSheet.create({
 		marginLeft:10,
 		fontWeight:'bold',
 		paddingBottom:'8%',
-
 	},
 	image: {
 		width: 75,
@@ -238,7 +197,6 @@ const styles = StyleSheet.create({
 	list: {
 		flex: 1,
 		marginTop: 20,
-		// backgroundColor: '#ebecf1',
 	},
 	container: {
         flex: 1,
@@ -262,18 +220,9 @@ const styles = StyleSheet.create({
 		fontWeight:'bold',
         paddingBottom:'8%',
     },
-
     item: {
-        //backgroundColor: '#4D243D',
-        // alignItems: 'flex-start',
-        // // justifyContent: 'center',
-        // flex: 1,
-        // // marginLeft:10,
-				// // marginRight:10,
-				// // backgroundColor: 'blue',
-				height: Dimensions.get('window').width / numColumns, // approximate a square
-				backgroundColor: '#FAFAFA',
-        // flex: 1,
+		height: Dimensions.get('window').width / numColumns, // approximate a square
+		backgroundColor: '#FAFAFA',
         alignItems: 'center',
       },
       itemInvisible: {
@@ -288,7 +237,6 @@ const styles = StyleSheet.create({
         margin: 1,
         width: Dimensions.get('window').width / numColumns,
       }
-
 });
 
 TimelineScreen.navigationOptions = {

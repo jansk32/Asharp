@@ -60,17 +60,21 @@ export default function ItemDetailScreen({ navigation }) {
     return (
         <>
             <ScrollView>
+            <ActivityIndicator size="large" animation={hide === 'true'}/>
                 <View style={styles.container}>
                     <Image
                         style={styles.image}
                         source={{ uri: artefact.file }}
                     />
+<<<<<<< HEAD
                     {hide && (
                     <ActivityIndicator
                         size="large"
                     />
                     )}
 
+=======
+>>>>>>> 25897e705687edd52a590432b229592741af6cb4
                     <View style={styles.headerCont}>
                         <Text style={styles.title}>{artefact.name}</Text>
 
@@ -119,10 +123,10 @@ const styles = StyleSheet.create({
         paddingVertical: '5%',
         marginBottom: '5%',
         // backgroundColor: '#E6E6E6',
-        borderColor: 'black',
+        // borderColor: 'black',
         borderBottomEndRadius: 30,
         borderBottomStartRadius: 30,
-        borderWidth: 1,
+        // borderWidth: 1,
         justifyContent: 'space-between',
     },
     headerDesc: {

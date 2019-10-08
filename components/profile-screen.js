@@ -101,22 +101,14 @@ export default function ProfileScreen({ navigation }) {
     return (
         <>
             <View style={styles.header}>
-                <Text style={styles.profile}>Profile</Text>
+                <Text style={styles.profile}>Profile</Text>              
                 <View style={styles.icon}>
                     <Icon name="navicon" size={40} color={'#2d2e33'} />
                 </View>
             </View>
+            <ActivityIndicator size="large" color="#0000ff" animating={hide === 'true'}/>    
             <ScrollView>
                 <View style={styles.profileBox}>
-                <ActivityIndicator size="large" color="#0000ff" animating={hide === 'true'}/>
-                    <View style={styles.header}>
-                        <Text style={styles.profile}>Profile</Text>
-                        <View style={styles.icon}>
-                            <Icon name="navicon" size={40} color={'#2d2e33'} />
-                        </View>
-                    </View>
-                    
-                    
                     <Image
                         source={{ uri: profile.pictureUrl }}
                         style={styles.image}
@@ -167,14 +159,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#f5f7fb',
         borderBottomLeftRadius: 25,
         borderBottomRightRadius: 25,
-        // flex: 1 / 4,
-        // flexDirection: 'row',
-        // textAlign: 'center',2
-        // paddingTop: 15,
-        // paddingLeft: 10,
-        // paddingRight: 10,
-        // margin:10,
-        // flexDirection:'row',
     },
     header: {
         flexDirection: 'row',
@@ -193,7 +177,6 @@ const styles = StyleSheet.create({
     icon: {
         alignItems: 'flex-end',
         flex: 3,
-        // paddingTop:15,
         paddingRight: 20,
         paddingTop: 5,
     },
@@ -206,7 +189,6 @@ const styles = StyleSheet.create({
         marginRight: 10,
         marginBottom: 5,
         alignSelf: 'center',
-
     },
     imageBox: {
         margin: 1,
@@ -222,7 +204,6 @@ const styles = StyleSheet.create({
     },
     itemBox: {
         backgroundColor: '#FAFAFA',
-        // flex: 1,
         alignItems: 'center',
     },
     itemText: {
@@ -231,8 +212,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     settingBox: {
-        // flex: 1 / 10,
-        // backgroundColor: '#fff',
         paddingBottom: 5,
         flexDirection: 'row',
         justifyContent: 'space-evenly',
@@ -263,13 +242,10 @@ const styles = StyleSheet.create({
     },
     artefactsBox: {
         backgroundColor: '#fff',
-        // borderTopColor: '#585858',
-        // borderTopWidth: 1,
         paddingTop: 20,
         paddingLeft: 10,
         paddingBottom: 10,
         paddingRight: 10,
-        // flex: 3 / 4,
     },
     artText: {
         justifyContent: 'center',
@@ -278,7 +254,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     container: {
-        // flex: 3 / 4,
         margin: 20,
     },
     invisibleItem: {

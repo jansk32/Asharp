@@ -4,7 +4,6 @@ import HomeScreen from './components/home-screen';
 import FamilyTreeScreen from './components/family-tree-screen';
 import ProfileScreen from './components/profile-screen';
 import TimelineScreen from './components/timeline-screen';
-import GalleryScreen from './components/gallery-screen';
 import ItemDetailScreen from './components/item-detail-screen';
 import WelcomeScreen from './components/welcome-screen';
 import Login from './components/log-in-screen';
@@ -13,6 +12,7 @@ import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
 import ProfileSettingScreen from './components/profile-setting';
+import NotificationScreen from './components/notification-screen';
 
 // Import react navigation tools
 import {
@@ -20,7 +20,6 @@ import {
 	createAppContainer,
 	createSwitchNavigator,
 	createStackNavigator,
-	createDrawerNavigator,
 } from 'react-navigation';
 
 // Import icons
@@ -44,44 +43,6 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-// To make drawer
-// const ProfileStack = createStackNavigator({
-// 	Profile: { screen: ProfileScreen },
-// },
-// 	{
-// 		defaultNavigationOptions: ({ navigation }) => {
-// 			return {
-// 				headerLeft: (
-// 					<Text style={{ fontWeight: 'bold', fontSize: 30, paddingLeft: 10, }}>Profile</Text>
-// 				),
-// 				headerRight: (
-// 					<Icon
-// 						style={{ paddingRight: 20 }}
-// 						onPress={() => navigation.openDrawer()}
-// 						name="md-menu"
-// 						size={30}
-// 					/>
-// 				),
-// 				headerStyle: {
-// 					borderBottomWidth: 0,
-// 					shadowColor: 'transparent',
-// 					elevation:0,
-// 					paddingTop: 25, 
-// 					// backgroundColor: 'red',
-// 				}
-
-// 			};
-// 		}
-// 	},
-// );
-
-// const ProfileDrawer = createDrawerNavigator({
-// 	back: {screen: ProfileStack},
-// 	ProfileSetting: { screen: ProfileSettingScreen },
-// 	Logout: { screen: WelcomeScreen },
-// },
-// );
-
 // Main bottom tab navigator to navigate the main functionalities of the application
 const MainNavigator = createBottomTabNavigator({
 	Timeline: {
@@ -102,10 +63,10 @@ const MainNavigator = createBottomTabNavigator({
 			tabBarIcon: ({ tintColor }) => <Icon name="md-add" color={tintColor} size={30} />
 		},
 	},
-	Gallery: {
-		screen: GalleryScreen,
+	Notification: {
+		screen: NotificationScreen,
 		navigationOptions: {
-			tabBarIcon: ({ tintColor }) => <Icon name="md-images" color={tintColor} size={30} />
+			tabBarIcon: ({ tintColor }) => <Icon name="md-notifications-outline" color={tintColor} size={30} />
 		},
 	},
 	Profile: {
@@ -177,8 +138,9 @@ const SignUpStack = createStackNavigator({
 const itemStack = createStackNavigator({
 	MainNavigator,
 	Profile: { screen: ProfileScreen },
+	ProfileSetting: {screen: ProfileSettingScreen},
 	Timeline: { screen: TimelineScreen },
-	Gallery: { screen: GalleryScreen },
+	Notification: { screen: NotificationScreen },
 	ItemDetail: { screen: ItemDetailScreen },
 },
 )
