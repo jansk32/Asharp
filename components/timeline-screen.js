@@ -21,7 +21,12 @@ export default function TimelineScreen({ navigation }) {
 
 		// TIMELINE FORMAT
 		// Format date DD-MM-YYYY
-		timeData.forEach(entry => {entry.time = Moment(entry.date).format("DD-MM-YYYY")});
+		timeData.forEach(entry => 
+			{entry.time = Moment(entry.date).format("DD-MM-YYYY")});
+
+		timeData.sort(function (a,b){
+			return a.time < b.time ? 1 : -1;
+		})
 
 		// Display only one date under several artefacts with the same date
 		for (let i = timeData.length - 1; i > 0; i--) {
@@ -260,12 +265,16 @@ const styles = StyleSheet.create({
 
     item: {
         //backgroundColor: '#4D243D',
-        alignItems: 'flex-start',
-        // justifyContent: 'center',
-        flex: 1,
-        // marginLeft:10,
-        // marginRight:10,
-        height: Dimensions.get('window').width / numColumns, // approximate a square
+        // alignItems: 'flex-start',
+        // // justifyContent: 'center',
+        // flex: 1,
+        // // marginLeft:10,
+				// // marginRight:10,
+				// // backgroundColor: 'blue',
+				height: Dimensions.get('window').width / numColumns, // approximate a square
+				backgroundColor: '#FAFAFA',
+        // flex: 1,
+        alignItems: 'center',
       },
       itemInvisible: {
         backgroundColor: 'transparent',

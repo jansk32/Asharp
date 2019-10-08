@@ -8,6 +8,11 @@ import DatePicker from 'react-native-datepicker';
 import axios from 'axios';
 import downloadImage from '../image-tools';
 import AsyncStorage from '@react-native-community/async-storage';
+import Moment from 'moment';
+var moment = require('moment');
+
+// Import date formatting module moment.js
+Moment.locale('en');
 
 export default function UploadImageScreen({ navigation }) {
   const { navigate } = navigation;
@@ -104,7 +109,7 @@ export default function UploadImageScreen({ navigation }) {
                 placeholder="Select date"
                 format="DD-MM-YYYY"
                 minDate="01-01-1900"
-                maxDate="01-01-2019"
+                maxDate={moment().format('DD-MM-YYYY')}
                 confirmBtnText="Confirm"
                 cancelBtnText="Cancel"
                 androidMode="spinner"
