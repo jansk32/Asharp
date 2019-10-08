@@ -57,7 +57,7 @@ export default function ProfileScreen({ navigation }) {
     }
 
     // Get profile and artefacts by owner
-    useEffect( () => { fetchProfile()});
+    useEffect( () => { fetchProfile()}), [];
 
     
     // Logout function
