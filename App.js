@@ -158,6 +158,7 @@ const addMemberStack = createStackNavigator({
 	MainNavigator,
 	FamilyTree: {screen: FamilyTreeScreen},
 	AddFamilyMember: {screen: AddFamilyMemberScreen},
+	ViewFamilyMember: {screen: ViewFamilyMemberScreen},
 });
 
 const Stack = createSwitchNavigator({
@@ -165,7 +166,6 @@ const Stack = createSwitchNavigator({
 	SignUpStack,
 	Login: {screen: LoginScreen},
 	addMemberStack,
-	ViewFamilyMember: {screen: ViewFamilyMemberScreen},
 	uploadArtefactStack,
 	itemStack,
 	itemStackProfile,

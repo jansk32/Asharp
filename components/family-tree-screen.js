@@ -1,10 +1,12 @@
 import React, { useState, useEffect, Component } from 'react';
-import { View, PanResponder, Dimensions, ToastAndroid, TextInput, Alert } from 'react-native';
-import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text } from 'react-native-svg';
+import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, ScrollView, Text, Alert } from 'react-native';
+import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text as SvgText} from 'react-native-svg';
 import generateFamilyTree, { mainDrawLines } from '../build-family-tree';
 import axios from 'axios';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
 const { SlideInMenu } = renderers;
+import Icon from 'react-native-vector-icons/Ionicons';
+
 
 const NODE_RADIUS = 50;
 /* SVG panning and zooming is taken from https://snack.expo.io/@msand/svg-pinch-to-pan-and-zoom
@@ -32,7 +34,7 @@ class ZoomableSvg extends Component {
 	resolution = this.viewBoxSize / Math.min(this.props.height, this.props.width);
 
 	state = {
-		zoom: 1,
+		zoom: 2,
 		left: 0,
 		top: 0,
 		isGesture: false,
@@ -215,7 +217,7 @@ class ZoomableSvg extends Component {
 			const familyTreeHeight = (Math.max(...yCoords) - Math.min(...yCoords)) / this.resolution;
 			this.setState({
 				left: (width - familyTreeWidth) / 2,
-				top: (height - familyTreeHeight) / 2
+				top: (height - familyTreeHeight) / 4,
 			});
 		}
 	}
@@ -229,7 +231,7 @@ class ZoomableSvg extends Component {
 				<Menu name="menu" renderer={SlideInMenu}>
 					<MenuTrigger>
 					</MenuTrigger>
-					<MenuOptions customStyles={{ optionText: { fontSize: 30, margin: 8 } }}>
+					<MenuOptions style={styles.menuStyle} customStyles={{ optionText:styles.menuText}}>
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
@@ -276,16 +278,14 @@ function Node({ data: { x, y, name, _id, pictureUrl, matchesSearch } }) {
 					<Circle cx={x} cy={y} r={NODE_RADIUS} />
 				</ClipPath>
 			</Defs>
-
 			<Circle
 				cx={x}
 				cy={y}
 				r={NODE_RADIUS}
-				stroke={matchesSearch ? 'red' : 'black'}
+				stroke={matchesSearch ? '#EC6268' : 'white'}
 				strokeWidth="8"
 				fill="white"
 			/>
-
 			<Image
 				height={NODE_RADIUS * 2}
 				width={NODE_RADIUS * 2}
@@ -295,8 +295,7 @@ function Node({ data: { x, y, name, _id, pictureUrl, matchesSearch } }) {
 				clipPath={`url(#${_id})`}
 				preserveAspectRatio="xMidYMid slice"
 			/>
-
-			<Text
+			<SvgText
 				x={x}
 				y={y + 100}
 				fill="black"
@@ -305,7 +304,7 @@ function Node({ data: { x, y, name, _id, pictureUrl, matchesSearch } }) {
 				textAnchor="middle"
 			>
 				{name}
-			</Text>
+			</SvgText>
 		</>
 	);
 }
@@ -350,11 +349,17 @@ function FamilyTreeScreen({ ctx, navigation }) {
 
 	return (
 		<>
-			<TextInput
-				placeholder="Search family member"
-				value={familyMemberSearch}
-				onChangeText={setFamilyMemberSearch}
-			/>
+			<Text style={styles.add}>This is your</Text>
+			<Text style={styles.title}>Family Tree</Text>
+			<View style={styles.searchContainer}>
+				<Icon name="md-search" size={30} color={'#2d2e33'} style={{paddingTop: 5,}}/>
+				<TextInput
+					placeholder="Search family member"
+					value={familyMemberSearch}
+					onChangeText={setFamilyMemberSearch}
+					style={styles.searchInput}
+				/>
+			</View>
 			<ZoomableSvg
 				width={screenWidth}
 				height={screenHeight}
@@ -365,6 +370,56 @@ function FamilyTreeScreen({ ctx, navigation }) {
 		</>
 	);
 }
+
+const styles = StyleSheet.create({
+	searchContainer: {
+		flexDirection: 'row',
+		padding: 5,
+		paddingHorizontal: 20,
+		borderRadius: 10,
+		borderWidth: 0.5,
+		marginLeft: '5%',
+		marginRight: '5%',
+		backgroundColor: '#f5f7fb',
+		borderColor: 'black',
+		marginTop: 15,
+	},
+	searchInput: {
+		flex: 1,
+		marginLeft: 15,
+		padding: 5
+	},
+	title: {
+		fontSize: 35,
+		color: '#2d2e33',
+		paddingBottom: '8%',
+		fontWeight: 'bold',
+		marginLeft: 10,
+	},
+	add: {
+		fontSize: 25,
+		color: '#2d2e33',
+		marginLeft: 10,
+		marginTop: 10,
+	},
+	menuStyle:{
+		borderTopEndRadius: 20,
+		borderTopStartRadius: 20,
+		borderRadius: 20,
+		borderColor: 'black',
+		borderWidth: 1,
+		flex: 1/4,
+		width: Dimensions.get('window').width * 0.85,
+		alignSelf: 'center',
+		height: 150,
+		marginBottom: 30,
+		justifyContent: 'space-evenly',
+	},
+	menuText:{
+		textAlign: 'center',
+		fontSize: 20,	
+	},
+})
 
 FamilyTreeScreen.navigationOptions = {
 	title: 'Family tree'
