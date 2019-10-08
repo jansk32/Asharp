@@ -133,7 +133,6 @@ export default function UploadImageScreen({ navigation }) {
                 <TextInput
                   placeholder='Describe the item.'
                   onChangeText={setDescription}
-                  maxLength={40}
                   multiline={true}
                   style={styles.textInput}
                 />
@@ -141,7 +140,6 @@ export default function UploadImageScreen({ navigation }) {
                 <TextInput
                   placeholder='Write down the value and memory this item holds.'
                   onChangeText={setValue}
-                  maxLength={40}
                   multiline={true}
                   style={styles.textInput}
                 />
@@ -194,6 +192,9 @@ const styles = StyleSheet.create({
     height: 100,
     paddingLeft: 10,
     textAlignVertical: 'top',
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    flex: 1,
   },
   textInputUpper: {
     borderColor: 'black',
