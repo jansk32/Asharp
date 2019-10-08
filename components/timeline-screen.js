@@ -160,7 +160,7 @@ export default function TimelineScreen({ navigation }) {
 					/>
 				  }
 				onIndexChange={index => setTab({ ...tab,index })}
-				initialLayout={{ width: Dimensions.get('window').width }}
+				initialLayout={{ width: Dimensions.get('window').width,height: Dimensions.get('window').height}}
       		/>
 		</>
 	);
