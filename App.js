@@ -20,7 +20,6 @@ import {
 	createAppContainer,
 	createSwitchNavigator,
 	createStackNavigator,
-	createDrawerNavigator,
 } from 'react-navigation';
 
 // Import icons
@@ -43,44 +42,6 @@ const firebaseConfig = {
 	appId: "1:657679581397:web:6dbc92e3aa881c59"
 };
 firebase.initializeApp(firebaseConfig);
-
-// To make drawer
-// const ProfileStack = createStackNavigator({
-// 	Profile: { screen: ProfileScreen },
-// },
-// 	{
-// 		defaultNavigationOptions: ({ navigation }) => {
-// 			return {
-// 				headerLeft: (
-// 					<Text style={{ fontWeight: 'bold', fontSize: 30, paddingLeft: 10, }}>Profile</Text>
-// 				),
-// 				headerRight: (
-// 					<Icon
-// 						style={{ paddingRight: 20 }}
-// 						onPress={() => navigation.openDrawer()}
-// 						name="md-menu"
-// 						size={30}
-// 					/>
-// 				),
-// 				headerStyle: {
-// 					borderBottomWidth: 0,
-// 					shadowColor: 'transparent',
-// 					elevation:0,
-// 					paddingTop: 25, 
-// 					// backgroundColor: 'red',
-// 				}
-
-// 			};
-// 		}
-// 	},
-// );
-
-// const ProfileDrawer = createDrawerNavigator({
-// 	back: {screen: ProfileStack},
-// 	ProfileSetting: { screen: ProfileSettingScreen },
-// 	Logout: { screen: WelcomeScreen },
-// },
-// );
 
 // Main bottom tab navigator to navigate the main functionalities of the application
 const MainNavigator = createBottomTabNavigator({
@@ -177,6 +138,7 @@ const SignUpStack = createStackNavigator({
 const itemStack = createStackNavigator({
 	MainNavigator,
 	Profile: { screen: ProfileScreen },
+	ProfileSetting: {screen: ProfileSettingScreen},
 	Timeline: { screen: TimelineScreen },
 	Notification: { screen: NotificationScreen },
 	ItemDetail: { screen: ItemDetailScreen },
