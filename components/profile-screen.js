@@ -63,8 +63,8 @@ export default function ProfileScreen({ navigation }) {
 
     // Get profile and artefacts by owner
     useEffect( () => { 
-        fetchProfile()
-        getArtefact()
+        fetchProfile();
+        getArtefact();
     }, []);
 
 
