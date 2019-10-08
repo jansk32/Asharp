@@ -137,9 +137,9 @@ app.post('/user/create', ({ body: {
 
 // Update user
 app.put('/user/update', (req,res) => {
-	let id = req.session.passport.user._id;
-	userModel.findOneAndUpdate({_id: id}, req.body, (err,result) => {
-		if(err) throw err;
+	const id = req.session.passport.user._id;
+	userModel.findOneAndUpdate({_id: id}, req.body, {new: true}, (err, result) => {
+		if (err) throw err;
 		res.send(result);
 	})
 })

@@ -28,7 +28,7 @@ const formatData = (data, numColumns) => {
 
 export default function ProfileScreen({ navigation }) {
     const { navigate } = navigation;
-    var [profile, setProfile] = useState({});
+    const [profile, setProfile] = useState({});
     const [artefact, setArtefact] = useState([]);
     const [hide, setHide] = useState("");
 
@@ -65,7 +65,7 @@ export default function ProfileScreen({ navigation }) {
     useEffect( () => { 
         fetchProfile()
         getArtefact()
-    },[]);
+    }, []);
 
 
     
@@ -130,7 +130,7 @@ export default function ProfileScreen({ navigation }) {
                     <View style={styles.settingBox}>
                         <View style={styles.settingButton}>
                             <TouchableOpacity
-                                onPress={() => navigate('ProfileSetting')}>
+                                onPress={() => navigate('ProfileSetting', {setProfile})}>
                                 <Text
                                     style={styles.buttonText}>
                                     Settings</Text>
@@ -147,12 +147,11 @@ export default function ProfileScreen({ navigation }) {
                     </View>
                 </View>
                
-
-
                 <View style={styles.artefactsBox}>
                     <Text style={styles.artText}>My Artefacts</Text>
                     <FlatList
                         data={formatData(artefact, numColumns)}
+                        keyExtractor={item => item._id}
                         numColumns={3}
                         renderItem={this.renderItem}
                     />
