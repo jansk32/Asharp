@@ -66,15 +66,11 @@ export default function ItemDetailScreen({ navigation }) {
                         style={styles.image}
                         source={{ uri: artefact.file }}
                     />
-<<<<<<< HEAD
                     {hide && (
                     <ActivityIndicator
                         size="large"
                     />
                     )}
-
-=======
->>>>>>> 25897e705687edd52a590432b229592741af6cb4
                     <View style={styles.headerCont}>
                         <Text style={styles.title}>{artefact.name}</Text>
 
