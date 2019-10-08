@@ -20,6 +20,7 @@ import {
 	createAppContainer,
 	createSwitchNavigator,
 	createStackNavigator,
+	createDrawerNavigator,
 } from 'react-navigation';
 
 // Import icons
@@ -28,7 +29,8 @@ import Icon2 from 'react-native-vector-icons/Entypo';
 
 // Import Firebase.
 import * as firebase from 'firebase';
-import { Dimensions } from 'react-native';
+import { Dimensions, Text } from 'react-native';
+import { HeaderTitle } from 'react-navigation-stack';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -41,6 +43,44 @@ const firebaseConfig = {
 	appId: "1:657679581397:web:6dbc92e3aa881c59"
 };
 firebase.initializeApp(firebaseConfig);
+
+// To make drawer
+// const ProfileStack = createStackNavigator({
+// 	Profile: { screen: ProfileScreen },
+// },
+// 	{
+// 		defaultNavigationOptions: ({ navigation }) => {
+// 			return {
+// 				headerLeft: (
+// 					<Text style={{ fontWeight: 'bold', fontSize: 30, paddingLeft: 10, }}>Profile</Text>
+// 				),
+// 				headerRight: (
+// 					<Icon
+// 						style={{ paddingRight: 20 }}
+// 						onPress={() => navigation.openDrawer()}
+// 						name="md-menu"
+// 						size={30}
+// 					/>
+// 				),
+// 				headerStyle: {
+// 					borderBottomWidth: 0,
+// 					shadowColor: 'transparent',
+// 					elevation:0,
+// 					paddingTop: 25, 
+// 					// backgroundColor: 'red',
+// 				}
+
+// 			};
+// 		}
+// 	},
+// );
+
+// const ProfileDrawer = createDrawerNavigator({
+// 	back: {screen: ProfileStack},
+// 	ProfileSetting: { screen: ProfileSettingScreen },
+// 	Logout: { screen: WelcomeScreen },
+// },
+// );
 
 // Main bottom tab navigator to navigate the main functionalities of the application
 const MainNavigator = createBottomTabNavigator({
@@ -69,6 +109,7 @@ const MainNavigator = createBottomTabNavigator({
 		},
 	},
 	Profile: {
+		// screen: ProfileDrawer,
 		screen: ProfileScreen,
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon name="md-person" color={tintColor} size={30} />
@@ -98,6 +139,7 @@ const MainNavigator = createBottomTabNavigator({
 		navigationOptions: {
 			header: null,
 		},
+
 	},
 );
 
@@ -105,7 +147,12 @@ const MainNavigator = createBottomTabNavigator({
 const uploadArtefactStack = createStackNavigator({
 	MainNavigator,
 	AddImageDetails: { screen: AddImageDetailsScreen },
-});
+},
+	{
+		navigationOptions: {
+			header: null,
+		},
+	});
 
 // Authentication stack navigator for sign up
 const SignUpStack = createStackNavigator({
@@ -130,16 +177,13 @@ const SignUpStack = createStackNavigator({
 const itemStack = createStackNavigator({
 	MainNavigator,
 	Profile: { screen: ProfileScreen },
-	ProfileSetting: {screen: ProfileSettingScreen},
 	Timeline: { screen: TimelineScreen },
 	Gallery: { screen: GalleryScreen },
-	ItemDetail: { screen: ItemDetailScreen},
+	ItemDetail: { screen: ItemDetailScreen },
 },
-	{
-		headerMode: 'none',
-	});
+)
 
-const Stack = createSwitchNavigator({	
+const Stack = createSwitchNavigator({
 	Welcome: { screen: WelcomeScreen },
 	SignUpStack,
 	Login: { screen: Login },

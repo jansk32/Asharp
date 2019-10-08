@@ -33,7 +33,7 @@ export default function ProfileScreen({ navigation }) {
 
     // Get profile details
     async function getProfile() {
-        console.log('Sending request');
+        //console.log('Sending request');
         axios.get('http://localhost:3000/user', { withCredentials: true })
         .then((res) => {
             setProfile(res.data);
@@ -42,10 +42,10 @@ export default function ProfileScreen({ navigation }) {
     }
     // Get the artefact of the user
     async function getArtefact() {
-        console.log(profile);
+        //console.log(profile);
         axios.get("http://localhost:3000/artefact/findbyowner/")
         .then((result) => {
-            console.log(result.data);
+            //console.log(result.data);
             setArtefact(result.data);
         })
         .catch(err => console.log(error));

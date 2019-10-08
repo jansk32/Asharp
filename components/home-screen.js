@@ -6,43 +6,80 @@ import { throwStatement } from '@babel/types';
 import { pickImage, uploadImage } from '../image-tools';
 import AsyncStorage from '@react-native-community/async-storage';
 
+export default function HomeScreen({ navigation }) {
+	const { navigate } = navigation;
+	const [condition, setCondition] = useState('');
+	const [image, setImage] = useState({});
+
+	/*	Upload the pictures to database */
+	async function uploadImageArtefact() {
+		const pictureUrl = await uploadImage(image.uri);
+		console.log(pictureUrl);
+		try {
+			await AsyncStorage.setItem('artefactPictureUrl', pictureUrl);
+		} catch (e) {
+			console.error(e);
+			ToastAndroid.show('Error storing picture URL', ToastAndroid.SHORT);
+		}
+	}
+	/*	Go to image detail page once you upload the picture */
+	async function upload() {
+		await uploadImageArtefact()
+			.then(() => navigate('AddImageDetails'));
+	}
+	/*	A button for user to upload image, previews image, and a button to navigate 
+	   to add details page */
+	return (
+		<>
+			<View style={styles.headerContainer}>
+				<Text style={styles.title}>Mementos</Text>
+				<Text style={styles.uploadTitle}>Upload Artefact</Text>
+			</View>
+			<Image source={image} style={styles.imageStyle} />
+			<TouchableOpacity
+				onPress={async () => setImage(await pickImage())}
+				style={styles.pickImageButton}>
+				<Text
+					style={styles.text}>
+					Select Image
+						</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				onPress={upload}
+				style={styles.uploadButton}>
+				<Text style={styles.whiteText}>Upload Image</Text>
+			</TouchableOpacity>
+			<Text>{condition}</Text>
+		</>
+	);
+}
+/* Stylesheets for styles */
 const styles = StyleSheet.create({
-	container: {
-		backgroundColor: 'white',
-		flex: 1,
-	},
-	uploadImageTitle: {
-		fontSize: 30,
-		justifyContent: 'space-evenly',
-		textAlign: 'center',
-		alignItems: 'center',
-		marginTop: '20%',
-	},
 	text: {
-		fontSize: 20,
+		fontSize: 16,
+		textAlign: 'center',
 	},
 	whiteText: {
 		fontSize: 20,
 		color: 'white',
+		textAlign: 'center',
 	},
 	pickImageButton: {
 		backgroundColor: 'white',
 		borderColor: '#233439',
-		borderWidth: 1,
-		paddingVertical: 4,
-		paddingHorizontal: 40,
-		borderRadius: 10,
+		borderWidth: .5,
+		width: Dimensions.get('window').width / 1.75,
+		height: Dimensions.get('window').width / 10,
+		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
-		marginBottom: 30,
+		marginBottom: 15,
 	},
 	uploadButton: {
 		backgroundColor: '#579B93',
-		borderColor: 'black',
-		borderWidth: 1,
-		paddingVertical: 4,
-		paddingHorizontal: 40,
-		borderRadius: 10,
+		width: Dimensions.get('window').width / 1.75,
+		height: Dimensions.get('window').width / 8,
+		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
 	},
@@ -50,61 +87,31 @@ const styles = StyleSheet.create({
 		width: Dimensions.get('window').width * 0.95,
 		height: Dimensions.get('window').width * 0.95,
 		marginBottom: '4%',
-		marginTop: '6%',
+		marginTop: '4%',
 		alignSelf: 'center',
 		borderColor: 'black',
-		borderWidth: 1,
+		borderWidth: 0.5,
+		borderRadius: 5,
+	},
+	title: {
+		fontSize: 20,
+		marginLeft: 10,
+		color: '#2d2e33',
+		paddingTop: '8%',
+	},
+	uploadTitle: {
+		fontSize: 30,
+		marginLeft: 10,
+		fontWeight: 'bold',
+		paddingBottom: '8%',
+	},
+	headerContainer: {
+		borderBottomLeftRadius: 25,
+		borderBottomRightRadius: 25,
+		backgroundColor: '#f5f7fb',
 	},
 }
 );
-
-export default function HomeScreen({ navigation }) {
-	const { navigate } = navigation;
-	const [condition, setCondition] = useState('');
-	const [image, setImage] = useState({});
-
-	// upload the pictures to database
-    async function uploadImageArtefact() {
-        const pictureUrl = await uploadImage(image.uri);
-        console.log(pictureUrl);
-        try { 
-            await AsyncStorage.setItem('artefactPictureUrl', pictureUrl);
-        } catch (e) {
-			console.error(e);
-            ToastAndroid.show('Error storing picture URL', ToastAndroid.SHORT);
-        }
-    }
-	// go to image detail page once you upload the picture
-    async function upload() {
-        await uploadImageArtefact()
-        .then(() => navigate('AddImageDetails'));
-    }
-	return (
-		<>
-			<View style={styles.container}>
-				<Text style={styles.uploadImageTitle}>Upload Image!</Text>
-				<Image source={image} style={styles.imageStyle} />
-				
-				<View style={styles.pickImageButton}>
-					<TouchableOpacity
-						onPress={async () => setImage(await pickImage())}>
-						<Text 
-						style={styles.text}>
-							Pick Image
-						</Text>
-					</TouchableOpacity>
-				</View>
-				<View style={styles.uploadButton}>
-					<TouchableOpacity
-						onPress= {upload}>
-						<Text style={styles.text}>Upload Image</Text>
-					</TouchableOpacity>
-				</View>
-				<Text>{condition}</Text>
-			</View>
-		</>
-	);
-}
 
 HomeScreen.navigationOptions = {
 	title: 'Home'
