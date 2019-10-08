@@ -101,22 +101,14 @@ export default function ProfileScreen({ navigation }) {
     return (
         <>
             <View style={styles.header}>
-                <Text style={styles.profile}>Profile</Text>
+                <Text style={styles.profile}>Profile</Text>              
                 <View style={styles.icon}>
                     <Icon name="navicon" size={40} color={'#2d2e33'} />
                 </View>
             </View>
+            <ActivityIndicator size="large" color="#0000ff" animating={hide === 'true'}/>    
             <ScrollView>
                 <View style={styles.profileBox}>
-                <ActivityIndicator size="large" color="#0000ff" animating={hide === 'true'}/>
-                    <View style={styles.header}>
-                        <Text style={styles.profile}>Profile</Text>
-                        <View style={styles.icon}>
-                            <Icon name="navicon" size={40} color={'#2d2e33'} />
-                        </View>
-                    </View>
-                    
-                    
                     <Image
                         source={{ uri: profile.pictureUrl }}
                         style={styles.image}
