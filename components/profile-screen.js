@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Text, ActivityIndicator,StyleSheet, View, Image, Dimensions, TouchableOpacity, Button } from 'react-native';
+import { Text, ActivityIndicator, StyleSheet, View, Image, Dimensions, TouchableOpacity, Button } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/EvilIcons';
-import Moment from 'moment';
+import moment from 'moment';
+import OneSignal from 'react-native-onesignal';
+import AsyncStorage from '@react-native-community/async-storage';
+import { Assets } from 'react-navigation-stack';
+
 
 // Number 
 const numColumns = 3;
@@ -41,6 +45,7 @@ export default function ProfileScreen({ navigation }) {
         })
         .catch(error => console.error(error));
     }
+    
     // Get the artefact of the user
     async function getArtefact() {
         //console.log(profile);
@@ -69,10 +74,15 @@ export default function ProfileScreen({ navigation }) {
 
 
     // Logout function
-    function logout() {
-        axios.get('http://localhost:3000/logout')
-            .then((result) => navigate('Welcome'))
-            .catch((err) => console.log(err));
+    async function logout() {
+        try {
+            await axios.get('http://localhost:3000/logout');
+            await AsyncStorage.multiRemove(['email', 'password']);
+            OneSignal.removeExternalUserId();
+            navigate('Welcome');
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     // Render Item invisible if it's just a placeholder for columns in the grid,
@@ -95,7 +105,7 @@ export default function ProfileScreen({ navigation }) {
     };
 
     // Format date
-    Moment.locale('en');
+    moment.locale('en');
 
     // Return the whole layout for profile
     return (
@@ -117,7 +127,7 @@ export default function ProfileScreen({ navigation }) {
                         <Text
                             style={styles.nameText}>{profile.name}</Text>
                         <Text
-                            style={styles.dob}>DOB: {Moment(profile.dob).format('L')}</Text>
+                            style={styles.dob}>DOB: {moment(profile.dob).format('L')}</Text>
                     </View>
                     <View style={styles.settingBox}>
                         <View style={styles.settingButton}>
@@ -145,6 +155,7 @@ export default function ProfileScreen({ navigation }) {
                         keyExtractor={item => item._id}
                         numColumns={3}
                         renderItem={this.renderItem}
+                        keyExtractor={item => item._id}
                     />
                 </View>
             </ScrollView>

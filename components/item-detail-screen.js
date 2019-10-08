@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Image, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { Text, Image, View, StyleSheet, Dimensions, ScrollView, Button } from 'react-native';
 import axios from 'axios';
-import Moment from 'moment';
-import AsyncStorage from '@react-native-community/async-storage';
+import moment from 'moment';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-Moment.locale('en');
+moment.locale('en');
+
+// Get all artefacts
+    {/* useEffect(() => {
+        async function fetchArtefact() {
+            const res = await axios.get(`http://localhost:3000/artefact/find/${artefactId}`);
+            setArtefact(res.data);
+            // console.log("owner id:"+ res.data.owner);
+            const ownerObj = await axios.post('http://localhost:3000/user/artefact', {
+                _id: res.data.owner
+            });
+            await setOwner(ownerObj.data.name);
+            // await console.log(ownerObj.data.name);
+        }
+        fetchArtefact();
+    }, []); */}
 
 // See the details of each individual artefacts
 export default function ItemDetailScreen({ navigation }) {
@@ -17,9 +31,6 @@ export default function ItemDetailScreen({ navigation }) {
     const [owner, setOwner] = useState('');
     const [hide, setHide] = useState(true);
 
-
-
-
     // Get a specific artefact
     async function fetchArtefact() {
         const res = await axios.get(`http://localhost:3000/artefact/find/${artefactId}`);
@@ -27,15 +38,15 @@ export default function ItemDetailScreen({ navigation }) {
         // console.log("owner id:"+ res.data.owner);
         await axios.get('http://localhost:3000/user/artefact', {
             params: {
-            _id: res.data.owner
+                _id: res.data.owner
             }
         })
-        .then((result) => {
-            if (result.data) {
-                setHide(false);
-                setOwner(result.data.name);
-            }
-        });
+            .then((result) => {
+                if (result.data) {
+                    setHide(false);
+                    setOwner(result.data.name);
+                }
+            });
         // await setOwner(ownerObj.data.name);
         // await console.log(ownerObj.data.name);
     }
@@ -82,7 +93,7 @@ export default function ItemDetailScreen({ navigation }) {
                     </View>
                     <View style={styles.buttonBox}>
                         <TouchableOpacity
-                            onPress={() => navigate('Home')}
+                            onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
                             style={styles.sendButton}>
                             <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
                                 Send Artefacts
@@ -94,6 +105,7 @@ export default function ItemDetailScreen({ navigation }) {
         </>
     );
 }
+
 const styles = StyleSheet.create({
     image: {
         width: Dimensions.get('window').width,

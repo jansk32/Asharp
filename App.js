@@ -16,6 +16,8 @@ import NotificationScreen from './components/notification-screen';
 
 import { MenuProvider } from 'react-native-popup-menu';
 
+import AddFamilyMemberScreen from './components/add-family-member-screen';
+import ViewFamilyMemberScreen from './components/view-family-member-screen';
 // Import react navigation tools
 import {
 	createBottomTabNavigator,
@@ -32,6 +34,7 @@ import Icon2 from 'react-native-vector-icons/Entypo';
 import * as firebase from 'firebase';
 import { Dimensions, Text } from 'react-native';
 import { HeaderTitle } from 'react-navigation-stack';
+import OneSignal from 'react-native-onesignal';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -44,6 +47,11 @@ const firebaseConfig = {
 	appId: "1:657679581397:web:6dbc92e3aa881c59"
 };
 firebase.initializeApp(firebaseConfig);
+
+// OneSignal
+const ONESIGNAL_APP_ID = 'f9de7906-8c82-4674-808b-a8048c4955f1';
+OneSignal.init(ONESIGNAL_APP_ID);
+OneSignal.addEventListener('received', () => console.log('RECEIVED ONESIGNAL'));
 
 // Main bottom tab navigator to navigate the main functionalities of the application
 const MainNavigator = createBottomTabNavigator({
@@ -58,6 +66,7 @@ const MainNavigator = createBottomTabNavigator({
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon2 name="tree" color={tintColor} size={30} />
 		},
+		header: 'Family Tree',
 	},
 	Home: {
 		screen: HomeScreen,

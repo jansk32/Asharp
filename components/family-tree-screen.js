@@ -1,10 +1,12 @@
 import React, { useState, useEffect, Component } from 'react';
-import { View, PanResponder, Dimensions, ToastAndroid } from 'react-native';
-import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text } from 'react-native-svg';
+import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, ScrollView, Text, Alert } from 'react-native';
+import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text as SvgText} from 'react-native-svg';
 import generateFamilyTree, { mainDrawLines } from '../build-family-tree';
 import axios from 'axios';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
 const { SlideInMenu } = renderers;
+import Icon from 'react-native-vector-icons/Ionicons';
+
 
 const NODE_RADIUS = 50;
 /* SVG panning and zooming is taken from https://snack.expo.io/@msand/svg-pinch-to-pan-and-zoom
@@ -28,8 +30,11 @@ function calcCenter(x1, y1, x2, y2) {
 }
 
 class ZoomableSvg extends Component {
+	viewBoxSize = 1200;
+	resolution = this.viewBoxSize / Math.min(this.props.height, this.props.width);
+
 	state = {
-		zoom: 1,
+		zoom: 2,
 		left: 0,
 		top: 0,
 		isGesture: false,
@@ -106,20 +111,17 @@ class ZoomableSvg extends Component {
 			onMoveShouldSetPanResponderCapture: () => true,
 			onPanResponderGrant: (e, gesture) => {
 				const { locationX, locationY } = e.nativeEvent;
-				const viewBoxSize = 1200;
-				const { height, width } = this.props;
 				const { left, top, zoom } = this.state;
-				const resolution = viewBoxSize / Math.min(height, width);
 
-				const tapX = (locationX - left) * resolution / zoom;
-				const tapY = (locationY - top) * resolution / zoom;
+				const tapX = (locationX - left) * this.resolution / zoom;
+				const tapY = (locationY - top) * this.resolution / zoom;
 
 				// Look for any node that was tapped
 				const tappedNode = this.props.familyTree.find(node => Math.hypot(node.x - tapX, node.y - tapY) <= NODE_RADIUS);
 				if (tappedNode) {
 					this.setState({ tappedNode });
 					// Set long press timeout to open menu if a node was tapped
-					const LONG_PRESS_DURATION = 1000;
+					const LONG_PRESS_DURATION = 2000;
 					this.longPressTimeout = setTimeout(() => {
 						this.props.ctx.menuActions.openMenu('menu');
 						// Null long press timeout to signal that the timeout has been resolved
@@ -167,44 +169,87 @@ class ZoomableSvg extends Component {
 					if (this.state.tappedNode && this.longPressTimeout) {
 						// Register touch release as a tap if long press timeout hasn't
 						// been nulled by itself which means it hasn't resolved
-
-						// Go to family member details page
-						alert('Navigating to family member details page of ' + this.state.tappedNode.id);
+						const { navigation } = this.props;
+						if (navigation.state.params && navigation.state.params.isSendingArtefact) {
+							// Send artefact
+							Alert.alert(
+								'Send artefact',
+								`Send artefact to ${this.state.tappedNode.name}?`,
+								[{
+									text: 'Cancel'
+								},
+								{
+									text: 'OK',
+									onPress: () => {
+										try {
+											axios.put('http://localhost:3000/artefact/assign', {
+												artefactId: navigation.state.params.artefactId,
+												senderId: this.state.tappedNode._id
+											});
+										} catch (e) {
+											ToastAndroid.show('Error sending artefact', ToastAndroid.SHORT);
+										}
+										navigation.setParams(null);
+										navigation.goBack();
+									}
+								}]);
+						} else {
+							// Go to family member details page
+							navigation.navigate('ViewFamilyMember', { userId: this.state.tappedNode._id });
+						}
 					}
 				}
 			},
 		});
 	}
 
+	componentDidUpdate(prevProps) {
+		/* Shift the whole family tree to center it.
+		 * The x coordinate of the top left corner of the family tree is set to
+		 * half the display width minus half the width of the family tree in pixels.
+		 * Same with the y coordinate of the top left corner but uses height instead of width.
+		*/
+		if (prevProps.familyTree.length === 0) {
+			const { height, width, familyTree } = this.props;
+			const xCoords = familyTree.map(node => node.x);
+			const familyTreeWidth = (Math.max(...xCoords) - Math.min(...xCoords)) / this.resolution;
+			const yCoords = familyTree.map(node => node.y);
+			const familyTreeHeight = (Math.max(...yCoords) - Math.min(...yCoords)) / this.resolution;
+			this.setState({
+				left: (width - familyTreeWidth) / 2,
+				top: (height - familyTreeHeight) / 4,
+			});
+		}
+	}
+
 	render() {
-		const viewBoxSize = 1200;
-		const { height, width, familyTree, lines } = this.props;
+		const { height, width, familyTree, lines, navigation: { navigate } } = this.props;
 		const { left, top, zoom } = this.state;
-		const resolution = viewBoxSize / Math.min(height, width);
 
 		return (
 			<View {...this._panResponder.panHandlers}>
 				<Menu name="menu" renderer={SlideInMenu}>
 					<MenuTrigger>
 					</MenuTrigger>
-					<MenuOptions customStyles={{ optionText: { fontSize: 30, margin: 8 } }}>
-						<MenuOption onSelect={() => alert('Adding spouse to ' + this.state.tappedNode.id)} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
-						<MenuOption onSelect={() => alert('Adding a child')} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
+					<MenuOptions style={styles.menuStyle} customStyles={{ optionText:styles.menuText}}>
+						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
+						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
+						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
 					</MenuOptions>
 				</Menu>
 				<Svg
 					width={width}
 					height={height}
-					viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
+					viewBox={`0 0 ${this.viewBoxSize} ${this.viewBoxSize}`}
 					preserveAspectRatio="xMinYMin meet" >
 					<G
 						transform={{
-							translateX: left * resolution,
-							translateY: top * resolution,
+							translateX: left * this.resolution,
+							translateY: top * this.resolution,
 							scale: zoom,
 						}}>
 						{
-							familyTree.map(node => <Node cx={node.x} cy={node.y} id={node.id} key={node.id} />)
+							familyTree.map(node => <Node data={node} key={node._id} />)
 						}
 						{
 							lines.map((line, i) =>
@@ -225,61 +270,64 @@ class ZoomableSvg extends Component {
 	}
 }
 
-function Node({ cx, cy, id }) {
+function Node({ data: { x, y, name, _id, pictureUrl, matchesSearch } }) {
 	return (
 		<>
 			<Defs>
-				<ClipPath id={id.toString()}>
-					<Circle cx={cx} cy={cy} r={NODE_RADIUS} />
+				<ClipPath id={_id.toString()}>
+					<Circle cx={x} cy={y} r={NODE_RADIUS} />
 				</ClipPath>
 			</Defs>
-
-			{/* <Image
-                height={radius * 2}
-                width={radius * 2}
-                x={cx - radius}
-                y={cy - radius}
-                href={require('../tim_derp.jpg')}
-                clipPath={`url(#${id})`}
-            /> */}
-
-
 			<Circle
-				cx={cx}
-				cy={cy}
+				cx={x}
+				cy={y}
 				r={NODE_RADIUS}
-				stroke="black"
+				stroke={matchesSearch ? '#EC6268' : 'white'}
+				strokeWidth="8"
 				fill="white"
-				onLongPress={() => alert('long press')}
 			/>
-
-			<Text
-				x={cx}
-				y={cy}
+			<Image
+				height={NODE_RADIUS * 2}
+				width={NODE_RADIUS * 2}
+				x={x - NODE_RADIUS}
+				y={y - NODE_RADIUS}
+				href={{ uri: pictureUrl ? pictureUrl : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
+				clipPath={`url(#${_id})`}
+				preserveAspectRatio="xMidYMid slice"
+			/>
+			<SvgText
+				x={x}
+				y={y + 100}
 				fill="black"
 				stroke="black"
 				fontSize="30"
 				textAnchor="middle"
 			>
-				{id}
-			</Text>
+				{name}
+			</SvgText>
 		</>
 	);
 }
 
-function FamilyTreeScreen({ ctx }) {
+function FamilyTreeScreen({ ctx, navigation }) {
 	const [familyTree, setFamilyTree] = useState([]);
 	const [lines, setLines] = useState([]);
+	const [familyMemberSearch, setFamilyMemberSearch] = useState('');
 
 	const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 	useEffect(() => {
 		async function fetchFamilyMembers() {
-			const res = await axios.get('http://localhost:3000/family-member');
+			const res = await axios.get('http://localhost:3000/users');
 			const familyMembers = res.data;
-			const familyTreeInfo = generateFamilyTree(familyMembers, 'th');
-			const familyTree = familyTreeInfo.familyTree;
-			const ancestors = familyTreeInfo.ancestors;
+			console.log(familyMembers);
+
+			// Get user document of current user
+			const userRes = await axios.get('http://localhost:3000/user', { withCredentials: true });
+			const user = userRes.data;
+
+			const familyTreeInfo = generateFamilyTree(familyMembers, user._id);
+			const { familyTree, ancestors } = familyTreeInfo;
 			const lines = mainDrawLines(familyTree, ancestors);
 
 			setFamilyTree(familyTree);
@@ -288,15 +336,90 @@ function FamilyTreeScreen({ ctx }) {
 		fetchFamilyMembers();
 	}, []);
 
+	// Family tree searching and highlighting
+	useEffect(() => {
+		if (familyTree.length) {
+			// Highlight the nodes that match the search string
+			// If the search string is empty, there are no matches
+			setFamilyTree(familyTree
+				.map(node =>
+					({ ...node, matchesSearch: familyMemberSearch ? node.name.toLowerCase().includes(familyMemberSearch.toLowerCase()) : false })));
+		}
+	}, [familyMemberSearch]);
+
 	return (
-		<ZoomableSvg
-			width={screenWidth}
-			height={screenHeight}
-			familyTree={familyTree}
-			lines={lines}
-			ctx={ctx} />
+		<>
+			<Text style={styles.add}>This is your</Text>
+			<Text style={styles.title}>Family Tree</Text>
+			<View style={styles.searchContainer}>
+				<Icon name="md-search" size={30} color={'#2d2e33'} style={{paddingTop: 5,}}/>
+				<TextInput
+					placeholder="Search family member"
+					value={familyMemberSearch}
+					onChangeText={setFamilyMemberSearch}
+					style={styles.searchInput}
+				/>
+			</View>
+			<ZoomableSvg
+				width={screenWidth}
+				height={screenHeight}
+				familyTree={familyTree}
+				lines={lines}
+				ctx={ctx}
+				navigation={navigation} />
+		</>
 	);
 }
+
+const styles = StyleSheet.create({
+	searchContainer: {
+		flexDirection: 'row',
+		padding: 5,
+		paddingHorizontal: 20,
+		borderRadius: 10,
+		borderWidth: 0.5,
+		marginLeft: '5%',
+		marginRight: '5%',
+		backgroundColor: '#f5f7fb',
+		borderColor: 'black',
+		marginTop: 15,
+	},
+	searchInput: {
+		flex: 1,
+		marginLeft: 15,
+		padding: 5
+	},
+	title: {
+		fontSize: 35,
+		color: '#2d2e33',
+		paddingBottom: '8%',
+		fontWeight: 'bold',
+		marginLeft: 10,
+	},
+	add: {
+		fontSize: 25,
+		color: '#2d2e33',
+		marginLeft: 10,
+		marginTop: 10,
+	},
+	menuStyle:{
+		borderTopEndRadius: 20,
+		borderTopStartRadius: 20,
+		borderRadius: 20,
+		borderColor: 'black',
+		borderWidth: 1,
+		flex: 1/4,
+		width: Dimensions.get('window').width * 0.85,
+		alignSelf: 'center',
+		height: 150,
+		marginBottom: 30,
+		justifyContent: 'space-evenly',
+	},
+	menuText:{
+		textAlign: 'center',
+		fontSize: 20,	
+	},
+})
 
 FamilyTreeScreen.navigationOptions = {
 	title: 'Family tree'

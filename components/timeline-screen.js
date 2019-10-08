@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, Image, TouchableOpacity,Dimensions, TouchableHighlight, FlatList } from 'react-native';
+import { Text, StyleSheet, View, Image, TouchableOpacity, Dimensions, TouchableHighlight, FlatList } from 'react-native';
 import Timeline from 'react-native-timeline-feed';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
-import Moment from 'moment';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
-
+import moment from 'moment';
 
 // Import date formatting module moment.js
-Moment.locale('en');
+moment.locale('en');
 
 const numColumns = 3;
 
@@ -21,36 +20,35 @@ export default function TimelineScreen({ navigation }) {
 
 		// TIMELINE FORMAT
 		// Format date DD-MM-YYYY
-		timeData.forEach(entry => 
-			{entry.time = Moment(entry.date).format("DD-MM-YYYY")});
+		timeData.forEach(entry => { entry.time = Moment(entry.date).format("DD-MM-YYYY") });
 
 		// Sort Timeline in Descending order
-		timeData.sort(function (a,b){
+		timeData.sort(function (a, b) {
 			return a.time < b.time ? 1 : -1;
 		})
 
 		// Display only one date under several artefacts with the same date
 		for (let i = timeData.length - 1; i > 0; i--) {
-			if (timeData[i].time === timeData[i-1].time) {
+			if (timeData[i].time === timeData[i - 1].time) {
 				timeData[i].time = '';
-			} 
+			}
 		}
 		return timeData;
 	}
-	const formatData = (data,numColumns) => {
+	const formatData = (data, numColumns) => {
 
 		// GALLERY FORMAT
 		const numberOfFullRows = Math.floor(data.length / numColumns);
-  
+
 		let numberOfElementsLastRow = data.length - numberOfFullRows * numColumns;
-		while (numberOfElementsLastRow !== numColumns 
+		while (numberOfElementsLastRow !== numColumns
 			&& numberOfElementsLastRow !== 0) {
 			numberOfElementsLastRow++;
 		}
 		return data;
 	};
 
-	  // Get all the artefact
+	// Get all the artefact
 	useEffect(() => {
 		async function fetchArtefacts() {
 			try {
@@ -64,7 +62,28 @@ export default function TimelineScreen({ navigation }) {
 		fetchArtefacts();
 	}, []);
 
-	
+	const formatData = (data) => {
+		// Sort date in descending order in the timeline
+		data.sort(function (a, b) {
+			return a.date > b.date ? -1 : 1;
+		});
+
+		// Format date DD-MM-YYYY
+		data.forEach(entry => {
+			entry.time = moment(entry.date).format('DD-MM-YYYY');
+			entry.key = entry._id;
+		});
+
+		// Display only one date under several artefacts with the same date
+		for (let i = data.length - 1; i > 0; i--) {
+			if (data[i].time === data[i - 1].time) {
+				data[i].time = '';
+			}
+		}
+		return data;
+	};
+
+
 	// Custom render event title and event description (Timeline)
 	renderDetail = ({ item, index }) => {
 		if (item.empty) {
@@ -73,8 +92,8 @@ export default function TimelineScreen({ navigation }) {
 		return (
 			<View style={{ flex: 1 }}>
 				<View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-					<TouchableOpacity onPress={() => navigate('ItemDetail',{artefactId: item._id})}>
-						<Image source={{uri: item.file}} style={styles.image} />
+					<TouchableOpacity onPress={() => navigate('ItemDetail', { artefactId: item._id })}>
+						<Image source={{ uri: item.file }} style={styles.image} />
 					</TouchableOpacity>
 					<Text style={[styles.itemTitle]}>{item.name}</Text>
 				</View>
@@ -83,39 +102,39 @@ export default function TimelineScreen({ navigation }) {
 	};
 
 	// Render Item invisible if it's just a placeholder for columns in the grid,
-    // if not, render the picture for each grid (Gallery)
+	// if not, render the picture for each grid (Gallery)
 	renderItem = ({ item, index }) => {
-		if(item.empty){
-			return <View style={[styles.item,styles.itemInvisible]} />
+		if (item.empty) {
+			return <View style={[styles.item, styles.itemInvisible]} />
 		}
 		return (
-		<View style={styles.item}>
-			<TouchableHighlight onPress={() => navigate('ItemDetail', {artefactId: item._id}) }>
-				<Image
-					style={styles.imageBox}
-					source={{uri: item.file}}
-				/>
-			</TouchableHighlight>    
-		</View>
+			<View style={styles.item}>
+				<TouchableHighlight onPress={() => navigate('ItemDetail', { artefactId: item._id })}>
+					<Image
+						style={styles.imageBox}
+						source={{ uri: item.file }}
+					/>
+				</TouchableHighlight>
+			</View>
 		);
 	}
 
 	// Layout for Gallery tab
 	const GalleryRoute = () => (
 		<>
-		<FlatList
-			data={formatData(artefacts, numColumns)}
-			keyExtractor={(item, index) => item._id}
-			renderItem={renderItem}
-			numColumns={numColumns}
-			style={styles.container}
-		/>
+			<FlatList
+				data={formatData(artefacts, numColumns)}
+				keyExtractor={(item, index) => item._id}
+				renderItem={renderItem}
+				numColumns={numColumns}
+				style={styles.container}
+			/>
 		</>
 	);
 
 	//Layout for Timeline tab
 	const TimelineRoute = () => (
-		<>			
+		<>
 			<Timeline
 				style={styles.list}
 				data={formatTime(artefacts)}
@@ -125,16 +144,16 @@ export default function TimelineScreen({ navigation }) {
 				innerCircleType='dot'
 				renderDetail={renderDetail}
 				timeContainerStyle={{ minWidth: 72, marginLeft: 10 }}
-				timeStyle={{color:'#2d2e33'}}
+				timeStyle={{ color: '#2d2e33' }}
 			/>
 		</>
-	  );
+	);
 
-	const [tab,setTab] = useState({
+	const [tab, setTab] = useState({
 		index: 0,
 		routes: [
-		  { key: 'first', title: 'Timeline' },
-		  { key: 'second', title: 'Gallery' },
+			{ key: 'first', title: 'Timeline' },
+			{ key: 'second', title: 'Gallery' },
 		],
 	});
 
@@ -152,16 +171,16 @@ export default function TimelineScreen({ navigation }) {
 				})}
 				renderTabBar={props =>
 					<TabBar
-					  {...props}
-					  indicatorStyle={{ backgroundColor: '#EC6268'}}
-					  style={{ backgroundColor: '#f5f7fb'}}
-					  bounces={true}
-					  labelStyle={{color:'#2d2e33'}}
+						{...props}
+						indicatorStyle={{ backgroundColor: '#EC6268' }}
+						style={{ backgroundColor: '#f5f7fb' }}
+						bounces={true}
+						labelStyle={{ color: '#2d2e33' }}
 					/>
-				  }
-				onIndexChange={index => setTab({ ...tab,index })}
+				}
+				onIndexChange={index => setTab({ ...tab, index })}
 				initialLayout={{ width: Dimensions.get('window').width }}
-      		/>
+			/>
 		</>
 	);
 }
@@ -169,25 +188,25 @@ export default function TimelineScreen({ navigation }) {
 const styles = StyleSheet.create({
 	scene: {
 		flex: 1,
-	  },
+	},
 	itemTitle: {
 		fontSize: 15,
 		paddingLeft: 5,
 	},
 	title: {
 		fontSize: 20,
-		marginLeft:10,
-		color:'#2d2e33',
-		paddingTop:'8%'
+		marginLeft: 10,
+		color: '#2d2e33',
+		paddingTop: '8%'
 	},
-	containers:{
-        backgroundColor:'#f5f7fb',
+	containers: {
+		backgroundColor: '#f5f7fb',
 	},
-	artefactTitle:{
+	artefactTitle: {
 		fontSize: 30,
-		marginLeft:10,
-		fontWeight:'bold',
-		paddingBottom:'8%',
+		marginLeft: 10,
+		fontWeight: 'bold',
+		paddingBottom: '8%',
 	},
 	image: {
 		width: 75,
@@ -199,44 +218,44 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 	},
 	container: {
-        flex: 1,
-        marginVertical: 20
-    },
-    header: {
-      fontSize: 20,
-      textAlign:'center',
-      marginVertical:10
-    },
-    title:{
-        fontSize: 20,
-		marginLeft:10,
-		color:'#2d2e33',
-        paddingTop:'8%',
-        
-    },
-    galleryTitle:{
+		flex: 1,
+		marginVertical: 20
+	},
+	header: {
+		fontSize: 20,
+		textAlign: 'center',
+		marginVertical: 10
+	},
+	title: {
+		fontSize: 20,
+		marginLeft: 10,
+		color: '#2d2e33',
+		paddingTop: '8%',
+
+	},
+	galleryTitle: {
 		fontSize: 30,
-		marginLeft:10,
-		fontWeight:'bold',
-        paddingBottom:'8%',
-    },
-    item: {
+		marginLeft: 10,
+		fontWeight: 'bold',
+		paddingBottom: '8%',
+	},
+	item: {
 		height: Dimensions.get('window').width / numColumns, // approximate a square
 		backgroundColor: '#FAFAFA',
-        alignItems: 'center',
-      },
-      itemInvisible: {
-        backgroundColor: 'transparent',
-      },
-      itemText: {
-        color: '#fff',
-      },
-      imageBox:{
-        height: Dimensions.get('window').width / numColumns, // approximate a square
-        flex: 1,
-        margin: 1,
-        width: Dimensions.get('window').width / numColumns,
-      }
+		alignItems: 'center',
+	},
+	itemInvisible: {
+		backgroundColor: 'transparent',
+	},
+	itemText: {
+		color: '#fff',
+	},
+	imageBox: {
+		height: Dimensions.get('window').width / numColumns, // approximate a square
+		flex: 1,
+		margin: 1,
+		width: Dimensions.get('window').width / numColumns,
+	}
 });
 
 TimelineScreen.navigationOptions = {

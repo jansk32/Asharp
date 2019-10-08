@@ -3,6 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const axios = require('axios');
+const moment = require('moment');
 
 // passport.js
 const passport = require('passport');
@@ -40,16 +42,18 @@ passport.deserializeUser(function (user, done) {
 
 // Schemas
 const userSchema = require('../schema/userSchema');
-const artSchema = require('../schema/artefactSchema');
+const artefactSchema = require('../schema/artefactSchema');
+const notificationSchema = require('../schema/notificationSchema');
 
 // Create the mongoose model 
-let userModel = mongoose.model('user', userSchema);
-let artefactModel = mongoose.model('artefact', artSchema);
+const userModel = mongoose.model('user', userSchema);
+const artefactModel = mongoose.model('artefact', artefactSchema);
+const notificationModel = mongoose.model('notification', notificationSchema);
 
 // Connect to mongodb
 require('../controller/mongooseController');
 
-// app.use
+// app.use middlewares
 app.use(bodyParser.json({ type: 'application/json' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
@@ -70,12 +74,28 @@ app.get('/', (req, res) => {
 	res.send('Hello World');
 });
 
+/* User routes */
+
 // Get a user
 app.get('/user', (req, res) => {
-	let id = req.session.passport.user._id;
+	// Change later
+	const id = req.session.passport.user._id;
+	console.log(req.session.passport.user._id);
 	userModel.find({ _id: id }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp[0]);
+	});
+});
+
+// Get limited information about another user
+app.get('/user/find/:id', (req, res) => {
+	userModel.findById(req.params.id, (err, user) => {
+		if (err) {
+			throw err;
+		}
+		delete user.email;
+		delete user.password;
+		res.send(user);
 	});
 });
 
@@ -84,13 +104,12 @@ app.get('/user/artefact', (req, res) => {
 	userModel.findOne(req.query, (err, result) => {
 		if (err) throw err;
 		res.send(result);
-	})
-})
+	});
+});
 
 // Create a user
-app.post('/user/create', ({ body: {
+app.post('/user/create', async ({ body: {
 	name,
-	userName,
 	dob,
 	email,
 	password,
@@ -103,7 +122,6 @@ app.post('/user/create', ({ body: {
 	isUser } }, res) => {
 	let user = userModel({
 		name,
-		userName,
 		dob,
 		email,
 		password,
@@ -115,11 +133,152 @@ app.post('/user/create', ({ body: {
 		pictureUrl,
 		isUser
 	});
-	user.save((err, resp) => {
+
+	// Await save so we can use the new document's id
+	const savedUser = await user.save();
+
+	// If new user has a spouse, add them as a spouse to their spouse
+	if (spouse) {
+		const spouseNode = await userModel.findById(spouse);
+		spouseNode.spouse = savedUser._id;
+		spouseNode.save();
+	}
+});
+
+// Get all users (registered and non-registered)
+// The front end will decide which ones are relevant to the user
+app.get('/users', (req, res) => {
+	const family = [{
+		_id: 'th',
+		gender: 'm',
+		m: 'yb',
+		f: 'ah'
+	}, {
+		_id: 'fh',
+		gender: 'f',
+		spouse: 'mg',
+		m: 'yb',
+		f: 'ah'
+	}, {
+		_id: 'mg',
+		gender: 'm',
+		spouse: 'fh'
+	}, {
+		_id: 'yb',
+		gender: 'f',
+		spouse: 'ah',
+		m: 'pp',
+		f: 'gg'
+	}, {
+		_id: 'vb',
+		gender: 'f',
+		spouse: 'tk',
+		m: 'pp',
+		f: 'gg'
+	}, {
+		_id: 'tk',
+		gender: 'm',
+		spouse: 'vb',
+	}, {
+		_id: 'j0',
+		gender: 'm',
+		m: 'vb',
+		f: 'tk'
+	}, {
+		_id: 'j1',
+		gender: 'f',
+		m: 'vb',
+		f: 'tk'
+	}, {
+		_id: 'j2',
+		gender: 'f',
+		m: 'vb',
+		f: 'tk'
+	}, {
+		_id: 'lb',
+		gender: 'f',
+		spouse: 'ak',
+		m: 'pp',
+		f: 'gg'
+	}, {
+		_id: 'ak',
+		gender: 'm',
+		spouse: 'lb',
+	}, {
+		_id: 'ad',
+		gender: 'm',
+		m: 'lb',
+		f: 'ak'
+	}, {
+		_id: 'nd',
+		gender: 'f',
+		m: 'lb',
+		f: 'ak'
+	}, {
+		_id: 'ah',
+		gender: 'm',
+		spouse: 'yb',
+		m: 'gm',
+		f: 'gf'
+	}, {
+		_id: 'lh',
+		gender: 'f',
+		spouse: 'jk',
+		f: 'gf',
+		m: 'gm'
+	}, {
+		_id: 'jk',
+		gender: 'm',
+		spouse: 'lh'
+	}, {
+		_id: 'dh',
+		gender: 'm',
+		spouse: 'yh',
+		m: 'gm',
+		f: 'gf'
+	}, {
+		_id: 'yh',
+		gender: 'f',
+		spouse: 'dh'
+	}, {
+		_id: 'pp',
+		gender: 'f',
+		spouse: 'gg'
+	},
+	{
+		_id: 'gg',
+		gender: 'm',
+		spouse: 'pp'
+	},
+	{
+		_id: 'gm',
+		gender: 'f',
+		spouse: 'gf',
+		f: 'ggf',
+		m: 'ggm'
+	}, {
+		_id: 'ggf',
+		gender: 'm',
+		spouse: 'ggm'
+	}, {
+		_id: 'ggm',
+		gender: 'f',
+		spouse: 'ggf'
+	}, {
+		_id: 'gf',
+		gender: 'm',
+		spouse: 'gm'
+	},
+	];
+
+	// res.send(family);
+	// return;
+
+	userModel.find({}, (err, result) => {
 		if (err) {
 			throw err;
 		}
-		res.send(resp);
+		res.send(result);
 	});
 });
 
@@ -132,16 +291,11 @@ app.put('/user/update', (req, res) => {
 	});
 });
 
+
+/* Artefact routes */
 // Get ALL artefacts
 app.get('/artefact', (req, res) => {
 	artefactModel.find({}, (err, result) => {
-		res.send(result);
-	});
-});
-
-// Get ALL users
-app.get('/users', (req, res) => {
-	userModel.find({}, (err, result) => {
 		res.send(result);
 	});
 });
@@ -177,19 +331,43 @@ app.post('/artefact/create', ({
 	});
 });
 
+
 // Re-assign artefact to certain user
-app.put('/artefact/assign', (req, res) => {
+app.put('/artefact/assign', ({ body: { artefactId, recipientId, senderId } }, res) => {
 	// Request should include id of artefact, and id of new owner
-	artefactModel.updateOne({ _id: req.body.id }, { owner: req.body.owner }, (err, resp) => {
+	artefactModel.updateOne({ artefactId }, { owner: recipientId }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp);
 	});
+
+	// Send notification to recipient
+	const ONESIGNAL_ENDPOINT = 'https://onesignal.com/api/v1/notifications';
+	const ONESIGNAL_APP_ID = 'f9de7906-8c82-4674-808b-a8048c4955f1';
+	axios.post(ONESIGNAL_ENDPOINT, {
+		app_id: ONESIGNAL_APP_ID,
+		include_external_user_ids: [recipientId],
+		contents: {
+			en: 'You have received a new artefact'
+		},
+		headings: {
+			en: 'Notification title'
+		}
+	});
+
+	// Add new notification document to database
+	const notif = new notificationModel({
+		time: moment().toISOString(),
+		senderId,
+		artefactId,
+	});
+
+	notif.save();
 });
 
 // Get artefact by owner id
-app.get('/artefact/findbyowner/', async (req, res) => {
-	let id = req.session.passport.user._id;
-	await artefactModel.find({ owner: id }, (err, resp) => {
+app.get('/artefact/findbyowner/', (req, res) => {
+	const id = req.session.passport.user._id;
+	artefactModel.find({ owner: id }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp);
 	});
