@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Text, StyleSheet, View, Image, Dimensions, TouchableOpacity, Button } from 'react-native';
+import { Text, ActivityIndicator,StyleSheet, View, Image, Dimensions, TouchableOpacity, Button } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import Moment from 'moment';
@@ -28,36 +28,44 @@ const formatData = (data, numColumns) => {
 
 export default function ProfileScreen({ navigation }) {
     const { navigate } = navigation;
-    var [profile, setProfile] = useState({});
+    const [profile, setProfile] = useState({});
     const [artefact, setArtefact] = useState([]);
+    const [hide, setHide] = useState("");
 
     // Get profile details
     async function getProfile() {
         //console.log('Sending request');
-        axios.get('http://localhost:3000/user', { withCredentials: true })
-            .then((res) => {
-                setProfile(res.data);
-            })
-            .catch(error => console.error(error));
+        await axios.get('http://localhost:3000/user', { withCredentials: true })
+        .then((res) => {
+            setProfile(res.data);
+        })
+        .catch(error => console.error(error));
     }
     // Get the artefact of the user
     async function getArtefact() {
         //console.log(profile);
-        axios.get("http://localhost:3000/artefact/findbyowner/")
-            .then((result) => {
-                //console.log(result.data);
-                setArtefact(result.data);
-            })
-            .catch(err => console.log(error));
+        axios.get("http://localhost:3000/artefact/findbyowner")
+        .then((result) => {
+            //console.log(result.data);
+            setArtefact(result.data);
+            setHide("false")
+        })
+        .catch(err => console.log(error));
     }
 
-    async function fetchProfile() {
-        await getProfile();
-        await getArtefact();
+    async function fetchProfile(){
+       if(profile === null || artefact.length < 1){
+        setHide("true");
+       }
+       await getProfile();
+    //    await getArtefact();
     }
 
     // Get profile and artefacts by owner
-    useEffect(() => { fetchProfile() }), [];
+    useEffect( () => { 
+        fetchProfile()
+        getArtefact()
+    }, []);
 
 
     // Logout function
@@ -100,6 +108,15 @@ export default function ProfileScreen({ navigation }) {
             </View>
             <ScrollView>
                 <View style={styles.profileBox}>
+                <ActivityIndicator size="large" color="#0000ff" animating={hide === 'true'}/>
+                    <View style={styles.header}>
+                        <Text style={styles.profile}>Profile</Text>
+                        <View style={styles.icon}>
+                            <Icon name="navicon" size={40} color={'#2d2e33'} />
+                        </View>
+                    </View>
+                    
+                    
                     <Image
                         source={{ uri: profile.pictureUrl }}
                         style={styles.image}
@@ -113,7 +130,7 @@ export default function ProfileScreen({ navigation }) {
                     <View style={styles.settingBox}>
                         <View style={styles.settingButton}>
                             <TouchableOpacity
-                                onPress={() => navigate('ProfileSetting')}>
+                                onPress={() => navigate('ProfileSetting', {setProfile})}>
                                 <Text
                                     style={styles.buttonText}>
                                     Settings</Text>
@@ -133,6 +150,7 @@ export default function ProfileScreen({ navigation }) {
                     <Text style={styles.artText}>My Artefacts</Text>
                     <FlatList
                         data={formatData(artefact, numColumns)}
+                        keyExtractor={item => item._id}
                         numColumns={3}
                         renderItem={this.renderItem}
                     />

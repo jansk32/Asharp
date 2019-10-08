@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Image, View, StyleSheet, Dimensions, ScrollView, } from 'react-native';
+import { Text, Image, View, StyleSheet, Dimensions, ScrollView, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import Moment from 'moment';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -15,22 +15,30 @@ export default function ItemDetailScreen({ navigation }) {
     var artefactId = navigation.getParam('artefactId');
     const [artefact, setArtefact] = useState({});
     const [owner, setOwner] = useState('');
+    const [hide, setHide] = useState('');
+
 
     // Get all artefacts
     useEffect(() => {
         async function fetchArtefact() {
             const res = await axios.get(`http://localhost:3000/artefact/find/${artefactId}`);
             setArtefact(res.data);
+            setHide('false');
             // console.log("owner id:"+ res.data.owner);
             const ownerObj = await axios.get('http://localhost:3000/user/artefact', {
                 params: {
-                    _id: res.data.owner
+                _id: res.data.owner
                 }
             });
             await setOwner(ownerObj.data.name);
+            setHide('false');
             // await console.log(ownerObj.data.name);
         }
+        if (!artefact.name){
+            setHide('true');
+        }
         fetchArtefact();
+        setHide('false');
     }, []);
 
     // TODO: Define function to send artefacts to family members
@@ -52,6 +60,8 @@ export default function ItemDetailScreen({ navigation }) {
                         style={styles.image}
                         source={{ uri: artefact.file }}
                     />
+                    <ActivityIndicator size="large" animation={hide === 'true'}/>
+
                     <View style={styles.headerCont}>
                         <Text style={styles.title}>{artefact.name}</Text>
 
@@ -159,6 +169,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignSelf: 'center',
     },
-
 })
 
