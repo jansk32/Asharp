@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Image, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { Text, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import Moment from 'moment';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 Moment.locale('en');
 
@@ -16,9 +14,6 @@ export default function ItemDetailScreen({ navigation }) {
     const [artefact, setArtefact] = useState({});
     const [owner, setOwner] = useState('');
     const [hide, setHide] = useState(true);
-
-
-
 
     // Get a specific artefact
     async function fetchArtefact() {
