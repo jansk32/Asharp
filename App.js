@@ -1,18 +1,18 @@
 import React from 'react';
-
 // Importing all existing screens for navigation
 import HomeScreen from './components/home-screen';
 import FamilyTreeScreen from './components/family-tree-screen';
 import ProfileScreen from './components/profile-screen';
 import TimelineScreen from './components/timeline-screen';
-import GalleryScreen from './components/gallery-screen';
 import ItemDetailScreen from './components/item-detail-screen';
 import WelcomeScreen from './components/welcome-screen';
-import Login from './components/log-in-screen';
-import SignUp1 from './components/sign-up1-screen';
-import SignUp2 from './components/sign-up2-screen';
-import SignUp3 from './components/sign-up3-screen';
+import LoginScreen from './components/log-in-screen';
+import SignUp1Screen from './components/sign-up1-screen';
+import SignUp2Screen from './components/sign-up2-screen';
+import SignUp3Screen from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
+import ProfileSettingScreen from './components/profile-setting';
+import NotificationScreen from './components/notification-screen';
 
 import { MenuProvider } from 'react-native-popup-menu';
 
@@ -24,12 +24,14 @@ import {
 	createStackNavigator,
 } from 'react-navigation';
 
-var tintColor = 'black';
 // Import icons
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/Entypo';
 
 // Import Firebase.
 import * as firebase from 'firebase';
+import { Dimensions, Text } from 'react-native';
+import { HeaderTitle } from 'react-navigation-stack';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -43,6 +45,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
+// Main bottom tab navigator to navigate the main functionalities of the application
 const MainNavigator = createBottomTabNavigator({
 	Timeline: {
 		screen: TimelineScreen,
@@ -53,7 +56,7 @@ const MainNavigator = createBottomTabNavigator({
 	FamilyTree: {
 		screen: FamilyTreeScreen,
 		navigationOptions: {
-			tabBarIcon: ({ tintColor }) => <Icon name="md-leaf" color={tintColor} size={30} />
+			tabBarIcon: ({ tintColor }) => <Icon2 name="tree" color={tintColor} size={30} />
 		},
 	},
 	Home: {
@@ -62,54 +65,70 @@ const MainNavigator = createBottomTabNavigator({
 			tabBarIcon: ({ tintColor }) => <Icon name="md-add" color={tintColor} size={30} />
 		},
 	},
-	Gallery: {
-		screen: GalleryScreen,
+	Notification: {
+		screen: NotificationScreen,
 		navigationOptions: {
-			tabBarIcon: ({ tintColor }) => <Icon name="md-images" color={tintColor} size={30} />
+			tabBarIcon: ({ tintColor }) => <Icon name="md-notifications-outline" color={tintColor} size={30} />
 		},
 	},
 	Profile: {
+		// screen: ProfileDrawer,
 		screen: ProfileScreen,
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon name="md-person" color={tintColor} size={30} />
 		},
 	},
 },
+	// Tab bar configuration
 	{
 		initialRouteName: 'Home',
 		tabBarOptions: {
 			activeTintColor: '#579B93',
 			inactiveTintColor: 'black',
-			showLabel: false,
+			showLabel: true,
 			showIcon: true,
+			// Edit the tab bar style and UI
 			style: {
 				backgroundColor: 'white',
 				borderTopColor: '#579B93',
 				borderTopWidth: .5,
+				height: Dimensions.get('window').height / 14,
+			},
+			// Edit the navigation bar label
+			labelStyle: {
+				fontSize: 12,
 			}
 		},
 		navigationOptions: {
 			header: null,
 		},
+
 	},
 );
 
+// Stack navigator for uploading artefact
 const uploadArtefactStack = createStackNavigator({
 	MainNavigator,
 	AddImageDetails: { screen: AddImageDetailsScreen },
-});
+},
+	{
+		navigationOptions: {
+			header: null,
+		},
+	});
 
+// Authentication stack navigator for sign up
 const SignUpStack = createStackNavigator({
-	SignUp1: { screen: SignUp1 },
+	SignUp1: { screen: SignUp1Screen },
 	SignUp2: {
-		screen: SignUp2,
+		screen: SignUp2Screen,
 		navigationOptions: ({ navigation }) => ({
 			title: 'Enter details',
 			headerTitleStyle: { color: '#EC6268' },
 		}),
 	},
 	SignUp3: {
-		screen: SignUp3,
+		screen: SignUp3Screen,
 		navigationOptions: ({ navigation }) => ({
 			title: 'Choose profile picture!',
 			headerTitleStyle: { color: '#EC6268' }
@@ -117,27 +136,23 @@ const SignUpStack = createStackNavigator({
 	},
 });
 
+// Stack navigator for looking at item details from gallery
 const itemStack = createStackNavigator({
 	MainNavigator,
-	ItemDetail: { screen: ItemDetailScreen },
-	Gallery: { screen: GalleryScreen },
-});
-
-const itemStackProfile = createStackNavigator({
-	MainNavigator,
-	ItemDetail: { screen: ItemDetailScreen },
 	Profile: { screen: ProfileScreen },
+	ProfileSetting: {screen: ProfileSettingScreen},
+	Timeline: { screen: TimelineScreen },
+	Notification: { screen: NotificationScreen },
+	ItemDetail: { screen: ItemDetailScreen },
 });
 
 const Stack = createSwitchNavigator({
-	MainNavigator,
 	Welcome: { screen: WelcomeScreen },
-	Login: { screen: Login },
 	SignUpStack,
-	uploadArtefactStack,
+	Login: { screen: LoginScreen },
 	itemStack,
-	itemStackProfile
-});
+	uploadArtefactStack,
+})
 
 const NavigationContainer = createAppContainer(Stack);
 

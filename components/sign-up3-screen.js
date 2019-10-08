@@ -66,10 +66,12 @@ const styles = StyleSheet.create({
 }
 )
 
+// Upload profile picture page.
 export default function SignUp3({ navigation }) {
 	const { navigate } = navigation;
 	const [image, setImage] = useState({});
 
+	// Upload sign up data
 	async function uploadSignUpData() {
 		let dataKeys = ['email', 'name', 'dob', 'password', 'pictureUrl'];
 		let data = {};
@@ -80,10 +82,11 @@ export default function SignUp3({ navigation }) {
 				ToastAndroid.show('Error getting ' + key, ToastAndroid.SHORT);
 			}
 		}
+		data.isUser = true;
 		axios.post('http://localhost:3000/user/create', data);
 	}
 
-	// automatically login to have give available acct details
+	// Automatically login to have give available acct details
 	async function login() {
 		  axios.post('http://localhost:3000/login/local',{
 			email: await AsyncStorage.getItem('email'),
@@ -92,6 +95,7 @@ export default function SignUp3({ navigation }) {
 		.then((result) => navigate('Home'));
 	}
 
+	// Finish sign up and log in straight into the home page
 	async function finishSignUp() {
 		const pictureUrl = await uploadImage(image.uri);
 		try {

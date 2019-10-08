@@ -7,7 +7,6 @@ const session = require('express-session');
 // passport.js
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-// const FacebookStrategy = require('passport-facebook').Strategy;
 
 // passport local config
 passport.use(new LocalStrategy(
@@ -17,7 +16,6 @@ passport.use(new LocalStrategy(
 	},
 	function (username, password, done) {
 		userModel.findOne({ email: username }, function (err, found) {
-			console.log(found);
 			if (err) { return done(err); }
 			// if no username found
 			if (!found) {
@@ -40,28 +38,15 @@ passport.deserializeUser(function (user, done) {
 });
 
 
-// passport Facebook config
-// passport.use(new FacebookStrategy({
-// 	clientID: FACEBOOK_APP_ID,
-// 	clientSecret: FACEBOOK_APP_SECRET,
-// 	callbackURL: 'http://localhost:3000/auth/facebook/callback'
-// },
-// 	function (accessToken, refreshToken, profile, cb) {
-// 		User.findOrCreate({ facebookId: profile.id }, function (err, user) {
-// 			return cb(err, user);
-// 		});
-// 	}
-// ));
-
-// schemas
+// Schemas
 const userSchema = require('../schema/userSchema');
 const artSchema = require('../schema/artefactSchema');
 
-// creates the mongoose model 
+// Create the mongoose model 
 let userModel = mongoose.model('user', userSchema);
 let artefactModel = mongoose.model('artefact', artSchema);
 
-// to connect to mongodb
+// Connect to mongodb
 require('../controller/mongooseController');
 
 // app.use
@@ -70,23 +55,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// cookies
+// Cookies
 app.set('trust proxy', 1);
 app.use(session({
 	secret: 'secret',
 	resave: false,
 	saveUninitialized: true
 }));
-
-
-// app.use(function(req, res, next) {
-// 	res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-// 	res.header(
-// 		'Access-Control-Allow-Headers',
-// 		'Origin, X-Requested-With, Content-Type, Accept'
-// 	);
-// 	next();
-// });
 
 
 // need to change this later not sure to what though
@@ -97,14 +72,20 @@ app.get('/', (req, res) => {
 
 // Get a user
 app.get('/user', (req, res) => {
-	// change later
 	let id = req.session.passport.user._id;
-	console.log(req.session.passport.user._id);
 	userModel.find({ _id: id }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp[0]);
 	});
 });
+
+// Get user by id for artefacts
+app.get('/user/artefact', (req, res) => {
+	userModel.findOne(req.query, (err, result) => {
+		if (err) throw err;
+		res.send(result);
+	})
+})
 
 // Create a user
 app.post('/user/create', ({ body: {
@@ -118,8 +99,9 @@ app.post('/user/create', ({ body: {
 	father,
 	mother,
 	artefact,
-	pictureUrl } }, res) => {
-	const user = userModel({
+	pictureUrl,
+	isUser } }, res) => {
+	let user = userModel({
 		name,
 		userName,
 		dob,
@@ -130,9 +112,9 @@ app.post('/user/create', ({ body: {
 		father,
 		mother,
 		artefact,
-		pictureUrl
+		pictureUrl,
+		isUser
 	});
-
 	user.save((err, resp) => {
 		if (err) {
 			throw err;
@@ -141,170 +123,25 @@ app.post('/user/create', ({ body: {
 	});
 });
 
-/* Family member routes */
-
-// Get all family members (users and non-users)
-// The front end will decide which ones are relevant to the user
-app.get('/family-member', (req, res) => {
-	const family = [{
-		id: 'th',
-		gender: 'm',
-		m: 'yb',
-		f: 'ah'
-	}, {
-		id: 'fh',
-		gender: 'f',
-		spouse: 'mg',
-		m: 'yb',
-		f: 'ah'
-	}, {
-		id: 'mg',
-		gender: 'm',
-		spouse: 'fh'
-	}, {
-		id: 'yb',
-		gender: 'f',
-		spouse: 'ah',
-		m: 'pp',
-		f: 'gg'
-	}, {
-		id: 'vb',
-		gender: 'f',
-		spouse: 'tk',
-		m: 'pp',
-		f: 'gg'
-	}, {
-		id: 'tk',
-		gender: 'm',
-		spouse: 'vb',
-	}, {
-		id: 'j0',
-		gender: 'm',
-		m: 'vb',
-		f: 'tk'
-	}, {
-		id: 'j1',
-		gender: 'f',
-		m: 'vb',
-		f: 'tk'
-	}, {
-		id: 'j2',
-		gender: 'f',
-		m: 'vb',
-		f: 'tk'
-	}, {
-		id: 'lb',
-		gender: 'f',
-		spouse: 'ak',
-		m: 'pp',
-		f: 'gg'
-	}, {
-		id: 'ak',
-		gender: 'm',
-		spouse: 'lb',
-	}, {
-		id: 'ad',
-		gender: 'm',
-		m: 'lb',
-		f: 'ak'
-	}, {
-		id: 'nd',
-		gender: 'f',
-		m: 'lb',
-		f: 'ak'
-	}, {
-		id: 'ah',
-		gender: 'm',
-		spouse: 'yb',
-		m: 'gm',
-		f: 'gf'
-	}, {
-		id: 'lh',
-		gender: 'f',
-		spouse: 'jk',
-		f: 'gf',
-		m: 'gm'
-	}, {
-		id: 'jk',
-		gender: 'm',
-		spouse: 'lh'
-	}, {
-		id: 'dh',
-		gender: 'm',
-		spouse: 'yh',
-		m: 'gm',
-		f: 'gf'
-	}, {
-		id: 'yh',
-		gender: 'f',
-		spouse: 'dh'
-	}, {
-		id: 'pp',
-		gender: 'f',
-		spouse: 'gg'
-	},
-	{
-		id: 'gg',
-		gender: 'm',
-		spouse: 'pp'
-	},
-	{
-		id: 'gm',
-		gender: 'f',
-		spouse: 'gf',
-		f: 'ggf',
-		m: 'ggm'
-	}, {
-		id: 'ggf',
-		gender: 'm',
-		spouse: 'ggm'
-	}, {
-		id: 'ggm',
-		gender: 'f',
-		spouse: 'ggf'
-	}, {
-		id: 'gf',
-		gender: 'm',
-		spouse: 'gm'
-	},
-	];
-	res.send(family);
-	return;
-
-	familyMember.find({}, (err, result) => {
+// Update user
+app.put('/user/update', (req, res) => {
+	const id = req.session.passport.user._id;
+	userModel.findOneAndUpdate({ _id: id }, req.body, { new: true }, (err, result) => {
+		if (err) throw err;
 		res.send(result);
-	});
-});
-
-app.post('/family-member', ({ body: {
-	name,
-	dob,
-	gender,
-	spouse,
-	father,
-	mother,
-	pictureUrl } }, res) => {
-	const familyMember = familyMemberModel({
-		name,
-		dob,
-		gender,
-		spouse,
-		father,
-		mother,
-		pictureUrl
-	});
-
-	familyMember.save((err, res) => {
-		if (err) {
-			throw err;
-		}
-		res.send(resp);
 	});
 });
 
 // Get ALL artefacts
 app.get('/artefact', (req, res) => {
 	artefactModel.find({}, (err, result) => {
+		res.send(result);
+	});
+});
+
+// Get ALL users
+app.get('/users', (req, res) => {
+	userModel.find({}, (err, result) => {
 		res.send(result);
 	});
 });
@@ -316,7 +153,7 @@ app.get('/artefact/find/:artefactId', (req, res) => {
 		if (err) throw err;
 		console.log(resp);
 		res.send(resp);
-	})
+	});
 });
 
 // Create an artefact
@@ -340,13 +177,21 @@ app.post('/artefact/create', ({
 	});
 });
 
-// assign artefact to a person
-app.put('/user/assign/:id', (req, res) => {
-	userModel.update({ id: req.params.id }, { $push: { artefact: req.body } }, (err, resp) => {
-		if (err) {
-			throw err;
-		}
-		res.send('updated');
+// Re-assign artefact to certain user
+app.put('/artefact/assign', (req, res) => {
+	// Request should include id of artefact, and id of new owner
+	artefactModel.updateOne({ _id: req.body.id }, { owner: req.body.owner }, (err, resp) => {
+		if (err) throw err;
+		res.send(resp);
+	});
+});
+
+// Get artefact by owner id
+app.get('/artefact/findbyowner/', async (req, res) => {
+	let id = req.session.passport.user._id;
+	await artefactModel.find({ owner: id }, (err, resp) => {
+		if (err) throw err;
+		res.send(resp);
 	});
 });
 
@@ -354,43 +199,25 @@ app.put('/user/assign/:id', (req, res) => {
 // the front end will make only one request to the back end
 
 
-// login page [in progress]
-app.get('/login', (req, res) => {
-
-});
-
 // login local
 app.post('/login/local', passport.authenticate('local'), (req, res) => {
-	console.log("posted");
-	console.log(req.user);
 	res.send(req.user);
 });
 
-// app.post('/login/local', (req,res) => {
-// 	console.log(req.body);
-// 	userModel.findOne({userName: req.body.userName}, (err, result) => {
-// 		if(err) throw err;
-// 		console.log(result);
-// 	})
-// }
-// );
 
-// login success or not 
-app.get('login/success/:isFail', (req, res) => {
-	console.log(req.params.isFail);
-	res.send(req.params.isFail);
+app.get('/logout', (req, res) => {
+	console.log("logging out");
+	if (req.session) {
+		// delete session object
+		req.session.destroy(function (err) {
+			if (err) {
+				return next(err);
+			} else {
+				return res.send("Success");
+			}
+		});
+	}
 });
-
-// login Facebook
-// app.get('/login/facebook',
-// 	passport.authenticate('facebook'));
-
-// app.get('/login/facebook/callback',
-// 	passport.authenticate('facebook', { failureRedirect: '/login' }),
-// 	function (req, res) {
-// 		// Successful authentication, redirect home.
-// 		res.redirect('/');
-// 	});
 
 const port = process.env.PORT || 3000;
 app.listen(port);

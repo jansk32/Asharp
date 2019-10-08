@@ -80,18 +80,22 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // axios authentication
+  // Axios authentication
   function axiosLocal(objData) {
     console.log(objData);
     axios.post("http://localhost:3000/login/local",objData)
     .then((data) => navigate('Home'))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      alert("Email or Password is incorrect");
+      navigate('Login');
+    });
   };
 
-  // axios third party authentication
+  // Axios third party authentication
   function axiosThirdParty(obj) {
     axios.get("http://localhost:3000/login/facebook")
   }
+
 
   return (
     <>
@@ -114,6 +118,7 @@ export default function LoginScreen({ navigation }) {
             <View style={styles.textInput}>
               <TextInput
                 placeholder='Enter Password'
+                secureTextEntry={true}
                 onChangeText={setPassword}
               />
             </View>
