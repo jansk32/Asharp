@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Image, View, StyleSheet, Dimensions, ScrollView, ActivityIndicator } from 'react-native';
+import { Text, Image, View, StyleSheet, Dimensions, ScrollView, } from 'react-native';
 import axios from 'axios';
 import Moment from 'moment';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -60,28 +60,16 @@ export default function ItemDetailScreen({ navigation }) {
     return (
         <>
             <ScrollView>
-            <ActivityIndicator size="large" animation={hide === 'true'}/>
                 <View style={styles.container}>
                     <Image
                         style={styles.image}
                         source={{ uri: artefact.file }}
                     />
-<<<<<<< HEAD
-                    {hide && (
-                    <ActivityIndicator
-                        size="large"
-                    />
-                    )}
-
-=======
->>>>>>> 25897e705687edd52a590432b229592741af6cb4
                     <View style={styles.headerCont}>
                         <Text style={styles.title}>{artefact.name}</Text>
-
                         <View style={styles.headerDesc}>
                             <Text style={styles.owner}>Owned by {owner}</Text>
                             <Text style={styles.dateStyle}>{Moment(artefact.date).format('L')}</Text>
-
                         </View>
                     </View>
                     <View style={styles.desc}>
