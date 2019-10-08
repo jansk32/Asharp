@@ -101,7 +101,7 @@ export default function TimelineScreen({ navigation }) {
 	}
 
 	// Layout for Gallery tab
-	const FirstRoute = () => (
+	const GalleryRoute = () => (
 		<>
 		<FlatList
 			data={formatData(artefacts, numColumns)}
@@ -114,7 +114,7 @@ export default function TimelineScreen({ navigation }) {
 	);
 
 	//Layout for Timeline tab
-	const SecondRoute = () => (
+	const TimelineRoute = () => (
 		<>			
 			<Timeline
 				style={styles.list}
@@ -133,8 +133,8 @@ export default function TimelineScreen({ navigation }) {
 	const [tab,setTab] = useState({
 		index: 0,
 		routes: [
-		  { key: 'first', title: 'Gallery' },
-		  { key: 'second', title: 'Timeline' },
+		  { key: 'first', title: 'Timeline' },
+		  { key: 'second', title: 'Gallery' },
 		],
 	});
 
@@ -147,8 +147,8 @@ export default function TimelineScreen({ navigation }) {
 			<TabView
 				navigationState={tab}
 				renderScene={SceneMap({
-					first: FirstRoute,
-					second: SecondRoute,
+					first: TimelineRoute,
+					second: GalleryRoute,
 				})}
 				renderTabBar={props =>
 					<TabBar

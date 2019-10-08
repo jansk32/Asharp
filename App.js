@@ -4,7 +4,6 @@ import HomeScreen from './components/home-screen';
 import FamilyTreeScreen from './components/family-tree-screen';
 import ProfileScreen from './components/profile-screen';
 import TimelineScreen from './components/timeline-screen';
-import GalleryScreen from './components/gallery-screen';
 import ItemDetailScreen from './components/item-detail-screen';
 import WelcomeScreen from './components/welcome-screen';
 import Login from './components/log-in-screen';
@@ -13,6 +12,7 @@ import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
 import ProfileSettingScreen from './components/profile-setting';
+import NotificationScreen from './components/notification-screen';
 
 // Import react navigation tools
 import {
@@ -102,10 +102,10 @@ const MainNavigator = createBottomTabNavigator({
 			tabBarIcon: ({ tintColor }) => <Icon name="md-add" color={tintColor} size={30} />
 		},
 	},
-	Gallery: {
-		screen: GalleryScreen,
+	Notification: {
+		screen: NotificationScreen,
 		navigationOptions: {
-			tabBarIcon: ({ tintColor }) => <Icon name="md-images" color={tintColor} size={30} />
+			tabBarIcon: ({ tintColor }) => <Icon name="md-notifications-outline" color={tintColor} size={30} />
 		},
 	},
 	Profile: {
@@ -178,7 +178,7 @@ const itemStack = createStackNavigator({
 	MainNavigator,
 	Profile: { screen: ProfileScreen },
 	Timeline: { screen: TimelineScreen },
-	Gallery: { screen: GalleryScreen },
+	Notification: { screen: NotificationScreen },
 	ItemDetail: { screen: ItemDetailScreen },
 },
 )
