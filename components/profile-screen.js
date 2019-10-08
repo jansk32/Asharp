@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Text, StyleSheet, View, Image, Dimensions, TouchableOpacity, Button } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import Moment from 'moment';
 
@@ -35,51 +35,51 @@ export default function ProfileScreen({ navigation }) {
     async function getProfile() {
         //console.log('Sending request');
         axios.get('http://localhost:3000/user', { withCredentials: true })
-        .then((res) => {
-            setProfile(res.data);
-        })
-        .catch(error => console.error(error));
+            .then((res) => {
+                setProfile(res.data);
+            })
+            .catch(error => console.error(error));
     }
     // Get the artefact of the user
     async function getArtefact() {
         //console.log(profile);
         axios.get("http://localhost:3000/artefact/findbyowner/")
-        .then((result) => {
-            //console.log(result.data);
-            setArtefact(result.data);
-        })
-        .catch(err => console.log(error));
+            .then((result) => {
+                //console.log(result.data);
+                setArtefact(result.data);
+            })
+            .catch(err => console.log(error));
     }
 
-    async function fetchProfile(){
-       await getProfile();
-       await getArtefact();
+    async function fetchProfile() {
+        await getProfile();
+        await getArtefact();
     }
 
     // Get profile and artefacts by owner
-    useEffect( () => { fetchProfile()}), [];
+    useEffect(() => { fetchProfile() }), [];
 
-    
+
     // Logout function
     function logout() {
         axios.get('http://localhost:3000/logout')
-        .then((result) => navigate('Welcome'))
-        .catch((err) => console.log(err));
+            .then((result) => navigate('Welcome'))
+            .catch((err) => console.log(err));
     }
 
     // Render Item invisible if it's just a placeholder for columns in the grid,
     // if not, render the picture for each grid
     renderItem = ({ item, index }) => {
-        
+
         if (item.empty === true) {
             return <View style={[styles.itemBox, styles.invisibleItem]} />;
         }
         return (
             <View style={styles.itemBox}>
-                <TouchableOpacity 
-                onPress={() => navigate('ItemDetail', {artefactId: item._id})}>
+                <TouchableOpacity
+                    onPress={() => navigate('ItemDetail', { artefactId: item._id })}>
                     <Image
-                        source={{uri: item.file}}
+                        source={{ uri: item.file }}
                         style={styles.imageBox} />
                 </TouchableOpacity>
             </View>
@@ -92,32 +92,24 @@ export default function ProfileScreen({ navigation }) {
     // Return the whole layout for profile
     return (
         <>
-            <React.Fragment>
+            <View style={styles.header}>
+                <Text style={styles.profile}>Profile</Text>
+                <View style={styles.icon}>
+                    <Icon name="navicon" size={40} color={'#2d2e33'} />
+                </View>
+            </View>
+            <ScrollView>
                 <View style={styles.profileBox}>
-
-                    <View style={styles.header}>
-                        <Text style={styles.profile}>Profile</Text>
-                        <View style={styles.icon}>
-                            <Icon name="navicon" size={40} color={'#2d2e33'} />
-                        </View>
-                    </View>
-                    
-                    
                     <Image
-                        source={{uri: profile.pictureUrl}}
+                        source={{ uri: profile.pictureUrl }}
                         style={styles.image}
                     />
-
-                   
-                    
                     <View style={styles.textBox}>
-                        <Text 
+                        <Text
                             style={styles.nameText}>{profile.name}</Text>
                         <Text
                             style={styles.dob}>DOB: {Moment(profile.dob).format('L')}</Text>
                     </View>
-
-
                     <View style={styles.settingBox}>
                         <View style={styles.settingButton}>
                             <TouchableOpacity
@@ -137,9 +129,6 @@ export default function ProfileScreen({ navigation }) {
                         </View>
                     </View>
                 </View>
-               
-
-
                 <View style={styles.artefactsBox}>
                     <Text style={styles.artText}>My Artefacts</Text>
                     <FlatList
@@ -148,10 +137,7 @@ export default function ProfileScreen({ navigation }) {
                         renderItem={this.renderItem}
                     />
                 </View>
-
-
-
-            </React.Fragment>
+            </ScrollView>
         </>
     );
 }
@@ -161,8 +147,8 @@ const styles = StyleSheet.create({
 
     profileBox: {
         backgroundColor: '#f5f7fb',
-        borderBottomLeftRadius:25,
-        borderBottomRightRadius:25,
+        borderBottomLeftRadius: 25,
+        borderBottomRightRadius: 25,
         // flex: 1 / 4,
         // flexDirection: 'row',
         // textAlign: 'center',2
@@ -172,26 +158,26 @@ const styles = StyleSheet.create({
         // margin:10,
         // flexDirection:'row',
     },
-    header:{
-        flexDirection:'row',
-        paddingTop:15,
-        margin:10,
+    header: {
+        flexDirection: 'row',
+        paddingTop: 15,
+        margin: 10,
     },
 
-    profile:{
-        fontSize:30,
-        fontWeight:'bold',
-        color:'#2d2e33',
-        alignItems:'flex-start',
-        paddingLeft:10,
+    profile: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        color: '#2d2e33',
+        alignItems: 'flex-start',
+        paddingLeft: 10,
     },
 
-    icon:{
-        alignItems:'flex-end',
-        flex:3,
+    icon: {
+        alignItems: 'flex-end',
+        flex: 3,
         // paddingTop:15,
-        paddingRight:20,
-        paddingTop:5,
+        paddingRight: 20,
+        paddingTop: 5,
     },
     image: {
         width: 100,
@@ -201,7 +187,7 @@ const styles = StyleSheet.create({
         marginLeft: 14,
         marginRight: 10,
         marginBottom: 5,
-        alignSelf:'center',
+        alignSelf: 'center',
 
     },
     imageBox: {
@@ -245,17 +231,17 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignSelf: 'center',
     },
-    buttonText:{
-        fontSize:15,
+    buttonText: {
+        fontSize: 15,
     },
     nameText: {
         fontSize: 20,
-        fontWeight:'bold',
-        textAlign:'center',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
-    dob:{
+    dob: {
         fontSize: 15,
-        textAlign:'center',
+        textAlign: 'center',
     },
     artefactsBox: {
         backgroundColor: '#fff',
