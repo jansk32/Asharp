@@ -4,7 +4,6 @@ import HomeScreen from './components/home-screen';
 import FamilyTreeScreen from './components/family-tree-screen';
 import ProfileScreen from './components/profile-screen';
 import TimelineScreen from './components/timeline-screen';
-import GalleryScreen from './components/gallery-screen';
 import ItemDetailScreen from './components/item-detail-screen';
 import WelcomeScreen from './components/welcome-screen';
 import Login from './components/log-in-screen';
@@ -12,6 +11,8 @@ import SignUp1 from './components/sign-up1-screen';
 import SignUp2 from './components/sign-up2-screen';
 import SignUp3 from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
+import ProfileSettingScreen from './components/profile-setting';
+import NotificationScreen from './components/notification-screen';
 
 // Import react navigation tools
 import {
@@ -23,10 +24,12 @@ import {
 
 // Import icons
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/Entypo';
 
 // Import Firebase.
 import * as firebase from 'firebase';
-import { Dimensions } from 'react-native';
+import { Dimensions, Text } from 'react-native';
+import { HeaderTitle } from 'react-navigation-stack';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -51,7 +54,7 @@ const MainNavigator = createBottomTabNavigator({
 	FamilyTree: {
 		screen: FamilyTreeScreen,
 		navigationOptions: {
-			tabBarIcon: ({ tintColor }) => <Icon name="md-leaf" color={tintColor} size={30} />
+			tabBarIcon: ({ tintColor }) => <Icon2 name="tree" color={tintColor} size={30} />
 		},
 	},
 	Home: {
@@ -60,13 +63,14 @@ const MainNavigator = createBottomTabNavigator({
 			tabBarIcon: ({ tintColor }) => <Icon name="md-add" color={tintColor} size={30} />
 		},
 	},
-	Gallery: {
-		screen: GalleryScreen,
+	Notification: {
+		screen: NotificationScreen,
 		navigationOptions: {
-			tabBarIcon: ({ tintColor }) => <Icon name="md-images" color={tintColor} size={30} />
+			tabBarIcon: ({ tintColor }) => <Icon name="md-notifications-outline" color={tintColor} size={30} />
 		},
 	},
 	Profile: {
+		// screen: ProfileDrawer,
 		screen: ProfileScreen,
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon name="md-person" color={tintColor} size={30} />
@@ -96,6 +100,7 @@ const MainNavigator = createBottomTabNavigator({
 		navigationOptions: {
 			header: null,
 		},
+
 	},
 );
 
@@ -103,7 +108,12 @@ const MainNavigator = createBottomTabNavigator({
 const uploadArtefactStack = createStackNavigator({
 	MainNavigator,
 	AddImageDetails: { screen: AddImageDetailsScreen },
-});
+},
+	{
+		navigationOptions: {
+			header: null,
+		},
+	});
 
 // Authentication stack navigator for sign up
 const SignUpStack = createStackNavigator({
@@ -127,20 +137,19 @@ const SignUpStack = createStackNavigator({
 // Stack navigator for looking at item details from gallery
 const itemStack = createStackNavigator({
 	MainNavigator,
-	Timeline: { screen: TimelineScreen },
 	Profile: { screen: ProfileScreen },
-	Gallery: { screen: GalleryScreen },
-	ItemDetail: { screen: ItemDetailScreen},
+	ProfileSetting: {screen: ProfileSettingScreen},
+	Timeline: { screen: TimelineScreen },
+	Notification: { screen: NotificationScreen },
+	ItemDetail: { screen: ItemDetailScreen },
 },
-	{
-		headerMode: 'none',
-	});
+)
 
-const Stack = createSwitchNavigator({	
+const Stack = createSwitchNavigator({
 	Welcome: { screen: WelcomeScreen },
 	SignUpStack,
 	Login: { screen: Login },
-	itemStack,	
+	itemStack,
 	uploadArtefactStack,
 })
 

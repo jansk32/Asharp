@@ -82,7 +82,7 @@ app.get('/', (req, res) => {
 	res.send('Hello World');
 })
 
-// get a user
+// Get a user
 app.get('/user', (req, res) => {
 	let id = req.session.passport.user._id;
 	userModel.find({ _id: id }, (err, resp) => {
@@ -92,9 +92,8 @@ app.get('/user', (req, res) => {
 })
 
 // Get user by id for artefacts
-app.post('/user/artefact', (req,res) => {
-	// console.log(req.body);
-	userModel.findOne(req.body, (err, result) => {
+app.get('/user/artefact', (req,res) => {
+	userModel.findOne(req.query, (err, result) => {
 		if(err) throw err;
 		res.send(result);
 	})
@@ -135,6 +134,16 @@ app.post('/user/create', ({ body: {
 		res.send(resp);
 	})
 })
+
+// Update user
+app.put('/user/update', (req,res) => {
+	const id = req.session.passport.user._id;
+	userModel.findOneAndUpdate({_id: id}, req.body, {new: true}, (err, result) => {
+		if (err) throw err;
+		res.send(result);
+	})
+})
+
 // Get ALL artefacts
 app.get('/artefact', (req,res) => {
 	artefactModel.find({}, (err,result) => {
@@ -200,9 +209,9 @@ app.put('/artefact/assign', (req,res) => {
 })
 
 // Get artefact by owner id
-app.get('/artefact/findbyowner/', (req,res) => {
+app.get('/artefact/findbyowner/', async (req,res) => {
 	let id = req.session.passport.user._id;
-	artefactModel.find({ owner: id }, (err, resp) => {
+	await artefactModel.find({ owner: id }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp);
 	});
@@ -212,24 +221,16 @@ app.get('/artefact/findbyowner/', (req,res) => {
 // the front end will make only one request to the back end
 
 
-// Login page [in progress]
-app.get('/login', (req, res) => {
-
-});
-
 // login local
 app.post('/login/local', passport.authenticate('local'),(req,res) => {
-	console.log("posted");
-	console.log(req.user);
 	res.send(req.user);
 });
 
 // login success or not 
-
-app.get('login/success/:isFail', (req,res) => {
-	console.log(req.params.isFail);
-	res.send(req.params.isFail);
-})
+// app.get('login/success/:isFail', (req,res) => {
+// 	console.log(req.params.isFail);
+// 	res.send(req.params.isFail);
+// })
 
 app.get('/logout', (req,res) => {
 	console.log("logging out");
