@@ -15,30 +15,35 @@ export default function ItemDetailScreen({ navigation }) {
     var artefactId = navigation.getParam('artefactId');
     const [artefact, setArtefact] = useState({});
     const [owner, setOwner] = useState('');
-    const [hide, setHide] = useState('');
+    const [hide, setHide] = useState(true);
 
 
-    // Get all artefacts
+
+
+    // Get a specific artefact
+    async function fetchArtefact() {
+        const res = await axios.get(`http://localhost:3000/artefact/find/${artefactId}`);
+        setArtefact(res.data);
+        // console.log("owner id:"+ res.data.owner);
+        await axios.get('http://localhost:3000/user/artefact', {
+            params: {
+            _id: res.data.owner
+            }
+        })
+        .then((result) => {
+            if (result.data) {
+                setHide(false);
+                setOwner(result.data.name);
+            }
+        });
+        // await setOwner(ownerObj.data.name);
+        // await console.log(ownerObj.data.name);
+    }
+
+
     useEffect(() => {
-        async function fetchArtefact() {
-            const res = await axios.get(`http://localhost:3000/artefact/find/${artefactId}`);
-            setArtefact(res.data);
-            setHide('false');
-            // console.log("owner id:"+ res.data.owner);
-            const ownerObj = await axios.get('http://localhost:3000/user/artefact', {
-                params: {
-                _id: res.data.owner
-                }
-            });
-            await setOwner(ownerObj.data.name);
-            setHide('false');
-            // await console.log(ownerObj.data.name);
-        }
-        if (!artefact.name){
-            setHide('true');
-        }
+        setHide(false);
         fetchArtefact();
-        setHide('false');
     }, []);
 
     // TODO: Define function to send artefacts to family members
@@ -60,7 +65,11 @@ export default function ItemDetailScreen({ navigation }) {
                         style={styles.image}
                         source={{ uri: artefact.file }}
                     />
-                    <ActivityIndicator size="large" animation={hide === 'true'}/>
+                    {hide && (
+                    <ActivityIndicator
+                        size="large"
+                    />
+                    )}
 
                     <View style={styles.headerCont}>
                         <Text style={styles.title}>{artefact.name}</Text>
