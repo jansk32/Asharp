@@ -22,12 +22,15 @@ export default function TimelineScreen({ navigation }) {
 		// TIMELINE FORMAT
 		// Format date DD-MM-YYYY
 		timeData.forEach(entry => 
-			{entry.time = Moment(entry.date).format("DD-MM-YYYY")});
+			{entry.time = Moment(entry.date).format("YYYY-MM-DD")});
 
 		// Sort Timeline in Descending order
 		timeData.sort(function (a,b){
 			return a.time < b.time ? 1 : -1;
 		})
+
+		timeData.forEach(entry => 
+			{entry.time = Moment(entry.date).format("DD-MM-YYYY")});
 
 		// Display only one date under several artefacts with the same date
 		for (let i = timeData.length - 1; i > 0; i--) {
