@@ -8,20 +8,14 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { SCHEMES } from 'uri-js';
 import { pickImage, uploadImage } from '../image-tools';
 import axios from 'axios';
-import moment from 'moment';
-moment.locale('en');
+import Moment from 'moment';
 
-/*
-TODO
-- Create Page ✓
-- Link in navigation bar ✓
-- Create function
-
-*/
+// import moment from 'moment';
+Moment.locale('en');
 
 // Edit user details: Name, DOB, password, profile picture
 export default function ProfileSettingScreen({ navigation }) {
-	const DATE_FORMAT = 'DD-MM-YYYY';
+	const DATE_FORMAT = 'YYYY-MM-DD';
 	const { navigate } = navigation;
 	// const handleProfileChange = navigation.getParam('handleProfileChange');
 	const setProfile = navigation.state.params.setProfile;
@@ -39,7 +33,7 @@ export default function ProfileSettingScreen({ navigation }) {
 			alert("Old password does not match! >:)");
 			return false;
 		}
-		if (password && password.length < 6) {
+		else if (password && password.length < 6) {
 			alert("Password must be at least 6 characters long");
 			return false
 		}
@@ -60,26 +54,31 @@ export default function ProfileSettingScreen({ navigation }) {
 	// Post profile
 	// TODO: FIX ERROR -> AFTER CHANGING SETTING, RELOGIN THE PERSON
 	async function updateProfile() {
-		await validateInput();
-		// Upload current image
-		const data = {};
-		name !== '' ? data.name = name : name;
-		dob !== '' ? data.dob = dob : dob;
-		password !== '' ? data.password = password : password;
-		if (image.uri.includes('firebase') === false) {
-			let newImage = await uploadImage(image.uri);
-			data.pictureUrl = newImage;
+		if (validateInput() === true) {
+			// Upload current image
+			const data = {};
+			name !== '' ? data.name = name : name;
+			dob !== '' ? data.dob = dob : dob;
+			password !== '' ? data.password = password : password;
+
+			if (image.uri.includes('firebase') === false) {
+				let newImage = await uploadImage(image.uri);
+				data.pictureUrl = newImage;
+			}
+			const res = await axios.put("http://localhost:3000/user/update", data);
+			const updatedProfile = res.data;
+			console.log(updatedProfile);
+			setProfile(updatedProfile);
 		}
-		const res = await axios.put("http://localhost:3000/user/update", data);
-		const updatedProfile = res.data;
-		console.log(updatedProfile);
-		setProfile(updatedProfile);
+		else {
+			navigate('Profile');
+		}
 	}
 
 	// Get user details
 	useEffect(() => {
 		obtainProfile();
-	}, [])
+	}, []);
 
 	return (
 		<>
@@ -109,14 +108,13 @@ export default function ProfileSettingScreen({ navigation }) {
 						</View>
 						<View style={styles.inputElem}>
 							<Text style={styles.text}>Date of Birth:</Text>
-
 							<DatePicker
 								style={styles.dateInputs}
 								date={dob ? dob : user.dob}
 								mode="date"
-								placeholder={moment(user.dob).format(DATE_FORMAT)}
+								placeholder={Moment(user.dob).format(DATE_FORMAT)}
 								format={DATE_FORMAT}
-								maxDate={moment().format(DATE_FORMAT)}
+								maxDate={Moment().format(DATE_FORMAT)}
 								confirmBtnText="Confirm"
 								cancelBtnText="Cancel"
 								androidMode="spinner"
