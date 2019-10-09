@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Component } from 'react';
 import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, ScrollView, Text, Alert } from 'react-native';
-import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text as SvgText} from 'react-native-svg';
+import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text as SvgText } from 'react-native-svg';
 import generateFamilyTree, { mainDrawLines } from '../build-family-tree';
 import axios from 'axios';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
@@ -180,17 +180,22 @@ class ZoomableSvg extends Component {
 								},
 								{
 									text: 'OK',
-									onPress: () => {
+									onPress: async () => {
 										try {
+											const userRes = await axios.get('http://localhost:3000/user', { withCredentials: true });
+											const user = userRes.data;
 											axios.put('http://localhost:3000/artefact/assign', {
 												artefactId: navigation.state.params.artefactId,
-												senderId: this.state.tappedNode._id
+												recipientId: this.state.tappedNode._id,
+												senderId: user._id,
 											});
+
+											navigation.setParams(null);
+											navigation.goBack();
 										} catch (e) {
+											console.error(e);
 											ToastAndroid.show('Error sending artefact', ToastAndroid.SHORT);
 										}
-										navigation.setParams(null);
-										navigation.goBack();
 									}
 								}]);
 						} else {
@@ -231,7 +236,7 @@ class ZoomableSvg extends Component {
 				<Menu name="menu" renderer={SlideInMenu}>
 					<MenuTrigger>
 					</MenuTrigger>
-					<MenuOptions style={styles.menuStyle} customStyles={{ optionText:styles.menuText}}>
+					<MenuOptions style={styles.menuStyle} customStyles={{ optionText: styles.menuText }}>
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
@@ -291,7 +296,7 @@ function Node({ data: { x, y, name, _id, pictureUrl, matchesSearch } }) {
 				width={NODE_RADIUS * 2}
 				x={x - NODE_RADIUS}
 				y={y - NODE_RADIUS}
-				href={{ uri: pictureUrl ? pictureUrl : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
+				href={{ uri: pictureUrl || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
 				clipPath={`url(#${_id})`}
 				preserveAspectRatio="xMidYMid slice"
 			/>
@@ -352,7 +357,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 			<Text style={styles.add}>This is your</Text>
 			<Text style={styles.title}>Family Tree</Text>
 			<View style={styles.searchContainer}>
-				<Icon name="md-search" size={30} color={'#2d2e33'} style={{paddingTop: 5,}}/>
+				<Icon name="md-search" size={30} color={'#2d2e33'} style={{ paddingTop: 5, }} />
 				<TextInput
 					placeholder="Search family member"
 					value={familyMemberSearch}
@@ -402,22 +407,22 @@ const styles = StyleSheet.create({
 		marginLeft: 10,
 		marginTop: 10,
 	},
-	menuStyle:{
+	menuStyle: {
 		borderTopEndRadius: 20,
 		borderTopStartRadius: 20,
 		borderRadius: 20,
 		borderColor: 'black',
 		borderWidth: 1,
-		flex: 1/4,
+		flex: 1 / 4,
 		width: Dimensions.get('window').width * 0.85,
 		alignSelf: 'center',
 		height: 150,
 		marginBottom: 30,
 		justifyContent: 'space-evenly',
 	},
-	menuText:{
+	menuText: {
 		textAlign: 'center',
-		fontSize: 20,	
+		fontSize: 20,
 	},
 })
 

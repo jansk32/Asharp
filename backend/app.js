@@ -335,7 +335,7 @@ app.post('/artefact/create', ({
 // Re-assign artefact to certain user
 app.put('/artefact/assign', ({ body: { artefactId, recipientId, senderId } }, res) => {
 	// Request should include id of artefact, and id of new owner
-	artefactModel.updateOne({ artefactId }, { owner: recipientId }, (err, resp) => {
+	artefactModel.updateOne({ _id: artefactId }, { owner: recipientId }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp);
 	});
@@ -350,15 +350,16 @@ app.put('/artefact/assign', ({ body: { artefactId, recipientId, senderId } }, re
 			en: 'You have received a new artefact'
 		},
 		headings: {
-			en: 'Notification title'
+			en: 'mementos'
 		}
 	});
 
 	// Add new notification document to database
 	const notif = new notificationModel({
 		time: moment().toISOString(),
-		senderId,
-		artefactId,
+		artefact: artefactId,
+		recipient: recipientId,
+		sender: senderId,
 	});
 
 	notif.save();
@@ -373,9 +374,20 @@ app.get('/artefact/findbyowner/', (req, res) => {
 	});
 });
 
-// Tim: this will be replaced by the single route called /user/create so
-// the front end will make only one request to the back end
 
+/* Notification routes */
+// Get all notifications that are meant for a certain user
+app.get('/notification/', async ({ query: { recipient } }, res) => {
+	try {
+		console.log(recipient);
+		res.send(await notificationModel.find({ recipient })
+			.populate('recipient')
+			.populate('sender')
+			.populate('artefact'));
+	} catch (e) {
+		console.error(e);
+	}
+});
 
 // login local
 app.post('/login/local', passport.authenticate('local'), (req, res) => {

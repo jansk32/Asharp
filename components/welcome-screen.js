@@ -75,9 +75,8 @@ export default function WelcomeScreen({ navigation }) {
             <View style={styles.container}>
                 <Text style={styles.title}>mementos</Text>
                 {
-                    isLoading ?
-                        null
-                        :
+                    !isLoading &&
+                    (
                         <View style={styles.buttonBox}>
                             <TouchableOpacity onPress={() => navigate('SignUp1')}>
                                 <View style={styles.yellowButton}>
@@ -90,6 +89,7 @@ export default function WelcomeScreen({ navigation }) {
                                 </View>
                             </TouchableOpacity>
                         </View>
+                    )
                 }
             </View>
         </>

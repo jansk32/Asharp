@@ -18,6 +18,7 @@ import { MenuProvider } from 'react-native-popup-menu';
 
 import AddFamilyMemberScreen from './components/add-family-member-screen';
 import ViewFamilyMemberScreen from './components/view-family-member-screen';
+
 // Import react navigation tools
 import {
 	createBottomTabNavigator,
@@ -51,6 +52,9 @@ firebase.initializeApp(firebaseConfig);
 // OneSignal
 const ONESIGNAL_APP_ID = 'f9de7906-8c82-4674-808b-a8048c4955f1';
 OneSignal.init(ONESIGNAL_APP_ID);
+// Incoming notifications are displayed in the notification bar and not as an alert box
+// when the app is open
+OneSignal.inFocusDisplaying(2);
 OneSignal.addEventListener('received', () => console.log('RECEIVED ONESIGNAL'));
 
 // Main bottom tab navigator to navigate the main functionalities of the application
@@ -145,6 +149,11 @@ const SignUpStack = createStackNavigator({
 	},
 });
 
+const familyStack = createStackNavigator({
+	MainNavigator,
+	ViewFamilyMember: {screen: ViewFamilyMemberScreen},
+});
+
 // Stack navigator for looking at item details from gallery
 const itemStack = createStackNavigator({
 	MainNavigator,
@@ -155,13 +164,20 @@ const itemStack = createStackNavigator({
 	ItemDetail: { screen: ItemDetailScreen },
 });
 
+const sendFamilyStack = createStackNavigator({
+	ItemDetail: { screen: ItemDetailScreen },	
+	FamilyTree: {screen: FamilyTreeScreen},
+});
+
 const Stack = createSwitchNavigator({
 	Welcome: { screen: WelcomeScreen },
 	SignUpStack,
 	Login: { screen: LoginScreen },
 	itemStack,
+	sendFamilyStack,
 	uploadArtefactStack,
-})
+	familyStack,
+});
 
 const NavigationContainer = createAppContainer(Stack);
 

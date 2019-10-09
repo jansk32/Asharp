@@ -16,16 +16,16 @@ export default function TimelineScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [artefacts, setArtefacts] = useState([]);
 
-	const formatTime = (timeData) => {
-
+	function formatTime(timeData) {
 		// TIMELINE FORMAT
 		// Format date DD-MM-YYYY
-		timeData.forEach(entry => { entry.time = Moment(entry.date).format("DD-MM-YYYY") });
+		timeData.forEach(entry => {
+			entry.time = moment(entry.date).format('DD-MM-YYYY');
+			entry.key = entry._id
+		});
 
-		// Sort Timeline in Descending order
-		timeData.sort(function (a, b) {
-			return a.time < b.time ? 1 : -1;
-		})
+		// Sort Timeline in descending order
+		timeData.sort((a, b) => b.time - a.time);
 
 		// Display only one date under several artefacts with the same date
 		for (let i = timeData.length - 1; i > 0; i--) {
@@ -35,8 +35,8 @@ export default function TimelineScreen({ navigation }) {
 		}
 		return timeData;
 	}
-	const formatData = (data, numColumns) => {
 
+	function formatData(data, numColumns) {
 		// GALLERY FORMAT
 		const numberOfFullRows = Math.floor(data.length / numColumns);
 
@@ -61,27 +61,6 @@ export default function TimelineScreen({ navigation }) {
 		}
 		fetchArtefacts();
 	}, []);
-
-	const formatData = (data) => {
-		// Sort date in descending order in the timeline
-		data.sort(function (a, b) {
-			return a.date > b.date ? -1 : 1;
-		});
-
-		// Format date DD-MM-YYYY
-		data.forEach(entry => {
-			entry.time = moment(entry.date).format('DD-MM-YYYY');
-			entry.key = entry._id;
-		});
-
-		// Display only one date under several artefacts with the same date
-		for (let i = data.length - 1; i > 0; i--) {
-			if (data[i].time === data[i - 1].time) {
-				data[i].time = '';
-			}
-		}
-		return data;
-	};
 
 
 	// Custom render event title and event description (Timeline)
@@ -120,34 +99,34 @@ export default function TimelineScreen({ navigation }) {
 	}
 
 	// Layout for Gallery tab
-	const GalleryRoute = () => (
-		<>
+	function GalleryRoute() {
+		return (
 			<FlatList
 				data={formatData(artefacts, numColumns)}
-				keyExtractor={(item, index) => item._id}
+				keyExtractor={item => item._id}
 				renderItem={renderItem}
 				numColumns={numColumns}
 				style={styles.container}
 			/>
-		</>
-	);
+		);
+	}
 
-	//Layout for Timeline tab
-	const TimelineRoute = () => (
-		<>
+	// Layout for Timeline tab
+	function TimelineRoute() {
+		return (
 			<Timeline
 				style={styles.list}
 				data={formatTime(artefacts)}
 				circleSize={15}
-				circleColor='#EC6268'
-				lineColor='#e3e3e3'
-				innerCircleType='dot'
+				circleColor="#EC6268"
+				lineColor="#e3e3e3"
+				innerCircleType="dot"
 				renderDetail={renderDetail}
 				timeContainerStyle={{ minWidth: 72, marginLeft: 10 }}
 				timeStyle={{ color: '#2d2e33' }}
 			/>
-		</>
-	);
+		);
+	}
 
 	const [tab, setTab] = useState({
 		index: 0,
