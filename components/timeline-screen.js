@@ -25,7 +25,7 @@ export default function TimelineScreen({ navigation }) {
 		});
 
 		// Sort Timeline in descending order
-		timeData.sort((a, b) => b.time - a.time);
+		timeData.sort((a, b) => moment(b.time).diff(moment(a.time)));
 
 		// Display only one date under several artefacts with the same date
 		for (let i = timeData.length - 1; i > 0; i--) {
@@ -158,7 +158,7 @@ export default function TimelineScreen({ navigation }) {
 					/>
 				}
 				onIndexChange={index => setTab({ ...tab, index })}
-				initialLayout={{ width: Dimensions.get('window').width }}
+				initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
 			/>
 		</>
 	);
