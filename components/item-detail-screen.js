@@ -104,12 +104,9 @@ const styles = StyleSheet.create({
     headerCont: {
         paddingHorizontal: '8%',
         paddingVertical: '5%',
-        marginBottom: '5%',
-        // backgroundColor: '#E6E6E6',
-        // borderColor: 'black',
+        marginBottom: '2%',
         borderBottomEndRadius: 30,
         borderBottomStartRadius: 30,
-        // borderWidth: 1,
         justifyContent: 'space-between',
     },
     headerDesc: {
