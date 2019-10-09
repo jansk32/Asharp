@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Text, View, Image, StyleSheet, TextInput, Button, ScrollView,
-  FlatList, SectionList, ToastAndroid, Picker, TouchableHighlight, Dimensions,
+  Text, View, Image, StyleSheet, TextInput, ScrollView, ToastAndroid, TouchableOpacity, Dimensions,
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import DatePicker from 'react-native-datepicker';
@@ -133,7 +132,6 @@ export default function UploadImageScreen({ navigation }) {
                 <TextInput
                   placeholder='Describe the item.'
                   onChangeText={setDescription}
-                  maxLength={40}
                   multiline={true}
                   style={styles.textInput}
                 />
@@ -141,18 +139,17 @@ export default function UploadImageScreen({ navigation }) {
                 <TextInput
                   placeholder='Write down the value and memory this item holds.'
                   onChangeText={setValue}
-                  maxLength={40}
                   multiline={true}
                   style={styles.textInput}
                 />
             </View>
-            <TouchableHighlight
+            <TouchableOpacity
               onPress={createArtefact}
               style={styles.redButton}>
               <Text
                 style={styles.whiteText}>
                 Upload Artefact</Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
         </View>
       </ScrollView>
     </>
@@ -194,6 +191,9 @@ const styles = StyleSheet.create({
     height: 100,
     paddingLeft: 10,
     textAlignVertical: 'top',
+    flex: 1,
+    flexWrap: 'wrap',
+    flexDirection: 'row',
   },
   textInputUpper: {
     borderColor: 'black',
