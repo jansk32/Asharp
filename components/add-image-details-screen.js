@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: 100,
     paddingLeft: 10,
+    flexWrap:'wrap',
     textAlignVertical: 'top',
   },
   textInputUpper: {
