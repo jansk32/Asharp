@@ -1,72 +1,81 @@
 import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, View, FlatList, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native';
-import ItemDetailScreen from './item-detail-screen';
 import axios from 'axios';
-import downloadImage from '../image-tools';
+import moment from 'moment';
+import OneSignal from 'react-native-onesignal';
 
-const DummyData = [
-    { 	
-		_id: '0',
-		profPic: require('../tim_derp.jpg'),
-		sender: 'Timothy',
-		artefactName: 'Himself',
-		artefactPic: require('../tim_derp.jpg')
-	}, 
-	{ 
-		_id: '0',
-		profPic: require('../gg.png'),
-		sender: 'Jansen',
-		artefactName: 'Cat',
-		artefactPic: require('../cat.jpg')
-	 },
-];
 
 export default function NotificationScreen({ navigation }) {
 	const { navigate } = navigation;
-	const [artefacts, setArtefacts] = useState([]);
-	
+	const [notifications, setNotifications] = useState([]);
+
+	useEffect(() => {
+		async function fetchNotifications() {
+			const userRes = await axios.get('http://localhost:3000/user', { withCredentials: true });
+			const user = userRes.data;
+			console.log(user._id);
+
+			const res = await axios.get('http://localhost:3000/notification', {
+				params: {
+					recipient: user._id
+				}
+			});
+			const notifs = res.data;
+			console.log(notifs);
+			// Sort notifications so the most recent one appears first
+			notifs.sort((a, b) => moment(b.time).diff(moment(a.time)));
+			setNotifications(notifs);
+		}
+		fetchNotifications();
+
+		// Fetch notifications whenever a new notification is received
+		OneSignal.addEventListener('received', fetchNotifications);
+	}, []);
+
 	// Make flatlist of notifications
 	/* Notifications
-		* When you recieve artefact
+		* When you receive artefact
 		* etc
-	
     */
-    
-   renderItem = ({ item, index }) => {
-        return (
-            <View style={styles.notifBox}>
-				<Image source={item.profPic}
-					style={styles.profPicStyle}
-				/>
-				<Text style={styles.textStyle}>
-                    <Text style={styles.ownerStyle}>{item.sender}</Text>
-                    <Text> pass down an artefact, {item.artefactName} for you! </Text>
-				</Text>
-				
+
+	function renderItem({ item: { sender, artefact }, index }) {
+		return (
+			<View style={styles.notifBox}>
 				<TouchableOpacity
-					// onPress={() => navigate('ItemDetail', { artefactId: item._id })}>
-					onPress={() => navigate('Home')}>
-                    <Image
-                        source={item.artefactPic}
-                        style={styles.artefactPicStyle}
-                    />
-                </TouchableOpacity>
-            </View>
-        );
-	};
-    
+					onPress={() => navigate('ViewFamilyMember', {userId: sender._id})}>
+					<Image
+						source={{ uri: sender.pictureUrl || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
+						style={styles.profPicStyle}
+					/>
+				</TouchableOpacity>
+				<Text style={styles.textStyle}>
+					<Text style={styles.ownerStyle}>{sender.name}</Text>
+					<Text> passed down an artefact, {artefact.name}, for you!</Text>
+				</Text>
+
+				<TouchableOpacity
+					onPress={() => navigate('ItemDetail', { artefactId: artefact._id })}>
+					<Image
+						source={{ uri: artefact.file }}
+						style={styles.artefactPicStyle}
+					/>
+				</TouchableOpacity>
+			</View>
+		);
+	}
+
 	return (
 		<>
 			<View style={styles.headerContainer}>
 				<Text style={styles.title}>View Updates</Text>
 				<Text style={styles.galleryTitle}>Notification</Text>
 			</View>
-			<ScrollView>   
-			<FlatList 
-                data={DummyData}
-                keyExtractor={item => item._id}
-                renderItem={this.renderItem}
-            />
+			<ScrollView>
+				<FlatList
+					data={notifications}
+					renderItem={renderItem}
+					keyExtractor={item => item._id}
+				/>
 			</ScrollView>
 		</>
 	);
@@ -78,7 +87,6 @@ const styles = StyleSheet.create({
 		marginLeft: 10,
 		color: '#2d2e33',
 		paddingTop: '8%',
-
 	},
 	galleryTitle: {
 		fontSize: 30,
@@ -91,36 +99,37 @@ const styles = StyleSheet.create({
 		borderBottomRightRadius: 25,
 		backgroundColor: '#f5f7fb',
 	},
-	notifBox:{
-        flexDirection:'row',
-		alignItems:'flex-start',
+	notifBox: {
+		flexDirection: 'row',
+		alignItems: 'flex-start',
 		justifyContent: 'space-between',
 	},
-	profPicStyle:{
-        width: 50,
-        height: 50,
-        borderRadius: 100,
+	profPicStyle: {
+		width: 50,
+		height: 50,
+		borderRadius: 100,
 		marginVertical: 10,
 		marginLeft: 15,
 	},
-    artefactPicStyle:{
-        width: 50,
-        height: 50,
-		borderRadius:3,
+	artefactPicStyle: {
+		width: 50,
+		height: 50,
+		borderRadius: 3,
 		marginVertical: 10,
 		marginHorizontal: 15,
-    },
-    textStyle:{
+	},
+	textStyle: {
 		fontSize: 16,
-		flex:1,
-		flexWrap:'wrap',
+		flex: 1,
+		flexWrap: 'wrap',
 		textAlignVertical: 'center',
 		margin: 10,
-    },
-    ownerStyle:{
-        fontWeight:'bold'
-    }
-})
+	},
+	ownerStyle: {
+		fontWeight: 'bold'
+	}
+});
+
 NotificationScreen.navigationOptions = {
 	title: 'Notification'
-}; 
+};

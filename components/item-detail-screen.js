@@ -1,56 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { Text, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
-import Moment from 'moment';
-import AsyncStorage from '@react-native-community/async-storage';
+import moment from 'moment';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-Moment.locale('en');
+moment.locale('en');
 
-// See the details of each individual artefacts
+function useCurrentUser() {
+    const [currentUser, setCurrentUser] = useState({});
+
+    useEffect(() => {
+        async function fetchCurrentUser() {
+            const res = await axios.get('http://localhost:3000/user', { withCredentials: true });
+            setCurrentUser(res.data);;
+        }
+        fetchCurrentUser();
+    }, []);
+
+    return currentUser;
+}
+
+// See the details of each individual artefact
 export default function ItemDetailScreen({ navigation }) {
     const { navigate } = navigation;
-    var artefactId = navigation.getParam('artefactId');
+    const { artefactId } = navigation.state.params;
     const [artefact, setArtefact] = useState({});
     const [owner, setOwner] = useState('');
     const [hide, setHide] = useState(true);
-
-    // Get a specific artefact
-    async function fetchArtefact() {
-        const res = await axios.get(`http://localhost:3000/artefact/find/${artefactId}`);
-        setArtefact(res.data);
-        // console.log("owner id:"+ res.data.owner);
-        await axios.get('http://localhost:3000/user/artefact', {
-            params: {
-            _id: res.data.owner
-            }
-        })
-        .then((result) => {
-            if (result.data) {
-                setHide(false);
-                setOwner(result.data.name);
-            }
-        });
-        // await setOwner(ownerObj.data.name);
-        // await console.log(ownerObj.data.name);
-    }
-
+    const currentUser = useCurrentUser();
 
     useEffect(() => {
-        setHide(false);
-        fetchArtefact();
-    }, []);
+        // Get a specific artefact
+        async function fetchArtefact() {
+            const res = await axios.get(`http://localhost:3000/artefact/find/${artefactId}`);
+            setArtefact(res.data);
 
-    // TODO: Define function to send artefacts to family members
-    const sendArtefact = () => {
-        // @Timothy / @Jansen pls help
-        async function postArtefact() {
-            const res = axios.post(`http://localhost:3000/artefact`, {
-
-            })
+            const ownerRes = await axios.get('http://localhost:3000/user/artefact', {
+                params: {
+                    _id: res.data.owner
+                }
+            });
+            if (ownerRes.data) {
+                setHide(false);
+                setOwner(ownerRes.data.name);
+            }
         }
-    }
-
+        fetchArtefact();
+        setHide(false);
+    }, []);
 
     return (
         <>
@@ -64,7 +61,7 @@ export default function ItemDetailScreen({ navigation }) {
                         <Text style={styles.title}>{artefact.name}</Text>
                         <View style={styles.headerDesc}>
                             <Text style={styles.owner}>Owned by {owner}</Text>
-                            <Text style={styles.dateStyle}>{Moment(artefact.date).format('L')}</Text>
+                            <Text style={styles.dateStyle}>{moment(artefact.date).format('L')}</Text>
                         </View>
                     </View>
                     <View style={styles.desc}>
@@ -75,20 +72,28 @@ export default function ItemDetailScreen({ navigation }) {
                         <Text style={styles.boldHeader}>Value:</Text>
                         <Text style={styles.descriptionStyle}>{artefact.value}</Text>
                     </View>
-                    <View style={styles.buttonBox}>
-                        <TouchableOpacity
-                            onPress={() => navigate('Home')}
-                            style={styles.sendButton}>
-                            <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
-                                Send Artefacts
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
+                    {
+                        // If the artefact owner is the current user, allow them to send the artefact
+                        artefact.owner === currentUser._id &&
+                            (
+                                <View style={styles.buttonBox}>
+                                    <TouchableOpacity
+                                        onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
+                                        style={styles.sendButton}>
+                                        <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
+                                            Send Artefact
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )
+                    }
+
                 </View >
             </ScrollView>
         </>
     );
 }
+
 const styles = StyleSheet.create({
     image: {
         width: Dimensions.get('window').width,

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Dimensions, ToastAndroid } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import { axiosLocal } from './log-in-screen';
 
 const styles = StyleSheet.create({
     title: {
@@ -40,33 +42,55 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'space-evenly',
         alignItems: 'center',
-		paddingVertical: '5%',
+        paddingVertical: '5%',
     },
     buttonText: {
-		fontSize: 16,
-		textAlign: 'center',
-	},
+        fontSize: 16,
+        textAlign: 'center',
+    },
 });
 
 // Welcome screen to go to login and sign in
 export default function WelcomeScreen({ navigation }) {
     const { navigate } = navigation;
+    const [isLoading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function rememberLogin() {
+            const email = await AsyncStorage.getItem('email');
+            const password = await AsyncStorage.getItem('password');
+            // Check if both email and password were stored previously before sending request
+            if (email && password && await axiosLocal({ email, password })) {
+                ToastAndroid.show('Successfully logged in with stored credentials', ToastAndroid.SHORT);
+                navigate('Home');
+            } else {
+                setLoading(false);
+            }
+        }
+        rememberLogin();
+    }, []);
+
     return (
         <>
             <View style={styles.container}>
                 <Text style={styles.title}>mementos</Text>
-                <View style={styles.buttonBox}>
-                    <TouchableOpacity onPress={() => navigate('SignUp1')}>
-                        <View style={styles.yellowButton}>
-                            <Text style={styles.buttonText}>I am a new user </Text>
+                {
+                    !isLoading &&
+                    (
+                        <View style={styles.buttonBox}>
+                            <TouchableOpacity onPress={() => navigate('SignUp1')}>
+                                <View style={styles.yellowButton}>
+                                    <Text style={styles.buttonText}>I am a new user </Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => navigate('Login')}>
+                                <View style={styles.whiteButton}>
+                                    <Text style={styles.buttonText}>I am an existing user</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigate('Login')}>
-                        <View style={styles.whiteButton}>
-                            <Text style={styles.buttonText}>I am an existing user</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
+                    )
+                }
             </View>
         </>
     );
