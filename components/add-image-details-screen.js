@@ -161,73 +161,6 @@ export default function UploadImageScreen({ navigation }) {
 
 // Stylesheets for styles
 const styles = StyleSheet.create({
-<<<<<<< HEAD
-  container: {
-    backgroundColor: 'white',
-    flex: 1,
-  },
-  text: {
-    fontSize: 16,
-    color: 'black',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
-  whiteText: {
-    fontSize: 20,
-    color: 'white',
-  },
-  redButton: {
-    backgroundColor: '#EC6268',
-    borderColor: '#EC6268',
-    borderWidth: 1,
-    paddingVertical: 9,
-    paddingHorizontal: 80,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginBottom: 30,
-  },
-  textInput: {
-    borderColor: 'black',
-    borderWidth: 0.5,
-    borderRadius: 3,
-    marginTop: 10,
-    height: 100,
-    paddingLeft: 10,
-    flexWrap:'wrap',
-    textAlignVertical: 'top',
-  },
-  textInputUpper: {
-    borderColor: 'black',
-    borderWidth: 0.5,
-    borderRadius: 3,
-    alignContent: 'center',
-    padding: 5,
-    paddingLeft: 10,
-    width: Dimensions.get('window').width / 2,
-  },
-  imageStyle: {
-    width: Dimensions.get('window').width / 2,
-    height: Dimensions.get('window').width / 2,
-    margin: 20,
-    alignSelf: 'center',
-    borderRadius: 5,
-  },
-  inputElem: {
-    marginBottom: 18,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  dateInputs: {
-    alignContent: 'center',
-    width: Dimensions.get('window').width / 2,
-  },
-  inputBox: {
-    justifyContent: 'space-between',
-    paddingHorizontal: 40,
-    marginBottom: 20,
-  },
-=======
 	container: {
 		backgroundColor: 'white',
 		flex: 1,
@@ -295,6 +228,5 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 40,
 		marginBottom: 20,
 	},
->>>>>>> 5eb4341fa6dec67334602e8d7b93f3cb40e1cb16
 }
 )
