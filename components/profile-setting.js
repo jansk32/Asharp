@@ -1,7 +1,7 @@
 // Profile setting
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, StyleSheet, TextInput, TouchableOpacity, ToastAndroid, Dimensions, Image, ScrollView,
+	Text, View, StyleSheet, TextInput, TouchableOpacity, ToastAndroid, Dimensions, Image, ScrollView
 } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -40,44 +40,41 @@ export default function ProfileSettingScreen({ navigation }) {
 		return true;
 	}
 
-	// Get profile
-	async function obtainProfile() {
-		await axios.get("http://localhost:3000/user")
-			.then((result) => {
-				console.log(result.data);
-				setUser(result.data);
-				setImage({ uri: result.data.pictureUrl });
-			});
-		// await console.log(user);
-	}
-
 	// Post profile
 	// TODO: FIX ERROR -> AFTER CHANGING SETTING, RELOGIN THE PERSON
 	async function updateProfile() {
-		if (validateInput() === true) {
-			// Upload current image
-			const data = {};
-			name !== '' ? data.name = name : name;
-			dob !== '' ? data.dob = dob : dob;
-			password !== '' ? data.password = password : password;
-
-			if (image.uri.includes('firebase') === false) {
-				let newImage = await uploadImage(image.uri);
-				data.pictureUrl = newImage;
-			}
-			const res = await axios.put("http://localhost:3000/user/update", data);
-			const updatedProfile = res.data;
-			console.log(updatedProfile);
-			setProfile(updatedProfile);
+		validateInput();
+		// Upload current image
+		const data = {};
+		if (name) {
+			data.name = name;
 		}
-		else {
-			navigate('Profile');
+		if (dob) {
+			data.dob = dob;
 		}
+		if (password) {
+			data.password = password;
+		}
+		if (!image.uri.includes('firebase')) {
+			const newImage = await uploadImage(image.uri);
+			data.pictureUrl = newImage;
+		}
+		const res = await axios.put('http://localhost:3000/user/update', data);
+		const updatedProfile = res.data;
+		console.log(updatedProfile);
+		setProfile(updatedProfile);
 	}
 
 	// Get user details
 	useEffect(() => {
-		obtainProfile();
+		async function fetchProfile() {
+			const res = await axios.get('http://localhost:3000/user');
+			const user = res.data;
+			console.log(user);
+			setUser(user);
+			setImage({ uri: user.pictureUrl });
+		}
+		fetchProfile();
 	}, []);
 
 	return (
@@ -110,7 +107,7 @@ export default function ProfileSettingScreen({ navigation }) {
 							<Text style={styles.text}>Date of Birth:</Text>
 							<DatePicker
 								style={styles.dateInputs}
-								date={dob ? dob : user.dob}
+								date={dob || user.dob}
 								mode="date"
 								placeholder={Moment(user.dob).format(DATE_FORMAT)}
 								format={DATE_FORMAT}

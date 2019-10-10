@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// user schema
 const userSchema = new mongoose.Schema({
     name: String,
     dob: Date,
@@ -12,7 +11,7 @@ const userSchema = new mongoose.Schema({
     mother: String,
     artefact: [String],
     pictureUrl: String,
-    isUser: Boolean
+    isUser: Boolean,
 });
 
 module.exports = userSchema;

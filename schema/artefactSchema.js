@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// schema for artefact
 const artefactSchema = new mongoose.Schema({
     name: String,
     date: Date,
