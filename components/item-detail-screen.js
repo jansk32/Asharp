@@ -12,7 +12,7 @@ function useCurrentUser() {
     useEffect(() => {
         async function fetchCurrentUser() {
             const res = await axios.get('http://localhost:3000/user', { withCredentials: true });
-            setCurrentUser(res.data);;
+            setCurrentUser(res.data);
         }
         fetchCurrentUser();
     }, []);

@@ -21,11 +21,12 @@ export default function TimelineScreen({ navigation }) {
 		// Format date DD-MM-YYYY
 		timeData.forEach(entry => {
 			entry.time = moment(entry.date).format('DD-MM-YYYY');
+			console.log(entry.time);
 			entry.key = entry._id
 		});
 
 		// Sort Timeline in descending order
-		timeData.sort((a, b) => moment(b.time).diff(moment(a.time)));
+		timeData.sort((a, b) => moment(b.time, 'DD-MM-YYYY').diff(moment(a.time, 'DD-MM-YYYY')));
 
 		// Display only one date under several artefacts with the same date
 		for (let i = timeData.length - 1; i > 0; i--) {
