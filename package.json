@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "react-native start && node server.js",
+    "start": "react-native start && node backend/app.js",
     "test": "jest",
     "lint": "eslint .",
     "front-end": "react-native start",
