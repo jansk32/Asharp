@@ -95,10 +95,6 @@ export default function LoginScreen({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
-	// Axios third party authentication
-	function axiosThirdParty(obj) {
-		axios.get('http://localhost:3000/login/facebook')
-	}
 
 	return (
 		<>
