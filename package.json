@@ -2,13 +2,13 @@
   "name": "mementos",
   "version": "0.0.1",
   "private": true,
+  "main": "server.js",
   "scripts": {
-    "start": "node app/app.js",
+    "start": "node server.js",
     "test": "jest",
     "lint": "eslint .",
     "front-end": "react-native start",
-    "back-end": "cd app && node app.js",
-    "main": "app/app.js",
+    "back-end": "node server.js",
     "dev": "npm-run-all -p -c front-end back-end"
   },
   "dependencies": {
