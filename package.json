@@ -6,8 +6,8 @@
     "test": "jest",
     "lint": "eslint .",
     "front-end": "react-native start",
-    "back-end": "cd backend && node app.js",
-    "main": "backend/app.js",
+    "back-end": "cd app && node app.js",
+    "main": "app/app.js",
     "dev": "npm-run-all -p -c front-end back-end"
   },
   "dependencies": {
