@@ -4,7 +4,7 @@
   "private": true,
   "main": "server.js",
   "scripts": {
-    "start": "react-native &&node server.js",
+    "start": "react-native start && node server.js",
     "test": "jest",
     "lint": "eslint .",
     "front-end": "react-native start",
