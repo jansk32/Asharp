@@ -11,7 +11,7 @@ function useCurrentUser() {
 
     useEffect(() => {
         async function fetchCurrentUser() {
-            const res = await axios.get('http://localhost:3000/user', { withCredentials: true });
+            const res = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
             setCurrentUser(res.data);
         }
         fetchCurrentUser();
@@ -32,10 +32,10 @@ export default function ItemDetailScreen({ navigation }) {
     useEffect(() => {
         // Get a specific artefact
         async function fetchArtefact() {
-            const res = await axios.get(`http://localhost:3000/artefact/find/${artefactId}`);
+            const res = await axios.get(`http://asharp-mementos.herokuapp.com/artefact/find/${artefactId}`);
             setArtefact(res.data);
 
-            const ownerRes = await axios.get('http://localhost:3000/user/artefact', {
+            const ownerRes = await axios.get('http://asharp-mementos.herokuapp.com/user/artefact', {
                 params: {
                     _id: res.data.owner
                 }

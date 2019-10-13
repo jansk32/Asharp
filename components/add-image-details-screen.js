@@ -45,7 +45,7 @@ export default function UploadImageScreen({ navigation }) {
 				ToastAndroid.show('Error getting pictureUrl', ToastAndroid.SHORT);
 			}
 			try {
-				await axios.post('http://localhost:3000/artefact/create', data);
+				await axios.post('http://asharp-mementos.herokuapp.com/artefact/create', data);
 				navigate('Home');
 			} catch (e) {
 				console.log(e);

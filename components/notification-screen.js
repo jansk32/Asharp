@@ -11,11 +11,11 @@ export default function NotificationScreen({ navigation }) {
 
 	useEffect(() => {
 		async function fetchNotifications() {
-			const userRes = await axios.get('http://localhost:3000/user', { withCredentials: true });
+			const userRes = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
 			const user = userRes.data;
 			console.log(user._id);
 
-			const res = await axios.get('http://localhost:3000/notification', {
+			const res = await axios.get('http://asharp-mementos.herokuapp.com/notification', {
 				params: {
 					recipient: user._id
 				}

@@ -53,7 +53,7 @@ export default function TimelineScreen({ navigation }) {
 	useEffect(() => {
 		async function fetchArtefacts() {
 			try {
-				const res = await axios.get('http://localhost:3000/artefact');
+				const res = await axios.get('http://asharp-mementos.herokuapp.com/artefact');
 				setArtefacts(res.data);
 				console.log(res.data)
 			} catch (e) {

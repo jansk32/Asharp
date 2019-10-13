@@ -182,9 +182,9 @@ class ZoomableSvg extends Component {
 									text: 'OK',
 									onPress: async () => {
 										try {
-											const userRes = await axios.get('http://localhost:3000/user', { withCredentials: true });
+											const userRes = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
 											const user = userRes.data;
-											axios.put('http://localhost:3000/artefact/assign', {
+											axios.put('http://asharp-mementos.herokuapp.com/artefact/assign', {
 												artefactId: navigation.state.params.artefactId,
 												recipientId: this.state.tappedNode._id,
 												senderId: user._id,
@@ -323,12 +323,12 @@ function FamilyTreeScreen({ ctx, navigation }) {
 
 	useEffect(() => {
 		async function fetchFamilyMembers() {
-			const res = await axios.get('http://localhost:3000/users');
+			const res = await axios.get('http://asharp-mementos.herokuapp.com/users');
 			const familyMembers = res.data;
 			console.log(familyMembers);
 
 			// Get user document of current user
-			const userRes = await axios.get('http://localhost:3000/user', { withCredentials: true });
+			const userRes = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
 			const user = userRes.data;
 
 			const familyTreeInfo = generateFamilyTree(familyMembers, user._id);

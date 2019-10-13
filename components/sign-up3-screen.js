@@ -83,12 +83,12 @@ export default function SignUp3({ navigation }) {
 			}
 		}
 		data.isUser = true;
-		axios.post('http://localhost:3000/user/create', data);
+		axios.post('http://asharp-mementos.herokuapp.com/user/create', data);
 	}
 
 	// Automatically login to have give available acct details
 	async function login() {
-		  axios.post('http://localhost:3000/login/local',{
+		  axios.post('http://asharp-mementos.herokuapp.com/login/local',{
 			email: await AsyncStorage.getItem('email'),
 			password: await AsyncStorage.getItem('password')
 		})

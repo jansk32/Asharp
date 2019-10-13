@@ -80,7 +80,7 @@ export default function AddFamilyMemberScreen({ navigation }) {
                                 newUserInfo.spouse = linkedNode._id;
                                 newUserInfo.gender = linkedNode.gender === 'm' ? 'f' : 'm';
                             }
-                            axios.post('http://localhost:3000/user/create', newUserInfo);
+                            axios.post('http://asharp-mementos.herokuapp.com/user/create', newUserInfo);
                             navigation.goBack();
                         }}>
                         Add
