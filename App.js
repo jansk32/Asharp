@@ -62,6 +62,17 @@ OneSignal.init(ONESIGNAL_APP_ID);
 OneSignal.inFocusDisplaying(2);
 OneSignal.addEventListener('received', () => console.log('RECEIVED ONESIGNAL'));
 
+const familyMemberStack = createStackNavigator({
+	FamilyTree: {screen: FamilyTreeScreen,
+		navigationOptions:{
+			header: null,
+			
+		}
+	},
+	NewProfile: {screen: ProfileScreen},
+	
+})
+
 // Main bottom tab navigator to navigate the main functionalities of the application
 const MainNavigator = createBottomTabNavigator({
 	Timeline: {
@@ -71,11 +82,10 @@ const MainNavigator = createBottomTabNavigator({
 		},
 	},
 	FamilyTree: {
-		screen: FamilyTreeScreen,
+		screen: familyMemberStack,
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon2 name="tree" color={tintColor} size={30} />
 		},
-		header: 'Family Tree',
 	},
 	Home: {
 		screen: HomeScreen,
@@ -162,12 +172,6 @@ const familyStack = createStackNavigator({
 	AddParentsManually: {screen:AddParentsManuallyScreen},
 	AddParents: {screen:AddParentsScreen},
 });
-
-const familyMemberStack = createStackNavigator({
-	MainNavigator,
-	FamilyTree: {screen: FamilyTreeScreen},
-  NewProfile: {screen: ProfileScreen},
-})
 
 // Stack navigator for looking at item details from gallery
 const itemStack = createStackNavigator({

@@ -57,7 +57,7 @@ function ProfileScreen({ navigation, ctx }) {
 	async function getProfile() {
 		// console.log('Sending request');
 		try {
-			const res = await axios.get('http://localhost:3000/user/find/' + userId || currentUser._id);
+			const res = await axios.get('http://localhost:3000/user/find/' + userId);
 			setProfile(res.data);
 		} catch (e) {
 			console.error(e);
@@ -68,7 +68,7 @@ function ProfileScreen({ navigation, ctx }) {
 	async function fetchArtefacts() {
 		console.log('fetching artefacts');
 		try {
-			const res = await axios.get('http://asharp-mementos.herokuapp.com/artefact/findbyowner/' + userId || currentUser._id);
+			const res = await axios.get('http://asharp-mementos.herokuapp.com/artefact/findbyowner/' + userId);
 			setArtefact(res.data);
 			setHide(false);
 		} catch (e) {
