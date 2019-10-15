@@ -7,7 +7,8 @@ import moment from 'moment';
 import OneSignal from 'react-native-onesignal';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Assets } from 'react-navigation-stack';
-
+import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
+const { SlideInMenu } = renderers;
 
 // Number 
 const numColumns = 3;
@@ -30,7 +31,7 @@ const formatData = (data, numColumns) => {
 	return data;
 };
 
-export default function ProfileScreen({ navigation }) {
+function ProfileScreen({ navigation, ctx }) {
 	const { navigate } = navigation;
 	const [profile, setProfile] = useState({});
 	const [artefact, setArtefact] = useState([]);
@@ -112,14 +113,23 @@ export default function ProfileScreen({ navigation }) {
 			<View style={styles.header}>
 				<Text style={styles.profile}>Profile</Text>
 				<View style={styles.icon}>
-					<Icon name="navicon" size={40} color={'#2d2e33'} />
+					<Icon name="navicon" size={40} color={'#2d2e33'}
+						onPress={() => ctx.menuActions.openMenu('menu')} />
+					<Menu name="menu" renderer={SlideInMenu}>
+						<MenuTrigger>
+						</MenuTrigger>
+						<MenuOptions style={styles.menuStyle} customStyles={{ optionText: styles.menuText }}>
+							<MenuOption onSelect={() => navigate('ProfileSetting', { setProfile })} text="Profile Setting" />
+							<MenuOption onSelect={logout} text="Logout" />
+						</MenuOptions>
+					</Menu>
 				</View>
 			</View>
 			<ActivityIndicator size="large" color="#0000ff" animating={hide === 'true'} />
 			<ScrollView>
 				<View style={styles.profileBox}>
 					<Image
-						source={{ uri: profile.pictureUrl }}
+						source={{ uri: profile.pictureUrl || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}}
 						style={styles.image}
 					/>
 					<View style={styles.textBox}>
@@ -127,24 +137,6 @@ export default function ProfileScreen({ navigation }) {
 							style={styles.nameText}>{profile.name}</Text>
 						<Text
 							style={styles.dob}>DOB: {moment(profile.dob).format('L')}</Text>
-					</View>
-					<View style={styles.settingBox}>
-						<View style={styles.settingButton}>
-							<TouchableOpacity
-								onPress={() => navigate('ProfileSetting', { setProfile })}>
-								<Text
-									style={styles.buttonText}>
-									Settings</Text>
-							</TouchableOpacity>
-						</View>
-						<View style={styles.settingButton}>
-							<TouchableOpacity
-								onPress={logout}>
-								<Text
-									style={styles.buttonText}>
-									Logout</Text>
-							</TouchableOpacity>
-						</View>
 					</View>
 				</View>
 				<View style={styles.artefactsBox}>
@@ -220,23 +212,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignSelf: 'center',
 	},
-	settingBox: {
-		paddingBottom: 5,
-		flexDirection: 'row',
-		justifyContent: 'space-evenly',
-	},
-	settingButton: {
-		backgroundColor: '#fff',
-		borderColor: '#F2F2F2',
-		borderWidth: 1,
-		paddingTop: 5,
-		paddingBottom: 5,
-		paddingRight: 20,
-		paddingLeft: 20,
-		borderRadius: 100,
-		justifyContent: 'center',
-		alignSelf: 'center',
-	},
 	buttonText: {
 		fontSize: 15,
 	},
@@ -268,4 +243,23 @@ const styles = StyleSheet.create({
 	invisibleItem: {
 		backgroundColor: 'transparent',
 	},
+	menuStyle: {
+		borderTopEndRadius: 20,
+		borderTopStartRadius: 20,
+		borderRadius: 20,
+		borderColor: 'black',
+		borderWidth: 1,
+		flex: 1 / 4,
+		width: Dimensions.get('window').width * 0.85,
+		alignSelf: 'center',
+		height: 150,
+		marginBottom: 30,
+		justifyContent: 'space-evenly',
+	},
+	menuText: {
+		textAlign: 'center',
+		fontSize: 20,
+	},
 })
+
+export default withMenuContext(ProfileScreen);

@@ -121,7 +121,7 @@ class ZoomableSvg extends Component {
 				if (tappedNode) {
 					this.setState({ tappedNode });
 					// Set long press timeout to open menu if a node was tapped
-					const LONG_PRESS_DURATION = 2000;
+					const LONG_PRESS_DURATION = 1000;
 					this.longPressTimeout = setTimeout(() => {
 						this.props.ctx.menuActions.openMenu('menu');
 						// Null long press timeout to signal that the timeout has been resolved

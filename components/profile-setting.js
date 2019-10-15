@@ -81,7 +81,7 @@ export default function ProfileSettingScreen({ navigation }) {
 		<>
 			<ScrollView>
 				<View style={styles.container}>
-					<Image source={{ uri: image.uri }} style={styles.imageStyle} />
+					<Image source={{ uri: image.uri || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}} style={styles.imageStyle} />
 					<View style={styles.buttonBox}>
 						<TouchableOpacity
 							onPress={async () => await setImage(await pickImage())}>
