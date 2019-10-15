@@ -33,7 +33,7 @@ const formatData = (data, numColumns) => {
 
 function useCurrentUser() {
 	const [currentUser, setCurrentUser] = useState({});
-
+	
 	useEffect(() => {
 		async function fetchCurrentUser() {
 			const res = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
@@ -51,13 +51,17 @@ function ProfileScreen({ navigation, ctx }) {
 	const [artefact, setArtefact] = useState([]);
 	const [hide, setHide] = useState(true);
 	const currentUser = useCurrentUser();
-	const userId = navigation.state.params ? navigation.state.params.userId : null;
+	const userId = navigation.state.params && navigation.state.params.userId;
 
 	// Get profile details
 	async function getProfile() {
-		// console.log('Sending request');
+		let targetId = userId;
+		if (!userId) {
+			const currentUserRes = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
+			targetId = currentUserRes.data._id;
+		}
 		try {
-			const res = await axios.get('http://localhost:3000/user/find/' + userId || currentUser._id);
+			const res = await axios.get('http://localhost:3000/user/find/' + targetId);
 			setProfile(res.data);
 		} catch (e) {
 			console.error(e);
@@ -66,9 +70,13 @@ function ProfileScreen({ navigation, ctx }) {
 
 	// Get the artefacts of the user
 	async function fetchArtefacts() {
-		console.log('fetching artefacts');
+		let targetId = userId;
+		if (!userId) {
+			const currentUserRes = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
+			targetId = currentUserRes.data._id;
+		}
 		try {
-			const res = await axios.get('http://asharp-mementos.herokuapp.com/artefact/findbyowner/' + userId || currentUser._id);
+			const res = await axios.get('http://localhost:3000/artefact/findbyowner/' + targetId);
 			setArtefact(res.data);
 			setHide(false);
 		} catch (e) {
