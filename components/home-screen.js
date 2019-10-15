@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, Image, StyleSheet, ToastAndroid, Picker, TouchableOpacity, Dimensions,
+	Text, View, Image, StyleSheet, ToastAndroid, Picker, TouchableOpacity, Dimensions, ScrollView,
 } from 'react-native';
 import { throwStatement } from '@babel/types';
 import { pickImage, uploadImage } from '../image-tools';
@@ -24,8 +24,12 @@ export default function HomeScreen({ navigation }) {
 	}
 	/*	Go to image detail page once you upload the picture */
 	async function upload() {
+		try{
 		await uploadImageArtefact()
 			.then(() => navigate('AddImageDetails'));
+		} catch (e) {
+			alert("Please select an Image to upload");
+		}
 	}
 	/*	A button for user to upload image, previews image, and a button to navigate 
 	   to add details page */
@@ -35,6 +39,7 @@ export default function HomeScreen({ navigation }) {
 				<Text style={styles.title}>Mementos</Text>
 				<Text style={styles.uploadTitle}>Upload Artefact</Text>
 			</View>
+			<ScrollView>
 			<Image source={image} style={styles.imageStyle} />
 			<TouchableOpacity
 				onPress={async () => setImage(await pickImage())}
@@ -50,6 +55,7 @@ export default function HomeScreen({ navigation }) {
 				<Text style={styles.whiteText}>Upload Image</Text>
 			</TouchableOpacity>
 			<Text>{condition}</Text>
+			</ScrollView>
 		</>
 	);
 }

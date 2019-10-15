@@ -8,20 +8,14 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { SCHEMES } from 'uri-js';
 import { pickImage, uploadImage } from '../image-tools';
 import axios from 'axios';
-import moment from 'moment';
-moment.locale('en');
+import Moment from 'moment';
 
-/*
-TODO
-- Create Page ✓
-- Link in navigation bar ✓
-- Create function
-
-*/
+// import moment from 'moment';
+Moment.locale('en');
 
 // Edit user details: Name, DOB, password, profile picture
 export default function ProfileSettingScreen({ navigation }) {
-	const DATE_FORMAT = 'DD-MM-YYYY';
+	const DATE_FORMAT = 'YYYY-MM-DD';
 	const { navigate } = navigation;
 	// const handleProfileChange = navigation.getParam('handleProfileChange');
 	const setProfile = navigation.state.params.setProfile;
@@ -39,7 +33,7 @@ export default function ProfileSettingScreen({ navigation }) {
 			alert("Old password does not match! >:)");
 			return false;
 		}
-		if (password && password.length < 6) {
+		else if (password && password.length < 6) {
 			alert("Password must be at least 6 characters long");
 			return false
 		}
@@ -87,7 +81,7 @@ export default function ProfileSettingScreen({ navigation }) {
 		<>
 			<ScrollView>
 				<View style={styles.container}>
-					<Image source={{ uri: image.uri }} style={styles.imageStyle} />
+					<Image source={{ uri: image.uri || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}} style={styles.imageStyle} />
 					<View style={styles.buttonBox}>
 						<TouchableOpacity
 							onPress={async () => await setImage(await pickImage())}>
@@ -111,14 +105,13 @@ export default function ProfileSettingScreen({ navigation }) {
 						</View>
 						<View style={styles.inputElem}>
 							<Text style={styles.text}>Date of Birth:</Text>
-
 							<DatePicker
 								style={styles.dateInputs}
 								date={dob || user.dob}
 								mode="date"
-								placeholder={moment(user.dob).format(DATE_FORMAT)}
+								placeholder={Moment(user.dob).format(DATE_FORMAT)}
 								format={DATE_FORMAT}
-								maxDate={moment().format(DATE_FORMAT)}
+								maxDate={Moment().format(DATE_FORMAT)}
 								confirmBtnText="Confirm"
 								cancelBtnText="Cancel"
 								androidMode="spinner"

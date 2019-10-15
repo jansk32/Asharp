@@ -121,7 +121,7 @@ class ZoomableSvg extends Component {
 				if (tappedNode) {
 					this.setState({ tappedNode });
 					// Set long press timeout to open menu if a node was tapped
-					const LONG_PRESS_DURATION = 2000;
+					const LONG_PRESS_DURATION = 1000;
 					this.longPressTimeout = setTimeout(() => {
 						this.props.ctx.menuActions.openMenu('menu');
 						// Null long press timeout to signal that the timeout has been resolved
@@ -236,7 +236,7 @@ class ZoomableSvg extends Component {
 				<Menu name="menu" renderer={SlideInMenu}>
 					<MenuTrigger>
 					</MenuTrigger>
-					<MenuOptions style={styles.menuStyle} customStyles={{ optionText: styles.menuText }}>
+					<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
@@ -439,6 +439,25 @@ const styles = StyleSheet.create({
 
 		// borderTopColor:'#f5f7fb',
 		// borderLeftColor:'#f5f7fb',
+	},
+	menuStyle: {
+		borderTopEndRadius: 20,
+		borderTopStartRadius: 20,
+		borderColor: 'black',
+		borderWidth: 0.5,
+		paddingTop: 20,
+		justifyContent: 'space-between',
+		paddingBottom: 80,
+	},
+	menuWrapper: {
+		paddingVertical: 15,
+		borderBottomColor: 'black',
+		borderBottomWidth: 0.5,
+		marginHorizontal: 50,
+	},
+	menuText: {
+		textAlign: 'left',
+		fontSize: 20,
 	},
 })
 
