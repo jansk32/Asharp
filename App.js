@@ -163,6 +163,12 @@ const familyStack = createStackNavigator({
 	AddParents: {screen:AddParentsScreen},
 });
 
+const familyMemberStack = createStackNavigator({
+	MainNavigator,
+	FamilyTree: {screen: FamilyTreeScreen},
+  NewProfile: {screen: ProfileScreen},
+})
+
 // Stack navigator for looking at item details from gallery
 const itemStack = createStackNavigator({
 	MainNavigator,
@@ -178,6 +184,8 @@ const sendFamilyStack = createStackNavigator({
 	FamilyTree: {screen: FamilyTreeScreen},
 });
 
+
+
 const Stack = createSwitchNavigator({
 	Welcome: { screen: WelcomeScreen },
 	SignUpStack,
@@ -186,6 +194,7 @@ const Stack = createSwitchNavigator({
 	sendFamilyStack,
 	uploadArtefactStack,
 	familyStack,
+	familyMemberStack,
 });
 
 const NavigationContainer = createAppContainer(Stack);

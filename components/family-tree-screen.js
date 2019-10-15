@@ -200,7 +200,7 @@ class ZoomableSvg extends Component {
 								}]);
 						} else {
 							// Go to profile page but send family member details instead
-							navigation.navigate('Profile', { userId: this.state.tappedNode._id });
+							navigation.navigate('NewProfile', { userId: this.state.tappedNode._id });
 						}
 					}
 				}
