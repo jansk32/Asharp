@@ -137,7 +137,7 @@ function ProfileScreen({ navigation, ctx }) {
 		<>
 			<View style={styles.header}>
 				<Text style={styles.profile}>Profile</Text>
-				<View style={[styles.icon, { display: userId === currentUser._id ? 'flex' : 'none' }]}>
+				<View style={[styles.icon, { display: !navigation.state.params ? 'flex' : 'none' }]}>
 					<Icon name="navicon" size={40} color={'#2d2e33'}
 						onPress={() => ctx.menuActions.openMenu('profileMenu')} />
 					<Menu name="profileMenu" renderer={SlideInMenu}>
