@@ -13,11 +13,15 @@ import SignUp3Screen from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
 import ProfileSettingScreen from './components/profile-setting';
 import NotificationScreen from './components/notification-screen';
+import AddFamilyMemberScreen from './components/add-family-member-screen';
+import ViewFamilyMemberScreen from './components/view-family-member-screen';
+import AddParentsScreen from './components/add-parents-screen';
+import AddParentsManually from './components/add-parents-manually-screen';
+
 
 import { MenuProvider } from 'react-native-popup-menu';
 
-import AddFamilyMemberScreen from './components/add-family-member-screen';
-import ViewFamilyMemberScreen from './components/view-family-member-screen';
+
 
 // Import react navigation tools
 import {
@@ -36,6 +40,7 @@ import * as firebase from 'firebase';
 import { Dimensions, Text } from 'react-native';
 import { HeaderTitle } from 'react-navigation-stack';
 import OneSignal from 'react-native-onesignal';
+import AddParentsManuallyScreen from './components/add-parents-manually-screen';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -152,6 +157,9 @@ const SignUpStack = createStackNavigator({
 const familyStack = createStackNavigator({
 	MainNavigator,
 	ViewFamilyMember: {screen: ViewFamilyMemberScreen},
+	AddFamilyMember: {screen: AddFamilyMemberScreen},
+	AddParentsManually: {screen:AddParentsManuallyScreen},
+	AddParents: {screen:AddParentsScreen},
 });
 
 // Stack navigator for looking at item details from gallery
