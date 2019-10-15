@@ -33,7 +33,7 @@ const formatData = (data, numColumns) => {
 
 function useCurrentUser() {
 	const [currentUser, setCurrentUser] = useState({});
-	
+
 	useEffect(() => {
 		async function fetchCurrentUser() {
 			const res = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
