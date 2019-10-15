@@ -114,8 +114,8 @@ function ProfileScreen({ navigation, ctx }) {
 				<Text style={styles.profile}>Profile</Text>
 				<View style={styles.icon}>
 					<Icon name="navicon" size={40} color={'#2d2e33'}
-						onPress={() => ctx.menuActions.openMenu('menu')} />
-					<Menu name="menu" renderer={SlideInMenu}>
+						onPress={() => ctx.menuActions.openMenu('profileMenu')} />
+					<Menu name="profileMenu" renderer={SlideInMenu}>
 						<MenuTrigger>
 						</MenuTrigger>
 						<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle	}}>
