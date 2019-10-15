@@ -291,6 +291,64 @@ app.put('/user/update', (req, res) => {
 	});
 });
 
+// Get users by name for adding as parents
+app.get('/user/search', async ({ query: { name } }, res) => {
+	const users = await userModel.find({
+		name: {
+			$regex: new RegExp(name, 'i')
+		}
+	});
+	res.send(users);
+});
+
+// Add parent who already has a spouse
+app.put('/user/add-parent', async ({ body: { childId, parentId } }, res) => {
+	// Make sure that parent already has a spouse
+	const parent = await userModel.findById(parentId);
+	if (!parent.spouse) {
+		return;
+	}
+	const child = await userModel.findById(childId);
+	child.father = parent.gender === 'm' ? parent._id : parent.spouse;
+	child.mother = parent.gender === 'f' ? parent._id : parent.spouse;
+	child.save();
+});
+
+// Add spouse
+app.put('/user/add-spouse', async ({ body: { personId, spouseId } }, res) => {
+	// Make sure that person and potential spouse don't have a spouse yet
+	const person = await userModel.findById(personId);
+	const spouse = await userModel.findById(spouseId);
+	if (person.spouse || spouse.spouse) {
+		return;
+	}
+
+	person.spouse = spouse._id;
+	person.save();
+	spouse.spouse = person._id;
+	spouse.save();
+});
+
+// Add child
+app.put('/user/add-child', async ({ body: { personId, childId } }, res) => {
+	// Make sure that potential child doesn't have parents yet
+	// and potential parent is married
+	const child = await userModel.findById(childId);
+	if (child.father || child.mother) {
+		console.log('returning cos of child already having parents');
+		return;
+	}
+	
+	const parent = await userModel.findById(personId);
+	if (!parent.spouse) {
+		console.log('returning cos parent doesnt have spouse');
+		return;
+	}
+
+	child.father = parent.gender === 'm' ? parent._id : parent.spouse;
+	child.mother = parent.gender === 'f' ? parent._id : parent.spouse;
+	child.save();
+});
 
 /* Artefact routes */
 // Get ALL artefacts

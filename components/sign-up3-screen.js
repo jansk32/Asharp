@@ -88,11 +88,11 @@ export default function SignUp3({ navigation }) {
 
 	// Automatically login to have give available acct details
 	async function login() {
-		  axios.post('http://asharp-mementos.herokuapp.com/login/local',{
+		axios.post('http://asharp-mementos.herokuapp.com/login/local', {
 			email: await AsyncStorage.getItem('email'),
 			password: await AsyncStorage.getItem('password')
 		})
-		.then((result) => navigate('Home'));
+			.then((result) => navigate('Home'));
 	}
 
 	// Finish sign up and log in straight into the home page
@@ -105,7 +105,6 @@ export default function SignUp3({ navigation }) {
 		}
 		await uploadSignUpData();
 		await login()
-
 	}
 
 	return (
@@ -116,19 +115,18 @@ export default function SignUp3({ navigation }) {
 					<View style={styles.buttonBox}>
 						<TouchableOpacity
 							onPress={async () => setImage(await pickImage())}>
-								<View style={styles.picButton}>
-									<Text
+							<View style={styles.picButton}>
+								<Text
 									style={styles.text}>
 									Pick Picture
 									</Text>
-								</View>
+							</View>
 						</TouchableOpacity>
 					</View>
 
 					<TouchableOpacity
 						onPress={finishSignUp}>
 						<View style={styles.finishButton}>
-
 							<Text
 								style={styles.whiteText}>
 								Finish

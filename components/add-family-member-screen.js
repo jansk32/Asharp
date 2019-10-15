@@ -1,29 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, Image, TouchableOpacity, TextInput, Dimensions, ScrollView } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import LinearGradient from 'react-native-linear-gradient';
+import { Text, StyleSheet, View, Image, TouchableOpacity, TextInput, Dimensions, ScrollView, Alert } from 'react-native';
+import UserSearchBox from './user-search-box';
 import axios from 'axios';
 
 export default function AddFamilyMemberScreen({ navigation }) {
+    // isAddingSpouse is false if adding a child
     const { navigate } = navigation;
-    const { linkedNode } = navigation.state.params;
+    const { linkedNode, isAddingSpouse } = navigation.state.params;
     const [name, setName] = useState('');
     const [dob, setDob] = useState('');
     const [gender, setGender] = useState('');
+
+    function renderSearchResult({ item: { _id, name, pictureUrl } }) {
+        // const disabled = linkedNode._id === parentId || !spouse || spouse && linkedNode.spouse === parentId;
+        const disabled = false;
+        return (
+            <TouchableOpacity
+                disabled={disabled}
+                onPress={() => {
+                    Alert.alert(
+                        `Add ${isAddingSpouse ? 'spouse' : 'child'}`,
+                        `Are you sure you would like to add ${name} as your ${isAddingSpouse ? 'spouse' : 'child'}?`,
+                        [
+                            {
+                                text: 'Cancel'
+                            },
+                            {
+                                text: 'OK',
+                                onPress: () => {
+                                    if (isAddingSpouse) {
+                                        axios.put('http://localhost:3000/user/add-spouse', {
+                                            personId: linkedNode._id,
+                                            spouseId: _id,
+                                        });
+                                    } else {
+                                        axios.put('http://localhost:3000/user/add-child', {
+                                            personId: linkedNode._id,
+                                            childId: _id,
+                                        });
+                                    }
+                                }
+                            }
+                        ]
+                    );
+                }
+                }
+                style={{ backgroundColor: disabled ? 'red' : 'white' }}
+            >
+                <Image
+                    source={{ uri: pictureUrl }}
+                    style={{ height: 50, width: 50 }} />
+                <Text>{name}</Text>
+            </TouchableOpacity>
+        );
+    }
 
     return (
         <>
             <ScrollView style={styles.allContainer}>
                 <View style={styles.container}>
                     <Text style={styles.add}>Find your</Text>
-                    <Text style={styles.title}>Family Member</Text>
-                    <View style={styles.searchContainer}>
-                        <Icon name="md-search" size={30} color={'#2d2e33'} />
-                        <TextInput
-                            placeholder='Search by email'
-                            style={styles.searchInput}
-                        />
-                    </View>
+                    <Text style={styles.title}>{isAddingSpouse ? 'Spouse' : 'Child'}</Text>
+                    <UserSearchBox renderItem={renderSearchResult} />
                 </View>
                 {/* <LinearGradient colors={['#436aac','#43b7b8']} style={styles.container}>
             <Text style={styles.title}>Add family member</Text>

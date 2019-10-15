@@ -3,63 +3,48 @@ import { Text, StyleSheet, View, Image, TouchableOpacity, TextInput, Dimensions,
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import { FlatList } from 'react-native-gesture-handler';
-import UserSearchBox from './user-search-box';
 
-export default function AddParentsScreen({ navigation }) {
-    const { navigate } = navigation;
-    const { linkedNode: childNode } = navigation.state.params;
+export default function UserSearchBox({ renderItem }) {
+    // parameters:
+    // - onPress of TouchableOpacity of search result
+    // - disabled
+    // OR just renderItem
 
-    function renderSearchResult({ item: { _id: parentId, name, pictureUrl, spouse } }) {
-        const disabled = childNode._id === parentId || !spouse || spouse && childNode.spouse === parentId;
-        return (
-            <TouchableOpacity
-                disabled={disabled}
-                onPress={() => {
-                    Alert.alert(
-                        'Add parent',
-                        `Are you sure you would like to add ${name} as your parent?`,
-                        [
-                            {
-                                text: 'Cancel'
-                            },
-                            {
-                                text: 'OK',
-                                onPress: () => {
-                                    axios.put('http://localhost:3000/user/add-parent', {
-                                        childId: childNode._id,
-                                        parentId,
-                                    });
-                                }
-                            }
-                        ]
-                    );
+    const [nameQuery, setNameQuery] = useState('');
+    const [searchedUsers, setSearchedUsers] = useState([]);
+
+    useEffect(() => {
+        async function searchUsers() {
+            const res = await axios.get('http://localhost:3000/user/search', {
+                params: {
+                    name: nameQuery
                 }
-                }
-                style={{ backgroundColor: disabled ? 'red' : 'white' }}
-            >
-                <Image
-                    source={{ uri: pictureUrl }}
-                    style={{ height: 50, width: 50 }} />
-                <Text>{name}</Text>
-            </TouchableOpacity>
-        );
-    }
+            });
+            const users = res.data;
+            setSearchedUsers(users);
+            console.log(users);
+        }
+        searchUsers();
+    }, [nameQuery]);
 
     return (
-        <ScrollView style={styles.allContainer}>
-            <View style={styles.container}>
-                <Text style={styles.add}>Add members</Text>
-                <Text style={styles.title}>Parents</Text>
+        <>
+            <View style={styles.searchContainer}>
+                <Icon name="md-search" size={30} color={'#2d2e33'} />
+                <TextInput
+                    placeholder="Search by name"
+                    style={styles.searchInput}
+                    value={nameQuery}
+                    onChangeText={setNameQuery}
+                />
             </View>
-            <UserSearchBox renderItem={renderSearchResult} />
-            <Text style={styles.results}>Can't find them? Add them manually!</Text>
-            <TouchableOpacity
-                onPress={() => navigate('AddParentsManually')}
-                style={styles.button}
-            >
-                <Text style={styles.buttonText}>Add parents manually</Text>
-            </TouchableOpacity>
-        </ScrollView>
+            <Text style={styles.results}>Search results:</Text>
+            <FlatList
+                data={searchedUsers}
+                renderItem={renderItem}
+                keyExtractor={item => item._id}
+            />
+        </>
     );
 }
 

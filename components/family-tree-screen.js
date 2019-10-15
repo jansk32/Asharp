@@ -121,7 +121,7 @@ class ZoomableSvg extends Component {
 				if (tappedNode) {
 					this.setState({ tappedNode });
 					// Set long press timeout to open menu if a node was tapped
-					const LONG_PRESS_DURATION = 2000;
+					const LONG_PRESS_DURATION = 1000;
 					this.longPressTimeout = setTimeout(() => {
 						this.props.ctx.menuActions.openMenu('menu');
 						// Null long press timeout to signal that the timeout has been resolved
@@ -237,9 +237,9 @@ class ZoomableSvg extends Component {
 					<MenuTrigger>
 					</MenuTrigger>
 					<MenuOptions style={styles.menuStyle} customStyles={{ optionText: styles.menuText }}>
-						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
-						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
-						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
+						<MenuOption onSelect={() => navigate('AddParents', { linkedNode: this.state.tappedNode })} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
+						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode, isAddingSpouse: true })} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
+						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode, isAddingSpouse: false })} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
 					</MenuOptions>
 				</Menu>
 				<Svg

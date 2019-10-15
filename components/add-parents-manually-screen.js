@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, View, Image, TouchableOpacity, TextInput, Dimensions, ScrollView } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 
 export default function AddParentsManuallyScreen({navigation}){
-    const{navigate} = navigation;
-    return(
+    const {navigate} = navigation;
+
+    return (
         <>
             <ScrollView style={styles.allContainer}>
                 <View style={styles.container}>
                     <Text style={styles.add}>Add manually</Text>
                     <Text style={styles.title}>Parents</Text>
                 </View>
+                
                 <View style={styles.inputContainer}>
                     <Text style={styles.manualHeader}>Add Father</Text>
                     <TextInput
@@ -32,6 +32,7 @@ export default function AddParentsManuallyScreen({navigation}){
                         style={styles.textInput}
                     />
                 </View>
+
                 <View style={styles.inputContainer}>
                     <Text style={styles.manualHeader}>Add Mother</Text>
                     <TextInput
@@ -56,7 +57,7 @@ export default function AddParentsManuallyScreen({navigation}){
                 </View>
             </ScrollView>
         </>
-    )
+    );
 }
 
 
@@ -149,4 +150,4 @@ const styles = StyleSheet.create({
         marginTop: 50,
         marginBottom: '30%'
     },
-})
+});
