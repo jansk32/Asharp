@@ -31,29 +31,46 @@ const formatData = (data, numColumns) => {
 	return data;
 };
 
+function useCurrentUser() {
+	const [currentUser, setCurrentUser] = useState({});
+
+	useEffect(() => {
+		async function fetchCurrentUser() {
+			const res = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
+			setCurrentUser(res.data);
+		}
+		fetchCurrentUser();
+	}, []);
+
+	return currentUser;
+}
+
 function ProfileScreen({ navigation, ctx }) {
 	const { navigate } = navigation;
 	const [profile, setProfile] = useState({});
 	const [artefact, setArtefact] = useState([]);
 	const [hide, setHide] = useState(true);
+	const currentUser = useCurrentUser();
+	const userId = navigation.state.params ? navigation.state.params.userId : null;
 
 	// Get profile details
 	async function getProfile() {
 		// console.log('Sending request');
-		await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true })
-			.then((res) => {
-				setProfile(res.data);
-			})
-			.catch(error => console.error(error));
+		try {
+			const res = await axios.get('http://localhost:3000/user/find/' + userId || currentUser._id);
+			setProfile(res.data);
+		} catch (e) {
+			console.error(e);
+		}
 	}
 
 	// Get the artefacts of the user
 	async function fetchArtefacts() {
 		console.log('fetching artefacts');
 		try {
-			const res = await axios.get('http://asharp-mementos.herokuapp.com/artefact/findbyowner');
+			const res = await axios.get('http://asharp-mementos.herokuapp.com/artefact/findbyowner/' + userId || currentUser._id);
 			setArtefact(res.data);
-			setHide(false)
+			setHide(false);
 		} catch (e) {
 			console.log(e);
 		}
@@ -70,7 +87,7 @@ function ProfileScreen({ navigation, ctx }) {
 	useEffect(() => {
 		fetchProfile();
 		fetchArtefacts();
-	}, []);
+	}, [userId]);
 
 
 	// Logout function
@@ -112,13 +129,13 @@ function ProfileScreen({ navigation, ctx }) {
 		<>
 			<View style={styles.header}>
 				<Text style={styles.profile}>Profile</Text>
-				<View style={styles.icon}>
+				<View style={[styles.icon, { display: userId === currentUser._id ? 'flex' : 'none' }]}>
 					<Icon name="navicon" size={40} color={'#2d2e33'}
 						onPress={() => ctx.menuActions.openMenu('profileMenu')} />
 					<Menu name="profileMenu" renderer={SlideInMenu}>
 						<MenuTrigger>
 						</MenuTrigger>
-						<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle	}}>
+						<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
 							<MenuOption onSelect={() => navigate('ProfileSetting', { setProfile })} text="Profile Setting" />
 							<MenuOption onSelect={logout} text="Logout" />
 						</MenuOptions>
@@ -129,7 +146,7 @@ function ProfileScreen({ navigation, ctx }) {
 			<ScrollView>
 				<View style={styles.profileBox}>
 					<Image
-						source={{ uri: profile.pictureUrl || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}}
+						source={{ uri: profile.pictureUrl || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
 						style={styles.image}
 					/>
 					<View style={styles.textBox}>
@@ -251,7 +268,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		paddingBottom: 80,
 	},
-	menuWrapper:{
+	menuWrapper: {
 		paddingVertical: 15,
 		borderBottomColor: 'black',
 		borderBottomWidth: 0.5,

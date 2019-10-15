@@ -366,14 +366,12 @@ app.put('/artefact/assign', ({ body: { artefactId, recipientId, senderId } }, re
 });
 
 // Get artefact by owner id
-app.get('/artefact/findbyowner/', (req, res) => {
-	const id = req.session.passport.user._id;
+app.get('/artefact/findbyowner/:id', ({params: {id}}, res) => {
 	artefactModel.find({ owner: id }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp);
 	});
 });
-
 
 /* Notification routes */
 // Get all notifications that are meant for a certain user
