@@ -20,6 +20,7 @@ export default function UploadImageScreen({ navigation }) {
 	const [name, setName] = useState('');
 	const [date, setDate] = useState('');
 	const [image, setImage] = useState('');
+	const [load, setLoad] = useState(false);
 
 	//   useEffect(() => {
 	//     // createArtefact();
@@ -45,6 +46,7 @@ export default function UploadImageScreen({ navigation }) {
 				ToastAndroid.show('Error getting pictureUrl', ToastAndroid.SHORT);
 			}
 			try {
+				console.log(data);
 				await axios.post('http://asharp-mementos.herokuapp.com/artefact/create', data);
 				navigate('Home');
 			} catch (e) {
@@ -81,7 +83,9 @@ export default function UploadImageScreen({ navigation }) {
 
 	// Get image to show on the screen
 	useEffect(() => {
+		setLoad(false);
 		getImage();
+		setLoad(true);
 	}, []);
 
 	/* Returns a form where the user can fill in their artefacts
@@ -91,7 +95,7 @@ export default function UploadImageScreen({ navigation }) {
 			<ScrollView>
 				<View style={styles.container}>
 					<Image
-						source={{ uri: image }}
+						source={ load ?  { uri: image} : require("../app_icon.jpeg")}
 						style={styles.imageStyle}
 					/>
 					<View style={styles.inputBox}>
@@ -110,7 +114,7 @@ export default function UploadImageScreen({ navigation }) {
 								date={date}
 								mode="date"
 								placeholder="Select date"
-								format="DD-MM-YYYY"
+								format="YYYY-MM-DD"
 								maxDate={moment().format('DD-MM-YYYY')}
 								confirmBtnText="Confirm"
 								cancelBtnText="Cancel"

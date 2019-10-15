@@ -102,13 +102,13 @@ const MainNavigator = createBottomTabNavigator({
 		initialRouteName: 'Home',
 		tabBarOptions: {
 			activeTintColor: '#579B93',
-			inactiveTintColor: 'black',
+			inactiveTintColor: '#525151',
 			showLabel: true,
 			showIcon: true,
 			// Edit the tab bar style and UI
 			style: {
-				backgroundColor: 'white',
-				borderTopColor: '#579B93',
+				backgroundColor: '#f5f7fb',
+				borderTopColor: '#f5f7fb',
 				borderTopWidth: .5,
 				height: Dimensions.get('window').height / 14,
 			},
