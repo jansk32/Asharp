@@ -11,7 +11,7 @@ export default function ViewFamilyMemberScreen({ navigation }) {
 
     useEffect(() => {
         async function fetchMember() {
-            const res = await axios.get('http://localhost:3000/user/find/' + userId);
+            const res = await axios.get('http://asharp-mementos.herokuapp.com/user/find/' + userId);
             const fetchedUser = res.data;
             setUser(fetchedUser);
         }

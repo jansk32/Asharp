@@ -39,7 +39,7 @@ export default function ProfileScreen({ navigation }) {
 	// Get profile details
 	async function getProfile() {
 		// console.log('Sending request');
-		await axios.get('http://localhost:3000/user', { withCredentials: true })
+		await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true })
 			.then((res) => {
 				setProfile(res.data);
 			})
@@ -50,7 +50,7 @@ export default function ProfileScreen({ navigation }) {
 	async function fetchArtefacts() {
 		console.log('fetching artefacts');
 		try {
-			const res = await axios.get('http://localhost:3000/artefact/findbyowner');
+			const res = await axios.get('http://asharp-mementos.herokuapp.com/artefact/findbyowner');
 			setArtefact(res.data);
 			setHide(false)
 		} catch (e) {
@@ -75,7 +75,7 @@ export default function ProfileScreen({ navigation }) {
 	// Logout function
 	async function logout() {
 		try {
-			await axios.get('http://localhost:3000/logout');
+			await axios.get('http://asharp-mementos.herokuapp.com/logout');
 			await AsyncStorage.multiRemove(['email', 'password']);
 			OneSignal.removeExternalUserId();
 			navigate('Welcome');

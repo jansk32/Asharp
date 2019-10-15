@@ -59,7 +59,7 @@ export default function ProfileSettingScreen({ navigation }) {
 			const newImage = await uploadImage(image.uri);
 			data.pictureUrl = newImage;
 		}
-		const res = await axios.put('http://localhost:3000/user/update', data);
+		const res = await axios.put('http://asharp-mementos.herokuapp.com/user/update', data);
 		const updatedProfile = res.data;
 		console.log(updatedProfile);
 		setProfile(updatedProfile);
@@ -68,7 +68,7 @@ export default function ProfileSettingScreen({ navigation }) {
 	// Get user details
 	useEffect(() => {
 		async function fetchProfile() {
-			const res = await axios.get('http://localhost:3000/user');
+			const res = await axios.get('http://asharp-mementos.herokuapp.com/user');
 			const user = res.data;
 			console.log(user);
 			setUser(user);

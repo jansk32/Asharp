@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
 export async function axiosLocal(objData) {
 	console.log(objData);
 	try {
-		const res = await axios.post('http://localhost:3000/login/local', objData);
+		const res = await axios.post('http://asharp-mementos.herokuapp.com/login/local', objData);
 		OneSignal.setExternalUserId(res.data._id);
 		return true;
 	} catch (e) {
@@ -95,10 +95,6 @@ export default function LoginScreen({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
-	// Axios third party authentication
-	function axiosThirdParty(obj) {
-		axios.get('http://localhost:3000/login/facebook')
-	}
 
 	return (
 		<>

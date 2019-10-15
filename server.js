@@ -41,9 +41,9 @@ passport.deserializeUser(function (user, done) {
 
 
 // Schemas
-const userSchema = require('../schema/userSchema');
-const artefactSchema = require('../schema/artefactSchema');
-const notificationSchema = require('../schema/notificationSchema');
+const userSchema = require('./schema/userSchema');
+const artefactSchema = require('./schema/artefactSchema');
+const notificationSchema = require('./schema/notificationSchema');
 
 // Create the mongoose model 
 const userModel = mongoose.model('user', userSchema);
@@ -51,7 +51,7 @@ const artefactModel = mongoose.model('artefact', artefactSchema);
 const notificationModel = mongoose.model('notification', notificationSchema);
 
 // Connect to mongodb
-require('../controller/mongooseController');
+require('./controller/mongooseController');
 
 // app.use middlewares
 app.use(bodyParser.json({ type: 'application/json' }));
@@ -410,7 +410,7 @@ app.get('/logout', (req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port);
+app.listen(port, "0.0.0.0");
 console.log('Listening to port ' + port);
 
 module.exports = app;
