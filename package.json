@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "react-native start && node server.js",
-    "test": "jest",
+    "test": "jest --coverage",
     "lint": "eslint .",
     "front-end": "react-native start",
     "back-end": "node server.js",
@@ -45,7 +45,8 @@
     "react-navigation": "^3.12.1",
     "react-navigation-stack": "^1.9.0",
     "request": "^2.88.0",
-    "rn-fetch-blob": "^0.10.16"
+    "rn-fetch-blob": "^0.10.16",
+    "sinon": "^7.5.0"
   },
   "devDependencies": {
     "@babel/core": "7.5.5",

@@ -47,7 +47,7 @@ export default function UploadImageScreen({ navigation }) {
 			}
 			try {
 				console.log(data);
-				await axios.post('http://asharp-mementos.herokuapp.com/artefact/create', data);
+				await axios.post('http://localhost:3000/artefact/create', data);
 				navigate('Home');
 			} catch (e) {
 				console.log(e);
