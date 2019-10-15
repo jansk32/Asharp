@@ -24,8 +24,12 @@ export default function HomeScreen({ navigation }) {
 	}
 	/*	Go to image detail page once you upload the picture */
 	async function upload() {
+		try{
 		await uploadImageArtefact()
 			.then(() => navigate('AddImageDetails'));
+		} catch (e) {
+			alert("Please select an Image to upload");
+		}
 	}
 	/*	A button for user to upload image, previews image, and a button to navigate 
 	   to add details page */
