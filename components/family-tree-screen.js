@@ -236,7 +236,7 @@ class ZoomableSvg extends Component {
 				<Menu name="menu" renderer={SlideInMenu}>
 					<MenuTrigger>
 					</MenuTrigger>
-					<MenuOptions style={styles.menuStyle} customStyles={{ optionText: styles.menuText }}>
+					<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
 						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode })} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
@@ -422,6 +422,25 @@ const styles = StyleSheet.create({
 	},
 	menuText: {
 		textAlign: 'center',
+		fontSize: 20,
+	},
+	menuStyle: {
+		borderTopEndRadius: 20,
+		borderTopStartRadius: 20,
+		borderColor: 'black',
+		borderWidth: 0.5,
+		paddingTop: 20,
+		justifyContent: 'space-between',
+		paddingBottom: 80,
+	},
+	menuWrapper: {
+		paddingVertical: 15,
+		borderBottomColor: 'black',
+		borderBottomWidth: 0.5,
+		marginHorizontal: 50,
+	},
+	menuText: {
+		textAlign: 'left',
 		fontSize: 20,
 	},
 })

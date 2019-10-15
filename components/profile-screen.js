@@ -118,7 +118,7 @@ function ProfileScreen({ navigation, ctx }) {
 					<Menu name="menu" renderer={SlideInMenu}>
 						<MenuTrigger>
 						</MenuTrigger>
-						<MenuOptions style={styles.menuStyle} customStyles={{ optionText: styles.menuText }}>
+						<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle	}}>
 							<MenuOption onSelect={() => navigate('ProfileSetting', { setProfile })} text="Profile Setting" />
 							<MenuOption onSelect={logout} text="Logout" />
 						</MenuOptions>
@@ -155,7 +155,6 @@ function ProfileScreen({ navigation, ctx }) {
 
 // Stylesheets to format the layout of the page
 const styles = StyleSheet.create({
-
 	profileBox: {
 		backgroundColor: '#f5f7fb',
 		borderBottomLeftRadius: 25,
@@ -246,18 +245,20 @@ const styles = StyleSheet.create({
 	menuStyle: {
 		borderTopEndRadius: 20,
 		borderTopStartRadius: 20,
-		borderRadius: 20,
 		borderColor: 'black',
-		borderWidth: 1,
-		flex: 1 / 4,
-		width: Dimensions.get('window').width * 0.85,
-		alignSelf: 'center',
-		height: 150,
-		marginBottom: 30,
-		justifyContent: 'space-evenly',
+		borderWidth: 0.5,
+		paddingTop: 20,
+		justifyContent: 'space-between',
+		paddingBottom: 80,
+	},
+	menuWrapper:{
+		paddingVertical: 15,
+		borderBottomColor: 'black',
+		borderBottomWidth: 0.5,
+		marginHorizontal: 50,
 	},
 	menuText: {
-		textAlign: 'center',
+		textAlign: 'left',
 		fontSize: 20,
 	},
 })
