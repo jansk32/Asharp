@@ -354,16 +354,18 @@ function FamilyTreeScreen({ ctx, navigation }) {
 
 	return (
 		<>
-			<Text style={styles.add}>This is your</Text>
-			<Text style={styles.title}>Family Tree</Text>
-			<View style={styles.searchContainer}>
-				<Icon name="md-search" size={30} color={'#2d2e33'} style={{ paddingTop: 5, }} />
-				<TextInput
-					placeholder="Search family member"
-					value={familyMemberSearch}
-					onChangeText={setFamilyMemberSearch}
-					style={styles.searchInput}
-				/>
+			<View style={styles.headerContainer}>
+				<Text style={styles.add}>This is your</Text>
+				<Text style={styles.title}>Family Tree</Text>
+				<View style={styles.searchContainer}>
+					<Icon name="md-search" size={30} color={'#2d2e33'} />
+					<TextInput
+						placeholder="Search family member"
+						value={familyMemberSearch}
+						onChangeText={setFamilyMemberSearch}
+						style={styles.searchInput}
+					/>
+				</View>
 			</View>
 			<ZoomableSvg
 				width={screenWidth}
@@ -377,6 +379,12 @@ function FamilyTreeScreen({ ctx, navigation }) {
 }
 
 const styles = StyleSheet.create({
+	headerContainer:{
+		borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+        backgroundColor: '#f5f7fb',
+        paddingBottom: 30,
+	},
 	searchContainer: {
 		flexDirection: 'row',
 		padding: 5,
@@ -385,9 +393,9 @@ const styles = StyleSheet.create({
 		borderWidth: 0.5,
 		marginLeft: '5%',
 		marginRight: '5%',
-		backgroundColor: '#f5f7fb',
-		borderColor: 'black',
-		marginTop: 15,
+		backgroundColor: 'white',
+		borderColor: 'white',
+		// marginTop: 15,
 	},
 	searchInput: {
 		flex: 1,
@@ -397,7 +405,7 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 35,
 		color: '#2d2e33',
-		paddingBottom: '8%',
+		paddingBottom: 10,
 		fontWeight: 'bold',
 		marginLeft: 10,
 	},
@@ -412,6 +420,7 @@ const styles = StyleSheet.create({
 		borderTopStartRadius: 20,
 		borderRadius: 20,
 		borderColor: 'black',
+		backgroundColor:"black",
 		borderWidth: 1,
 		flex: 1 / 4,
 		width: Dimensions.get('window').width * 0.85,
@@ -423,6 +432,13 @@ const styles = StyleSheet.create({
 	menuText: {
 		textAlign: 'center',
 		fontSize: 20,
+		color:'white',
+		borderBottomWidth:1,
+		borderBottomColor:'white',
+		paddingBottom:7,
+
+		// borderTopColor:'#f5f7fb',
+		// borderLeftColor:'#f5f7fb',
 	},
 })
 
