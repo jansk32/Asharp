@@ -70,7 +70,16 @@ const familyMemberStack = createStackNavigator({
 		}
 	},
 	NewProfile: {screen: ProfileScreen},
-	
+})
+
+const notifStack = createStackNavigator({
+	Notification: {screen: NotificationScreen,
+		navigationOptions:{
+			header: null,
+			
+		}
+	},
+	NewProfile: {screen: ProfileScreen},
 })
 
 // Main bottom tab navigator to navigate the main functionalities of the application
@@ -94,7 +103,7 @@ const MainNavigator = createBottomTabNavigator({
 		},
 	},
 	Notification: {
-		screen: NotificationScreen,
+		screen: notifStack,
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon name="md-notifications-outline" color={tintColor} size={30} />
 		},
@@ -184,8 +193,6 @@ const sendFamilyStack = createStackNavigator({
 	ItemDetail: { screen: ItemDetailScreen },	
 	FamilyTree: {screen: FamilyTreeScreen},
 });
-
-
 
 const Stack = createSwitchNavigator({
 	Welcome: { screen: WelcomeScreen },

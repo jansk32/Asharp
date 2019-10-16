@@ -42,7 +42,7 @@ export default function NotificationScreen({ navigation }) {
 		return (
 			<View style={styles.notifBox}>
 				<TouchableOpacity
-					onPress={() => navigate('ViewFamilyMember', {userId: sender._id})}>
+					onPress={() => navigate('NewProfile', {userId: sender._id})}>
 					<Image
 						source={{ uri: sender.pictureUrl || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
 						style={styles.profPicStyle}
