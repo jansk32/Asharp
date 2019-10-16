@@ -3,6 +3,12 @@ import { Text, StyleSheet, View, Image, TouchableOpacity, TextInput, Dimensions,
 import UserSearchBox from './user-search-box';
 import axios from 'axios';
 
+import DatePicker from 'react-native-datepicker';
+import Moment from 'moment';
+
+// import moment from 'moment';
+Moment.locale('en');
+
 export default function AddFamilyMemberScreen({ navigation }) {
     // isAddingSpouse is false if adding a child
     const { navigate } = navigation;
@@ -10,6 +16,9 @@ export default function AddFamilyMemberScreen({ navigation }) {
     const [name, setName] = useState('');
     const [dob, setDob] = useState('');
     const [gender, setGender] = useState('');
+
+    const DATE_FORMAT = 'YYYY-MM-DD';
+
 
     function renderSearchResult({ item: { _id, name, pictureUrl } }) {
         // const disabled = linkedNode._id === parentId || !spouse || spouse && linkedNode.spouse === parentId;
@@ -47,10 +56,10 @@ export default function AddFamilyMemberScreen({ navigation }) {
                 }
                 style={{ backgroundColor: disabled ? 'red' : 'white' }}
             >
-                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                <View style={{ flexDirection: 'row', marginHorizontal: 30, marginTop: 10, }}>
                     <Image
                         source={{ uri: pictureUrl }}
-                        style={{ height: 50, width: 50 }} />
+                        style={{ height: 60, width: 60, marginRight: 30, borderRadius: 50, }} />
                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{name}</Text>
                 </View>
             </TouchableOpacity>
@@ -59,74 +68,89 @@ export default function AddFamilyMemberScreen({ navigation }) {
 
     return (
         <>
+            <View style={styles.container}>
+                <Text style={styles.add}>Find your</Text>
+                <Text style={styles.title}>{isAddingSpouse ? 'Spouse' : 'Child'}</Text>
+            </View>
             <ScrollView>
-                <View style={styles.allContainer}>
-                    <View style={styles.container}>
-                        <Text style={styles.add}>Find your</Text>
-                        <Text style={styles.title}>{isAddingSpouse ? 'Spouse' : 'Child'}</Text>
-                        <UserSearchBox renderItem={renderSearchResult}/>
+                    <View>
+                        <UserSearchBox renderItem={renderSearchResult} />
                     </View>
-                    {/* <LinearGradient colors={['#436aac','#43b7b8']} style={styles.container}>
-            <Text style={styles.title}>Add family member</Text>
-        </LinearGradient> */}
+                <View style={styles.inputContainer}>
+                    <Text style={styles.manualHeader}>Add details manually</Text>
+                    <TextInput
+                        placeholder="Name"
+                        style={styles.textInput}
+                        value={name}
+                        onChangeText={setName}
+                    />
+                    <DatePicker
+                        style={styles.dateInputs}
+                        date={dob}
+                        mode="date"
+                        placeholder={Moment().format(DATE_FORMAT)}
+                        format={DATE_FORMAT}
+                        maxDate={Moment().format(DATE_FORMAT)}
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        androidMode="spinner"
+                        customStyles={{
+                            dateIcon: {
+                                position: 'absolute',
+                                left: 0,
+                                top: 4,
+                                marginLeft: 0
+                            },
+                            dateInput: {
+                                // borderColor: 'white',
+                            }
+                        }}
+                        showIcon={false}
+                        onDateChange={newDate => setDob(newDate)}
+                        value={dob}
+                    />
+                    {linkedNode.spouse ?
+                        <TextInput
+                            placeholder="Gender"
+                            style={styles.textInput}
+                            value={gender}
+                            onChangeText={setGender}
+                        />
+                        :
+                        null
+                    }
+                    <TextInput
+                        placeholder="Picture"
+                        style={styles.textInput}
+                    />
+                </View>
+                <View style={styles.button}>
+                    <Text
+                        style={styles.buttonText}
+                        onPress={() => {
+                            const newUserInfo = {
+                                name,
+                                dob,
+                            };
 
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.manualHeader}>Add details manually</Text>
-                        <TextInput
-                            placeholder="Name"
-                            style={styles.textInput}
-                            value={name}
-                            onChangeText={setName}
-                        />
-                        <TextInput
-                            placeholder="Date of birth"
-                            style={styles.textInput}
-                            value={dob}
-                            onChangeText={setDob}
-                        />
-                        {linkedNode.spouse ?
-                            <TextInput
-                                placeholder="Gender"
-                                style={styles.textInput}
-                                value={gender}
-                                onChangeText={setGender}
-                            />
-                            :
-                            null
-                        }
-                        <TextInput
-                            placeholder="Picture"
-                            style={styles.textInput}
-                        />
-                    </View>
-                    <View style={styles.button}>
-                        <Text
-                            style={styles.buttonText}
-                            onPress={() => {
-                                const newUserInfo = {
-                                    name,
-                                    dob,
-                                };
-
-                                if (linkedNode.spouse) {
-                                    // Linked node has a spouse, so add a child
-                                    // Father and mother are already entered
-                                    newUserInfo.father = linkedNode.gender === 'm' ? linkedNode._id : linkedNode.spouse;
-                                    newUserInfo.mother = linkedNode.gender === 'f' ? linkedNode._id : linkedNode.spouse;
-                                    newUserInfo.gender = gender;
-                                } else {
-                                    // Linked node doesn't have a spouse, so add a spouse
-                                    // Spouse is already available
-                                    // Gender of the new user is implicitly the opposite of the linked node's
-                                    newUserInfo.spouse = linkedNode._id;
-                                    newUserInfo.gender = linkedNode.gender === 'm' ? 'f' : 'm';
-                                }
-                                axios.post('http://asharp-mementos.herokuapp.com/user/create', newUserInfo);
-                                navigation.goBack();
-                            }}>
-                            Add
+                            if (linkedNode.spouse) {
+                                // Linked node has a spouse, so add a child
+                                // Father and mother are already entered
+                                newUserInfo.father = linkedNode.gender === 'm' ? linkedNode._id : linkedNode.spouse;
+                                newUserInfo.mother = linkedNode.gender === 'f' ? linkedNode._id : linkedNode.spouse;
+                                newUserInfo.gender = gender;
+                            } else {
+                                // Linked node doesn't have a spouse, so add a spouse
+                                // Spouse is already available
+                                // Gender of the new user is implicitly the opposite of the linked node's
+                                newUserInfo.spouse = linkedNode._id;
+                                newUserInfo.gender = linkedNode.gender === 'm' ? 'f' : 'm';
+                            }
+                            axios.post('http://asharp-mementos.herokuapp.com/user/create', newUserInfo);
+                            navigation.goBack();
+                        }}>
+                        Add
                         </Text>
-                    </View>
                 </View>
             </ScrollView>
         </>
@@ -139,15 +163,15 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     textInput: {
-        borderBottomColor: 'black',
-        borderBottomWidth: 1,
-        alignContent: 'center',
-        marginTop: 10,
-        padding: 5,
-        paddingLeft: 10,
-        marginLeft: '5%',
-        marginRight: '5%',
-    },
+		borderColor: 'black',
+		borderWidth: 0.5,
+		borderRadius: 3,
+		alignContent: 'center',
+		padding: 5,
+		paddingLeft: 10,
+        width: Dimensions.get('window').width / 2,
+        marginBottom:20,
+	},
     searchContainer: {
         flexDirection: 'row',
         padding: 5,
@@ -169,15 +193,12 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     manualHeader: {
-        // marginTop: '10%',
         padding: 10,
         fontSize: 20,
+        fontWeight: 'bold',
     },
     container: {
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
         backgroundColor: 'white',
-        // paddingBottom: 30,
     },
     title: {
         fontSize: 35,
@@ -193,16 +214,16 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     inputContainer: {
-        marginTop: '10%',
         backgroundColor: 'white',
         borderRadius: 25,
-        padding: '10%',
         marginHorizontal: 15,
+        marginTop: 20,
+        alignSelf:'center',
+        justifyContent:'space-evenly',
     },
     buttonText: {
         fontSize: 15,
         textAlign: 'center',
-        marginTop: '20%',
         color: 'white'
     },
     button: {
@@ -214,7 +235,11 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         justifyContent: 'center',
         alignSelf: 'center',
-        marginTop: '20%',
-        marginBottom: '30%'
+        marginVertical: 20,
     },
+    dateInputs: {
+		alignContent: 'center',
+        width: Dimensions.get('window').width / 2,
+        marginBottom: 20,
+	},
 });
