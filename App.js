@@ -137,7 +137,6 @@ const MainNavigator = createBottomTabNavigator({
 
 // Stack navigator for uploading artefact
 const uploadArtefactStack = createStackNavigator({
-	MainNavigator,
 	AddImageDetails: { screen: AddImageDetailsScreen },
 },
 	{
@@ -166,7 +165,6 @@ const SignUpStack = createStackNavigator({
 });
 
 const familyStack = createStackNavigator({
-	MainNavigator,
 	ViewFamilyMember: {screen: ViewFamilyMemberScreen},
 	AddFamilyMember: {screen: AddFamilyMemberScreen},
 	AddParentsManually: {screen:AddParentsManuallyScreen},
@@ -175,7 +173,6 @@ const familyStack = createStackNavigator({
 
 // Stack navigator for looking at item details from gallery
 const itemStack = createStackNavigator({
-	MainNavigator,
 	Profile: { screen: ProfileScreen },
 	ProfileSetting: {screen: ProfileSettingScreen},
 	Timeline: { screen: TimelineScreen },
@@ -194,6 +191,7 @@ const Stack = createSwitchNavigator({
 	Welcome: { screen: WelcomeScreen },
 	SignUpStack,
 	Login: { screen: LoginScreen },
+	MainNavigator,
 	itemStack,
 	sendFamilyStack,
 	uploadArtefactStack,
