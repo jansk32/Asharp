@@ -174,7 +174,8 @@ const SignUpStack = createStackNavigator({
 });
 
 const familyStack = createStackNavigator({
-	ViewFamilyMember: {screen: ViewFamilyMemberScreen},
+	MainNavigator,
+	FamilyTree: {screen: FamilyTreeScreen},
 	AddFamilyMember: {screen: AddFamilyMemberScreen},
 	AddParentsManually: {screen:AddParentsManuallyScreen},
 	AddParents: {screen:AddParentsScreen},
@@ -182,6 +183,7 @@ const familyStack = createStackNavigator({
 
 // Stack navigator for looking at item details from gallery
 const itemStack = createStackNavigator({
+	MainNavigator,
 	Profile: { screen: ProfileScreen },
 	ProfileSetting: {screen: ProfileSettingScreen},
 	Timeline: { screen: TimelineScreen },
