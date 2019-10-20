@@ -1,25 +1,30 @@
 # A# - mementos
 
-Here are the functionalities that we have done so far:
+## Functionalities of Our Application
 
 ### Sign-Up & Login: 
-- We have managed to implement the sign-up and login using email. 
-- Input verification has not been implemented.
+- Sign-up and login using email 
+- Implement email and input verification
   
 ### Family Tree:
-- Implement the tree algorithm to create and display the tree.
-- Adding family member has not been implemented.
+- Display the tree structure including profile pictures of each of the family member
+- When user press a profile picture, user will be directed to a new screen that shows the details of that user.
+- When user do a long press on the profile picuture, user will be given options to either add parents/ spouse/ child. 
 
 ### Upload Artefact:
 - Uploading the artefact from the app and stored the data into Firebase (for pictures) and MongoDB (other details).
+- The uploaded artefact will be displayed on the user's profile screen, timeline and gallery.
 
 ### Timeline:
-- Able to implement the timeline structure with duplicate data.
-- Need to implement the feature to get data from the databse and displayed it in the timeline.
+- Display artefacts of all users in the family tree with the corresponding time. 
 
 ### Gallery: 
-- Able to retrieve and display pictures from Firebase.
+- Display artefacts in a 3 column grid format of all users in the family tree.
    
 ### Profile page: 
-- Display the basic details of the user's name and DOB. 
-- Display the profile picture from Firebase. 
+- Display the user's name and date of birth.
+- Display the user's profile picture from Firebase. 
+- Display artefacts created by the user in a 3 column grid format.
+
+### Notification:
+- User will be notified when someone passed an artefact to them.

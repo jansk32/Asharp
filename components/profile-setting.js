@@ -140,6 +140,7 @@ export default function ProfileSettingScreen({ navigation }) {
 								onChangeText={setOldPassword}
 								value={oldPassword}
 								style={styles.textInput}
+								autoCapitalize="none"
 							/>
 						</View>
 						<View style={styles.inputElem}>
@@ -150,10 +151,10 @@ export default function ProfileSettingScreen({ navigation }) {
 								onChangeText={setPassword}
 								value={password}
 								style={styles.textInput}
+								autoCapitalize="none"
 							/>
 						</View>
 					</View>
-
 					<TouchableOpacity
 						onPress={() => {
 							updateProfile();

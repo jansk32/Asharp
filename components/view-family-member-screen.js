@@ -8,7 +8,7 @@ import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
 
 export default function ViewFamilyMemberScreen({ navigation }) {
     const { navigate } = navigation;
-    const {userId} = navigation.state.params;
+    const userId = navigation.state.params && navigation.state.params.userId;
     const [user, setUser] = useState({});
 
     useEffect(() => {

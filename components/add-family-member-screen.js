@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, View, Image, TouchableOpacity, TextInput, Dimensions, ScrollView, Alert } from 'react-native';
 import UserSearchBox from './user-search-box';
 import axios from 'axios';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+
+import DatePicker from 'react-native-datepicker';
+import Moment from 'moment';
+
+// import moment from 'moment';
+Moment.locale('en');
 
 import Config from 'react-native-config';
 const {BACK_END_ENDPOINT} = Config;
@@ -13,6 +20,9 @@ export default function AddFamilyMemberScreen({ navigation }) {
     const [name, setName] = useState('');
     const [dob, setDob] = useState('');
     const [gender, setGender] = useState('');
+
+    const DATE_FORMAT = 'YYYY-MM-DD';
+
 
     function renderSearchResult({ item: { _id, name, pictureUrl } }) {
         // const disabled = linkedNode._id === parentId || !spouse || spouse && linkedNode.spouse === parentId;
@@ -50,39 +60,62 @@ export default function AddFamilyMemberScreen({ navigation }) {
                 }
                 style={{ backgroundColor: disabled ? 'red' : 'white' }}
             >
-                <Image
-                    source={{ uri: pictureUrl }}
-                    style={{ height: 50, width: 50 }} />
-                <Text>{name}</Text>
+                <View style={{ flexDirection: 'row', marginHorizontal: 30, marginTop: 10, marginBottom: 20, }}>
+                    <Image
+                        source={{ uri: pictureUrl || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
+                        style={{ height: 60, width: 60, marginRight: 30, borderRadius: 50, }} />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{name}</Text>
+                </View>
             </TouchableOpacity>
         );
     }
-
-    return (
-        <>
-            <ScrollView style={styles.allContainer}>
-                <View style={styles.container}>
-                    <Text style={styles.add}>Find your</Text>
-                    <Text style={styles.title}>{isAddingSpouse ? 'Spouse' : 'Child'}</Text>
+    function SearchMemberRoute() {
+        return (
+            <ScrollView>
+                <View>
                     <UserSearchBox renderItem={renderSearchResult} />
                 </View>
-                {/* <LinearGradient colors={['#436aac','#43b7b8']} style={styles.container}>
-            <Text style={styles.title}>Add family member</Text>
-        </LinearGradient> */}
 
+            </ScrollView>
+        )
+
+    }
+    function AddMemberRoute() {
+        return (
+            <>
+                <Text style={styles.manualHeader}>Add details manually</Text>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.manualHeader}>Add details manually</Text>
+
                     <TextInput
                         placeholder="Name"
                         style={styles.textInput}
                         value={name}
                         onChangeText={setName}
                     />
-                    <TextInput
-                        placeholder="Date of birth"
-                        style={styles.textInput}
+                    <DatePicker
+                        style={styles.dateInputs}
+                        date={dob}
+                        mode="date"
+                        placeholder={Moment().format(DATE_FORMAT)}
+                        format={DATE_FORMAT}
+                        maxDate={Moment().format(DATE_FORMAT)}
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        androidMode="spinner"
+                        customStyles={{
+                            dateIcon: {
+                                position: 'absolute',
+                                left: 0,
+                                top: 4,
+                                marginLeft: 0
+                            },
+                            dateInput: {
+                                // borderColor: 'white',
+                            }
+                        }}
+                        showIcon={false}
+                        onDateChange={newDate => setDob(newDate)}
                         value={dob}
-                        onChangeText={setDob}
                     />
                     {linkedNode.spouse ?
                         <TextInput
@@ -127,24 +160,60 @@ export default function AddFamilyMemberScreen({ navigation }) {
                         Add
                         </Text>
                 </View>
-            </ScrollView>
+            </>
+        )
+    }
+
+    const [tab, setTab] = useState({
+        index: 0,
+        routes: [
+            { key: 'first', title: 'Search Family Member' },
+            { key: 'second', title: 'Add Manually' },
+        ],
+    });
+
+    return (
+        <>
+            <View style={styles.container}>
+                <Text style={styles.add}>Find your</Text>
+                <Text style={styles.title}>{isAddingSpouse ? 'Spouse' : 'Child'}</Text>
+            </View>
+            <TabView
+                navigationState={tab}
+                renderScene={SceneMap({
+                    first: SearchMemberRoute,
+                    second: AddMemberRoute,
+                })}
+                renderTabBar={props =>
+                    <TabBar
+                        {...props}
+                        indicatorStyle={{ backgroundColor: '#EC6268' }}
+                        style={{ backgroundColor: '#f5f7fb' }}
+                        bounces={true}
+                        labelStyle={{ color: '#2d2e33' }}
+                    />
+                }
+                onIndexChange={index => setTab({ ...tab, index })}
+                initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
+            />
         </>
     )
 };
 
 const styles = StyleSheet.create({
     allContainer: {
-        backgroundColor: '#f5f7fb'
+        backgroundColor: '#f5f7fb',
+        alignSelf: 'center',
     },
     textInput: {
-        borderBottomColor: 'black',
-        borderBottomWidth: 1,
+        borderColor: 'black',
+        borderWidth: 0.5,
+        borderRadius: 3,
         alignContent: 'center',
-        marginTop: 10,
         padding: 5,
         paddingLeft: 10,
-        marginLeft: '5%',
-        marginRight: '5%',
+        width: Dimensions.get('window').width / 2,
+        marginBottom: 20,
     },
     searchContainer: {
         flexDirection: 'row',
@@ -167,15 +236,13 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     manualHeader: {
-        // marginTop: '10%',
-        padding: 10,
-        fontSize: 20,
+        margin: 20,
+        fontSize: 30,
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
     container: {
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
         backgroundColor: 'white',
-        paddingBottom: 30,
     },
     title: {
         fontSize: 35,
@@ -191,16 +258,16 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     inputContainer: {
-        marginTop: '10%',
         backgroundColor: 'white',
         borderRadius: 25,
-        padding: '10%',
         marginHorizontal: 15,
+        marginTop: 20,
+        alignSelf: 'center',
+        justifyContent: 'space-evenly',
     },
     buttonText: {
         fontSize: 15,
         textAlign: 'center',
-        marginTop: '20%',
         color: 'white'
     },
     button: {
@@ -212,7 +279,11 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         justifyContent: 'center',
         alignSelf: 'center',
-        marginTop: '20%',
-        marginBottom: '30%'
+        marginVertical: 20,
+    },
+    dateInputs: {
+        alignContent: 'center',
+        width: Dimensions.get('window').width / 2,
+        marginBottom: 20,
     },
 });

@@ -70,7 +70,16 @@ const familyMemberStack = createStackNavigator({
 		}
 	},
 	NewProfile: {screen: ProfileScreen},
-	
+})
+
+const notifStack = createStackNavigator({
+	Notification: {screen: NotificationScreen,
+		navigationOptions:{
+			header: null,
+			
+		}
+	},
+	NewProfile: {screen: ProfileScreen},
 })
 
 // Main bottom tab navigator to navigate the main functionalities of the application
@@ -94,7 +103,7 @@ const MainNavigator = createBottomTabNavigator({
 		},
 	},
 	Notification: {
-		screen: NotificationScreen,
+		screen: notifStack,
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon name="md-notifications-outline" color={tintColor} size={30} />
 		},
@@ -137,7 +146,6 @@ const MainNavigator = createBottomTabNavigator({
 
 // Stack navigator for uploading artefact
 const uploadArtefactStack = createStackNavigator({
-	MainNavigator,
 	AddImageDetails: { screen: AddImageDetailsScreen },
 },
 	{
@@ -167,7 +175,7 @@ const SignUpStack = createStackNavigator({
 
 const familyStack = createStackNavigator({
 	MainNavigator,
-	ViewFamilyMember: {screen: ViewFamilyMemberScreen},
+	FamilyTree: {screen: FamilyTreeScreen},
 	AddFamilyMember: {screen: AddFamilyMemberScreen},
 	AddParentsManually: {screen:AddParentsManuallyScreen},
 	AddParents: {screen:AddParentsScreen},
@@ -188,12 +196,11 @@ const sendFamilyStack = createStackNavigator({
 	FamilyTree: {screen: FamilyTreeScreen},
 });
 
-
-
 const Stack = createSwitchNavigator({
 	Welcome: { screen: WelcomeScreen },
 	SignUpStack,
 	Login: { screen: LoginScreen },
+	MainNavigator,
 	itemStack,
 	sendFamilyStack,
 	uploadArtefactStack,
