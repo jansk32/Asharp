@@ -4,6 +4,7 @@ import axios from 'axios';
 import moment from 'moment';
 import OneSignal from 'react-native-onesignal';
 
+import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
 
 export default function NotificationScreen({ navigation }) {
 	const { navigate } = navigation;
@@ -11,11 +12,11 @@ export default function NotificationScreen({ navigation }) {
 
 	useEffect(() => {
 		async function fetchNotifications() {
-			const userRes = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
+			const userRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
 			const user = userRes.data;
 			console.log(user._id);
 
-			const res = await axios.get('http://asharp-mementos.herokuapp.com/notification', {
+			const res = await axios.get(`${BACK_END_ENDPOINT}/notification`, {
 				params: {
 					recipient: user._id
 				}
@@ -44,7 +45,7 @@ export default function NotificationScreen({ navigation }) {
 				<TouchableOpacity
 					onPress={() => navigate('ViewFamilyMember', {userId: sender._id})}>
 					<Image
-						source={{ uri: sender.pictureUrl || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
+						source={{ uri: sender.pictureUrl || BLANK_PROFILE_PIC_URI }}
 						style={styles.profPicStyle}
 					/>
 				</TouchableOpacity>

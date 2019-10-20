@@ -6,6 +6,10 @@ const session = require('express-session');
 const axios = require('axios');
 const moment = require('moment');
 
+// Environment variables
+const constants = require('./server-constants');
+const { ONESIGNAL_ENDPOINT, ONESIGNAL_APP_ID } = constants;
+
 // passport.js
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
@@ -18,7 +22,9 @@ passport.use(new LocalStrategy(
 	},
 	function (username, password, done) {
 		userModel.findOne({ email: username }, function (err, found) {
-			if (err) { return done(err); }
+			if (err) {
+				return done(err);
+			}
 			// if no username found
 			if (!found) {
 				return done(null, false, { message: 'Incorrect username or password' });
@@ -26,6 +32,7 @@ passport.use(new LocalStrategy(
 			if (!(found.password === password)) {
 				return done(null, false, { message: 'Incorrect username or password' });
 			}
+			console.log('SUCCESSFUL LOG IN');
 			return done(null, found);
 		});
 	}
@@ -74,17 +81,22 @@ app.get('/', (req, res) => {
 	res.send('Hello World');
 });
 
+
 /* User routes */
 
-// Get a user
-app.get('/user', (req, res) => {
+// Get logged-in user
+app.get('/user', async (req, res) => {
 	// Change later
 	const id = req.session.passport.user._id;
-	console.log(req.session.passport.user._id);
-	userModel.find({ _id: id }, (err, resp) => {
-		if (err) throw err;
-		res.send(resp[0]);
-	});
+	// const id = req.user._id;
+	console.log('Authenticating user with id: ' + id);
+	try {
+		const user = await userModel.findById(id);
+		res.send(user);
+		console.log('AUTHENTICATED user with id: ' + id);
+	} catch (e) {
+		console.trace(e);
+	}
 });
 
 // Get limited information about another user
@@ -147,7 +159,7 @@ app.post('/user/create', async ({ body: {
 
 // Get all users (registered and non-registered)
 // The front end will decide which ones are relevant to the user
-app.get('/users', (req, res) => {
+app.get('/users', async (req, res) => {
 	const family = [{
 		_id: 'th',
 		gender: 'm',
@@ -274,15 +286,15 @@ app.get('/users', (req, res) => {
 	// res.send(family);
 	// return;
 
-	userModel.find({}, (err, result) => {
-		if (err) {
-			throw err;
-		}
-		res.send(result);
-	});
+	try {
+		const users = await userModel.find();
+		res.send(users);
+	} catch (e) {
+		console.error(e);
+	}
 });
 
-// Update user
+// Update logged-in user
 app.put('/user/update', (req, res) => {
 	const id = req.session.passport.user._id;
 	userModel.findOneAndUpdate({ _id: id }, req.body, { new: true }, (err, result) => {
@@ -338,7 +350,7 @@ app.put('/user/add-child', async ({ body: { personId, childId } }, res) => {
 		console.log('returning cos of child already having parents');
 		return;
 	}
-	
+
 	const parent = await userModel.findById(personId);
 	if (!parent.spouse) {
 		console.log('returning cos parent doesnt have spouse');
@@ -352,20 +364,24 @@ app.put('/user/add-child', async ({ body: { personId, childId } }, res) => {
 
 /* Artefact routes */
 // Get ALL artefacts
-app.get('/artefact', (req, res) => {
-	artefactModel.find({}, (err, result) => {
-		res.send(result);
-	});
+app.get('/artefact', async (req, res) => {
+	try {
+		const artefacts = await artefactModel.find();
+		res.send(artefacts);
+	} catch (e) {
+		console.trace(e);
+	}
 });
 
 
 // Get a single artefact by id
-app.get('/artefact/find/:artefactId', (req, res) => {
-	artefactModel.findById(req.params.artefactId, (err, resp) => {
-		if (err) throw err;
-		console.log(resp);
-		res.send(resp);
-	});
+app.get('/artefact/find/:artefactId', async (req, res) => {
+	try {
+		const artefact = await artefactModel.findById(req.params.artefactId);
+		res.send(artefact);
+	} catch (e) {
+		console.trace(e);
+	}
 });
 
 // Create an artefact
@@ -399,8 +415,6 @@ app.put('/artefact/assign', ({ body: { artefactId, recipientId, senderId } }, re
 	});
 
 	// Send notification to recipient
-	const ONESIGNAL_ENDPOINT = 'https://onesignal.com/api/v1/notifications';
-	const ONESIGNAL_APP_ID = 'f9de7906-8c82-4674-808b-a8048c4955f1';
 	axios.post(ONESIGNAL_ENDPOINT, {
 		app_id: ONESIGNAL_APP_ID,
 		include_external_user_ids: [recipientId],
@@ -423,12 +437,14 @@ app.put('/artefact/assign', ({ body: { artefactId, recipientId, senderId } }, re
 	notif.save();
 });
 
-// Get artefact by owner id
-app.get('/artefact/findbyowner/:id', ({params: {id}}, res) => {
-	artefactModel.find({ owner: id }, (err, resp) => {
-		if (err) throw err;
-		res.send(resp);
-	});
+// Get artefacts by owner id
+app.get('/artefact/findbyowner/:id', async ({ params: { id } }, res) => {
+	try {
+		const artefacts = await artefactModel.find({ owner: id });
+		res.send(artefacts);
+	} catch (e) {
+		console.trace(e);
+	}
 });
 
 /* Notification routes */
@@ -452,21 +468,27 @@ app.post('/login/local', passport.authenticate('local'), (req, res) => {
 
 
 app.get('/logout', (req, res) => {
-	console.log("logging out");
+	console.log('logging out');
 	if (req.session) {
 		// delete session object
 		req.session.destroy(function (err) {
 			if (err) {
 				return next(err);
 			} else {
-				return res.send("Success");
+				return res.send('Success');
 			}
 		});
 	}
 });
 
+process.on('unhandledRejection', (reason, p) => {
+	console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+	// application specific logging, throwing an error, or other logic here
+});
+
+
 const port = process.env.PORT || 3000;
-app.listen(port, "0.0.0.0");
+app.listen(port, '0.0.0.0');
 console.log('Listening to port ' + port);
 
 module.exports = app;

@@ -1,6 +1,11 @@
 {
   "name": "mementos",
   "version": "0.0.1",
+  "babel": {
+    "presets": [
+      "module:react-native-dotenv"
+    ]
+  },
   "private": true,
   "main": "server.js",
   "scripts": {
@@ -13,6 +18,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.6.1",
+    "@react-native-community/datetimepicker": "^2.1.0",
     "axios": "^0.19.0",
     "eslint": "^5.16.0",
     "express": "^4.17.1",

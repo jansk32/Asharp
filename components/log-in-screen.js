@@ -6,6 +6,9 @@ import { NavigationEvents } from 'react-navigation';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import OneSignal from 'react-native-onesignal';
+import { BACK_END_ENDPOINT } from '../constants';
+
+// alert('login ' + BACK_END_ENDPOINT);
 
 const styles = StyleSheet.create({
 	container: {
@@ -81,11 +84,12 @@ const styles = StyleSheet.create({
 export async function axiosLocal(objData) {
 	console.log(objData);
 	try {
-		const res = await axios.post('http://asharp-mementos.herokuapp.com/login/local', objData);
+		console.log(`${BACK_END_ENDPOINT}/login/local`);
+		const res = await axios.post(`${BACK_END_ENDPOINT}/login/local`, objData);
 		OneSignal.setExternalUserId(res.data._id);
 		return true;
 	} catch (e) {
-		console.log(e);
+		console.trace(e);
 		return false;
 	}
 }

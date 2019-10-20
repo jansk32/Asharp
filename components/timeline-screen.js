@@ -5,6 +5,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import moment from 'moment';
+import { BACK_END_ENDPOINT } from '../constants';
 
 // Import date formatting module moment.js
 moment.locale('en');
@@ -53,7 +54,7 @@ export default function TimelineScreen({ navigation }) {
 	useEffect(() => {
 		async function fetchArtefacts() {
 			try {
-				const res = await axios.get('http://asharp-mementos.herokuapp.com/artefact');
+				const res = await axios.get(`${BACK_END_ENDPOINT}/artefact`);
 				setArtefacts(res.data);
 				console.log(res.data)
 			} catch (e) {

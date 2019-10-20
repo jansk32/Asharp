@@ -3,6 +3,9 @@ import { Text, StyleSheet, View, Image, TouchableOpacity, TextInput, Dimensions,
 import UserSearchBox from './user-search-box';
 import axios from 'axios';
 
+import Config from 'react-native-config';
+const {BACK_END_ENDPOINT} = Config;
+
 export default function AddFamilyMemberScreen({ navigation }) {
     // isAddingSpouse is false if adding a child
     const { navigate } = navigation;
@@ -29,12 +32,12 @@ export default function AddFamilyMemberScreen({ navigation }) {
                                 text: 'OK',
                                 onPress: () => {
                                     if (isAddingSpouse) {
-                                        axios.put('http://localhost:3000/user/add-spouse', {
+                                        axios.put(`${BACK_END_ENDPOINT}/user/add-spouse`, {
                                             personId: linkedNode._id,
                                             spouseId: _id,
                                         });
                                     } else {
-                                        axios.put('http://localhost:3000/user/add-child', {
+                                        axios.put(`${BACK_END_ENDPOINT}/user/add-child`, {
                                             personId: linkedNode._id,
                                             childId: _id,
                                         });
@@ -118,7 +121,7 @@ export default function AddFamilyMemberScreen({ navigation }) {
                                 newUserInfo.spouse = linkedNode._id;
                                 newUserInfo.gender = linkedNode.gender === 'm' ? 'f' : 'm';
                             }
-                            axios.post('http://asharp-mementos.herokuapp.com/user/create', newUserInfo);
+                            axios.post(`${BACK_END_ENDPOINT}/user/create`, newUserInfo);
                             navigation.goBack();
                         }}>
                         Add

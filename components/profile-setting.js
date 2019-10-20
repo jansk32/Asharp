@@ -1,4 +1,3 @@
-// Profile setting
 import React, { useState, useEffect } from 'react';
 import {
 	Text, View, StyleSheet, TextInput, TouchableOpacity, ToastAndroid, Dimensions, Image, ScrollView
@@ -8,10 +7,12 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { SCHEMES } from 'uri-js';
 import { pickImage, uploadImage } from '../image-tools';
 import axios from 'axios';
-import Moment from 'moment';
+import moment from 'moment';
+
+import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
 
 // import moment from 'moment';
-Moment.locale('en');
+moment.locale('en');
 
 // Edit user details: Name, DOB, password, profile picture
 export default function ProfileSettingScreen({ navigation }) {
@@ -59,7 +60,7 @@ export default function ProfileSettingScreen({ navigation }) {
 			const newImage = await uploadImage(image.uri);
 			data.pictureUrl = newImage;
 		}
-		const res = await axios.put('http://asharp-mementos.herokuapp.com/user/update', data);
+		const res = await axios.put(`${BACK_END_ENDPOINT}/user/update`, data);
 		const updatedProfile = res.data;
 		console.log(updatedProfile);
 		setProfile(updatedProfile);
@@ -68,7 +69,7 @@ export default function ProfileSettingScreen({ navigation }) {
 	// Get user details
 	useEffect(() => {
 		async function fetchProfile() {
-			const res = await axios.get('http://asharp-mementos.herokuapp.com/user');
+			const res = await axios.get(`${BACK_END_ENDPOINT}/user`);
 			const user = res.data;
 			console.log(user);
 			setUser(user);
@@ -81,7 +82,7 @@ export default function ProfileSettingScreen({ navigation }) {
 		<>
 			<ScrollView>
 				<View style={styles.container}>
-					<Image source={{ uri: image.uri || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}} style={styles.imageStyle} />
+					<Image source={{ uri: image.uri || BLANK_PROFILE_PIC_URI}} style={styles.imageStyle} />
 					<View style={styles.buttonBox}>
 						<TouchableOpacity
 							onPress={async () => await setImage(await pickImage())}>
@@ -109,9 +110,9 @@ export default function ProfileSettingScreen({ navigation }) {
 								style={styles.dateInputs}
 								date={dob || user.dob}
 								mode="date"
-								placeholder={Moment(user.dob).format(DATE_FORMAT)}
+								placeholder={moment(user.dob).format(DATE_FORMAT)}
 								format={DATE_FORMAT}
-								maxDate={Moment().format(DATE_FORMAT)}
+								maxDate={moment().format(DATE_FORMAT)}
 								confirmBtnText="Confirm"
 								cancelBtnText="Cancel"
 								androidMode="spinner"

@@ -4,6 +4,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 
+import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
+
 export default function ViewFamilyMemberScreen({ navigation }) {
     const { navigate } = navigation;
     const {userId} = navigation.state.params;
@@ -25,7 +27,7 @@ export default function ViewFamilyMemberScreen({ navigation }) {
         </LinearGradient> */}
 
             <Image
-                source={{ uri: user.pictureUrl || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
+                source={{ uri: user.pictureUrl || BLANK_PROFILE_PIC_URI }}
                 style={styles.profilePic}
             />
 

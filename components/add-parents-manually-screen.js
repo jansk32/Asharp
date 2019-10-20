@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, View, Image, TouchableOpacity, TextInput, Dimensions, ScrollView } from 'react-native';
 import axios from 'axios';
 
-export default function AddParentsManuallyScreen({navigation}){
-    const {navigate} = navigation;
+export default function AddParentsManuallyScreen({ navigation }) {
+    const { navigate } = navigation;
 
     return (
         <>
@@ -12,20 +12,20 @@ export default function AddParentsManuallyScreen({navigation}){
                     <Text style={styles.add}>Add manually</Text>
                     <Text style={styles.title}>Parents</Text>
                 </View>
-                
+
                 <View style={styles.inputContainer}>
                     <Text style={styles.manualHeader}>Add Father</Text>
                     <TextInput
                         placeholder="Name"
                         style={styles.textInput}
-                        // value={name}
-                        // onChangeText={setName}
+                    // value={name}
+                    // onChangeText={setName}
                     />
                     <TextInput
                         placeholder="Date of birth"
                         style={styles.textInput}
-                        // value={dob}
-                        // onChangeText={setDob}
+                    // value={dob}
+                    // onChangeText={setDob}
                     />
                     <TextInput
                         placeholder="Picture"
@@ -38,14 +38,14 @@ export default function AddParentsManuallyScreen({navigation}){
                     <TextInput
                         placeholder="Name"
                         style={styles.textInput}
-                        // value={name}
-                        // onChangeText={setName}
+                    // value={name}
+                    // onChangeText={setName}
                     />
                     <TextInput
                         placeholder="Date of birth"
                         style={styles.textInput}
-                        // value={dob}
-                        // onChangeText={setDob}
+                    // value={dob}
+                    // onChangeText={setDob}
                     />
                     <TextInput
                         placeholder="Picture"
@@ -113,11 +113,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginLeft: 10,
     },
-    results:{
-        fontSize:15,
+    results: {
+        fontSize: 15,
         color: '#2d2e33',
-        marginLeft:10,
-        fontWeight:'bold',
+        marginLeft: 10,
+        fontWeight: 'bold',
     },
     add: {
         fontSize: 25,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 15,
         textAlign: 'center',
-        paddingTop:40,
+        paddingTop: 40,
         color: 'white'
     },
     button: {
