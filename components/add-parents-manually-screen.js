@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, View, Image, TouchableOpacity, TextInput, Dimensions, ScrollView } from 'react-native';
 import axios from 'axios';
+import DatePicker from 'react-native-datepicker';
+import Moment from 'moment';
+
+
+Moment.locale('en');
+
 
 export default function AddParentsManuallyScreen({navigation}){
     const {navigate} = navigation;
+    const [dob, setDob] = useState('');
+    const [dobMother, setDobMother] = useState('');
 
     return (
         <>
@@ -18,19 +26,36 @@ export default function AddParentsManuallyScreen({navigation}){
                     <TextInput
                         placeholder="Name"
                         style={styles.textInput}
-                        // value={name}
-                        // onChangeText={setName}
                     />
-                    <TextInput
-                        placeholder="Date of birth"
-                        style={styles.textInput}
-                        // value={dob}
-                        // onChangeText={setDob}
-                    />
-                    <TextInput
-                        placeholder="Picture"
-                        style={styles.textInput}
-                    />
+
+                        <Text style = {styles.dobText}>Date of Birth:</Text>
+                        <View style = {styles.dobPicker}>
+                           <DatePicker
+								style={styles.dateInputs}
+								date={dob}
+								mode="date"
+								placeholder="Select date"
+								format="YYYY-MM-DD"
+								maxDate={Moment().format('DD-MM-YYYY')}
+								confirmBtnText="Confirm"
+								cancelBtnText="Cancel"
+								androidMode="spinner"
+								customStyles={{
+									dateIcon: {
+										position: 'absolute',
+										left: 0,
+										top: 4,
+										marginLeft: 0
+									},
+									dateInput: {
+										marginLeft: 0
+									}
+								}}
+								// showIcon={false}
+								onDateChange={setDob}
+								value={dob}
+							/>
+                        </View>
                 </View>
 
                 <View style={styles.inputContainer}>
@@ -41,16 +66,35 @@ export default function AddParentsManuallyScreen({navigation}){
                         // value={name}
                         // onChangeText={setName}
                     />
-                    <TextInput
-                        placeholder="Date of birth"
-                        style={styles.textInput}
-                        // value={dob}
-                        // onChangeText={setDob}
+                    <Text style = {styles.dobText}>Date of Birth:</Text>
+                    <View style = {styles.dobPicker}>
+                    <DatePicker
+                        style={styles.dateInputs}
+                        date={dobMother}
+                        mode="date"
+                        placeholder="Select date"
+                        format="YYYY-MM-DD"
+                        maxDate={Moment().format('DD-MM-YYYY')}
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        androidMode="spinner"
+                        customStyles={{
+                            dateIcon: {
+                                position: 'absolute',
+                                left: 0,
+                                top: 4,
+                                marginLeft: 0
+                            },
+                            dateInput: {
+                                marginLeft: 0
+                            }
+                        }}
+                        // showIcon={false}
+                        onDateChange={setDobMother}
+                        value={dobMother}
                     />
-                    <TextInput
-                        placeholder="Picture"
-                        style={styles.textInput}
-                    />
+                    </View>
+
                 </View>
                 <View style={styles.button}>
                     <Text style={styles.buttonText}>Add</Text>
@@ -75,6 +119,19 @@ const styles = StyleSheet.create({
         marginLeft: '5%',
         marginRight: '5%',
     },
+    dobText: {
+        marginTop: 10,
+        padding: 5,
+        paddingLeft: 10,
+        marginLeft: '5%',
+        marginRight: '5%',
+    },
+    dobPicker:{
+        padding: 5,
+        paddingLeft:10,
+        marginLeft:'5%',
+        marginRight: '5%',
+    },  
     searchContainer: {
         flexDirection: 'row',
         padding: 5,
