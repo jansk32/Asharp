@@ -7,6 +7,85 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import OneSignal from 'react-native-onesignal';
 
+// Axios authentication
+export async function axiosLocal(objData) {
+	console.log(objData);
+	try {
+		const res = await axios.post('http://asharp-mementos.herokuapp.com/login/local', objData);
+		OneSignal.setExternalUserId(res.data._id);
+		return true;
+	} catch (e) {
+		console.log(e);
+		return false;
+	}
+}
+
+export default function LoginScreen({ navigation }) {
+	const { navigate } = navigation;
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+
+
+	return (
+		<>
+			<View style={styles.container}>
+				<View style={styles.loginBox}>
+					<Text style={styles.loginText}>LOGIN</Text>
+				</View>
+				<View style={styles.inputBox}>
+					<View style={styles.usernameBox}>
+						<Text style={styles.text}>Email</Text>
+						<View style={styles.textInput}>
+							<TextInput
+								placeholder="Enter Email"
+								onChangeText={setEmail}
+								autoCapitalize="none"
+							/>
+						</View>
+					</View>
+					<View style={styles.passwordBox}>
+						<Text style={styles.text}>Password</Text>
+						<View style={styles.textInput}>
+							<TextInput
+								placeholder="Enter Password"
+								secureTextEntry={true}
+								onChangeText={setPassword}
+								autoCapitalize="none"
+							/>
+						</View>
+					</View>
+				</View>
+				<View style={styles.buttonBox}>
+					<TouchableOpacity
+						onPress={async () => {
+							if (await axiosLocal({ email, password })) {
+								AsyncStorage.setItem('email', email);
+								AsyncStorage.setItem('password', password);
+								navigate('Home');
+							} else {
+								alert('Email or password is incorrect');
+							}
+						}}>
+						<View style={styles.redButton}>
+							<Text
+								style={styles.whiteText}>
+								Login</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => navigate('SignUp1')}>
+						<View style={styles.whiteButton}>
+							<Text
+								style={styles.buttonText}>
+								Sign Up</Text>
+						</View>
+					</TouchableOpacity>
+				</View>
+			</View>
+		</>
+	);
+}
+
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: 'white',
@@ -76,80 +155,3 @@ const styles = StyleSheet.create({
 	},
 }
 );
-
-// Axios authentication
-export async function axiosLocal(objData) {
-	console.log(objData);
-	try {
-		const res = await axios.post('http://asharp-mementos.herokuapp.com/login/local', objData);
-		OneSignal.setExternalUserId(res.data._id);
-		return true;
-	} catch (e) {
-		console.log(e);
-		return false;
-	}
-}
-
-export default function LoginScreen({ navigation }) {
-	const { navigate } = navigation;
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-
-
-	return (
-		<>
-			<View style={styles.container}>
-				<View style={styles.loginBox}>
-					<Text style={styles.loginText}>LOGIN</Text>
-				</View>
-				<View style={styles.inputBox}>
-					<View style={styles.usernameBox}>
-						<Text style={styles.text}>Email</Text>
-						<View style={styles.textInput}>
-							<TextInput
-								placeholder='Enter Email'
-								onChangeText={setEmail}
-							/>
-						</View>
-					</View>
-					<View style={styles.passwordBox}>
-						<Text style={styles.text}>Password</Text>
-						<View style={styles.textInput}>
-							<TextInput
-								placeholder='Enter Password'
-								secureTextEntry={true}
-								onChangeText={setPassword}
-							/>
-						</View>
-					</View>
-				</View>
-				<View style={styles.buttonBox}>
-					<TouchableOpacity
-						onPress={async () => {
-							if (await axiosLocal({ email, password })) {
-								AsyncStorage.setItem('email', email);
-								AsyncStorage.setItem('password', password);
-								navigate('Home');
-							} else {
-								alert('Email or password is incorrect');
-							}
-						}}>
-						<View style={styles.redButton}>
-							<Text
-								style={styles.whiteText}>
-								Login</Text>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity
-						onPress={() => navigate('SignUp1')}>
-						<View style={styles.whiteButton}>
-							<Text
-								style={styles.buttonText}>
-								Sign Up</Text>
-						</View>
-					</TouchableOpacity>
-				</View>
-			</View>
-		</>
-	);
-}

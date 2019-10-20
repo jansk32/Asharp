@@ -60,7 +60,7 @@ export default function SignUp2({ navigation }) {
 						<Text style={styles.text}>Name</Text>
 						<View style={styles.textInput}>
 							<TextInput
-								placeholder='Enter Full Name'
+								placeholder="Enter Full Name"
 								onChangeText={setName}
 								value={name}
 							/>
@@ -98,10 +98,11 @@ export default function SignUp2({ navigation }) {
 						<Text style={styles.text}>Password</Text>
 						<View style={styles.textInput}>
 							<TextInput
-								placeholder='Enter Password'
+								placeholder="Enter Password"
 								secureTextEntry={true}
 								onChangeText={setPassword}
 								value={password}
+								autoCapitalize="none"
 							/>
 						</View>
 					</View>
