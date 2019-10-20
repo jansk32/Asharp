@@ -69,7 +69,7 @@ export default function ProfileSettingScreen({ navigation }) {
 	// Get user details
 	useEffect(() => {
 		async function fetchProfile() {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/user`);
+			const res = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
 			const user = res.data;
 			console.log(user);
 			setUser(user);
@@ -82,7 +82,7 @@ export default function ProfileSettingScreen({ navigation }) {
 		<>
 			<ScrollView>
 				<View style={styles.container}>
-					<Image source={{ uri: image.uri || BLANK_PROFILE_PIC_URI}} style={styles.imageStyle} />
+					<Image source={{ uri: image.uri || BLANK_PROFILE_PIC_URI }} style={styles.imageStyle} />
 					<View style={styles.buttonBox}>
 						<TouchableOpacity
 							onPress={async () => await setImage(await pickImage())}>

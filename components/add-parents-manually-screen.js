@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, View, Image, TouchableOpacity, TextInput, Dimensions, ScrollView } from 'react-native';
 import axios from 'axios';
 import DatePicker from 'react-native-datepicker';
-import Moment from 'moment';
+import moment from 'moment';
 
-
-Moment.locale('en');
-
+moment.locale('en');
 
 export default function AddParentsManuallyScreen({navigation}){
-    const {navigate} = navigation;
+    const { navigate } = navigation;
     const [dob, setDob] = useState('');
     const [dobMother, setDobMother] = useState('');
 
@@ -36,7 +34,7 @@ export default function AddParentsManuallyScreen({navigation}){
 								mode="date"
 								placeholder="Select date"
 								format="YYYY-MM-DD"
-								maxDate={Moment().format('DD-MM-YYYY')}
+								maxDate={moment().format('DD-MM-YYYY')}
 								confirmBtnText="Confirm"
 								cancelBtnText="Cancel"
 								androidMode="spinner"
@@ -74,7 +72,7 @@ export default function AddParentsManuallyScreen({navigation}){
                         mode="date"
                         placeholder="Select date"
                         format="YYYY-MM-DD"
-                        maxDate={Moment().format('DD-MM-YYYY')}
+                        maxDate={moment().format('DD-MM-YYYY')}
                         confirmBtnText="Confirm"
                         cancelBtnText="Cancel"
                         androidMode="spinner"

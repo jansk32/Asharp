@@ -13,11 +13,6 @@ const { SlideInMenu } = renderers;
 // Environment variables
 import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
 
-// import Config from 'react-native-config';
-// const {BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI} = Config;
-
-// alert(BACK_END_ENDPOINT);
-
 // Number 
 const numColumns = 3;
 

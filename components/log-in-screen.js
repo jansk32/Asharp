@@ -8,13 +8,11 @@ import AsyncStorage from '@react-native-community/async-storage';
 import OneSignal from 'react-native-onesignal';
 import { BACK_END_ENDPOINT } from '../constants';
 
-// alert('login ' + BACK_END_ENDPOINT);
 
 // Axios authentication
 export async function axiosLocal(objData) {
 	console.log(objData);
 	try {
-		console.log(`${BACK_END_ENDPOINT}/login/local`);
 		const res = await axios.post(`${BACK_END_ENDPOINT}/login/local`, objData);
 		OneSignal.setExternalUserId(res.data._id);
 		return true;
@@ -28,7 +26,6 @@ export default function LoginScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-
 
 	return (
 		<>

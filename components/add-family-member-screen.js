@@ -10,8 +10,7 @@ import Moment from 'moment';
 // import moment from 'moment';
 Moment.locale('en');
 
-import Config from 'react-native-config';
-const {BACK_END_ENDPOINT} = Config;
+import { BACK_END_ENDPOINT } from '../constants';
 
 export default function AddFamilyMemberScreen({ navigation }) {
     // isAddingSpouse is false if adding a child

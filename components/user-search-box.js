@@ -4,8 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import { FlatList } from 'react-native-gesture-handler';
 
-import Config from 'react-native-config';
-import { BACK_END_ENDPOINT } from 'react-native-dotenv';
+import { BACK_END_ENDPOINT } from '../constants';
 
 export default function UserSearchBox({ renderItem }) {
     // parameters:

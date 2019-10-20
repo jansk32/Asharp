@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
-import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
+import { BACK_END_ENDPOINT } from '../constants';
 
 moment.locale('en');
 

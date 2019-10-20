@@ -9,9 +9,7 @@ import downloadImage from '../image-tools';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 
-import Config from 'react-native-config';
-const { BACK_END_ENDPOINT } = Config;
-
+import { BACK_END_ENDPOINT } from '../constants';
 
 // Import date formatting module moment.js
 moment.locale('en');

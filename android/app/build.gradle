@@ -98,9 +98,6 @@ project.ext.vectoricons = [
 
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
-apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
-
-
 
 /**
  * Set this to true to create two separate APKs instead of one:
