@@ -9,14 +9,13 @@ import { pickImage, uploadImage } from '../image-tools';
 import axios from 'axios';
 import moment from 'moment';
 
-import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
+import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI, DATE_FORMAT } from '../constants';
 
 // import moment from 'moment';
 moment.locale('en');
 
 // Edit user details: Name, DOB, password, profile picture
 export default function ProfileSettingScreen({ navigation }) {
-	const DATE_FORMAT = 'YYYY-MM-DD';
 	const { navigate } = navigation;
 	// const handleProfileChange = navigation.getParam('handleProfileChange');
 	const setProfile = navigation.state.params.setProfile;
@@ -277,4 +276,4 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	}
 }
-)
+);

@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const axios = require('axios');
 const moment = require('moment');
+const cors = require('cors');
 const { ensureLoggedIn } = require('connect-ensure-login');
 
 // Environment variables
@@ -44,7 +45,7 @@ passport.use(new LocalStrategy(
 			if (!found) {
 				return done(null, false, { message: 'Incorrect username or password' });
 			}
-			if (!(found.password === password)) {
+			if (found.password !== password) {
 				return done(null, false, { message: 'Incorrect username or password' });
 			}
 			console.log('SUCCESSFUL LOG IN');
@@ -59,21 +60,30 @@ passport.serializeUser(function (user, done) {
 
 passport.deserializeUser(async function (_id, done) {
 	try {
-		const user = await userModel.findById(mongoose.Types.ObjectId(_id));
-		console.log('DESERIALIZED: ' + user.name);
+		const user = await userModel.findById(_id);
+		// console.log('DESERIALIZED: ' + user.name);
 		done(null, user);
 	} catch (e) {
-		console.log('ERROR IN DESERIALIZE');
+		// console.log('ERROR IN DESERIALIZE');
 		done(e);
 	}
 });
 
 // Cookies
-app.set('trust proxy', 1);
+// app.set('trust proxy', 1);
+app.use(cors({
+	credentials: true,
+	origin: 'http://localhost:3000'
+}));
+
 app.use(session({
-	secret: 'secret',
+	secret: 'secret_string',
 	resave: false,
-	saveUninitialized: true
+	saveUninitialized: true,
+	cookie: {
+		secure: false,
+		maxAge: 60 * 60 * 1000,  // 1 hour
+	},
 }));
 
 // app.use middlewares
@@ -92,19 +102,27 @@ app.get('/', (req, res) => {
 /* User routes */
 
 // Get logged-in user
-app.get('/user', ensureLoggedIn(), async (req, res) => {
-	// res.send(req.user);
-	// return;
+app.get('/user', async (req, res) => {
+	console.log('ACCESS COOKIE = ' + req.headers.cookie);
+	console.log('ACCESS SESSION ID = ' + req.session.id);
+
+	if (!req.user) {
+		console.log('req.user is undefined');
+		res.send('No user in session');
+		return;
+	}
+	res.send(req.user);
+	return;
 	// Change later
 	// const id = req.session.passport.user._id;
 
-	const id = req.user._id;
-	console.log('ID = ' + id);
-	console.log('Authenticating user with id: ' + id);
+	// console.log('ID = ' + id);
+	// console.log('Authenticating user with id: ' + id);
+	console.log(req.session.id);
 	try {
 		const user = await userModel.findById(id);
 		res.send(user);
-		console.log('AUTHENTICATED user with id: ' + id);
+		// console.log('AUTHENTICATED user with id: ' + id);
 	} catch (e) {
 		console.trace(e);
 	}
@@ -476,6 +494,7 @@ app.get('/notification/', async ({ query: { recipient } }, res) => {
 // login local
 app.post('/login/local', passport.authenticate('local'), (req, res) => {
 	res.send(req.user);
+	console.log('LOGIN SESSION ID = ' + req.session.id);
 });
 
 
