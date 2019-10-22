@@ -68,6 +68,7 @@ export default function AddFamilyMemberScreen({ navigation }) {
             </TouchableOpacity>
         );
     }
+
     function SearchMemberRoute() {
         return (
             <ScrollView>
@@ -77,8 +78,8 @@ export default function AddFamilyMemberScreen({ navigation }) {
 
             </ScrollView>
         )
-
     }
+
     function AddMemberRoute() {
         return (
             <>
@@ -89,50 +90,50 @@ export default function AddFamilyMemberScreen({ navigation }) {
                         value={name}
                         onChangeText={setName}
                     />
-                    <Text style = {styles.dobText}>Date of Birth:</Text>
+                    <Text style={styles.dobText}>Date of Birth:</Text>
                     <View style={styles.dobPicker}>
-                    <DatePicker
-                        style={styles.dateInputs}
-                        date={dob}
-                        mode="date"
-                        placeholder="Select date"
-                        format={DATE_FORMAT}
-                        maxDate={Moment().format(DATE_FORMAT)}
-                        confirmBtnText="Confirm"
-                        cancelBtnText="Cancel"
-                        androidMode="spinner"
-                        customStyles={{
-                            dateIcon: {
-                                position: 'absolute',
-                                left: 0,
-                                top: 4,
-                                marginLeft: 0
-                            },
-                            dateInput: {
-                                marginLeft:0
-                            }
-                        }}
-                        // showIcon={false}
-                        onDateChange={newDate => setDob(newDate)}
-                        value={dob}
-                    />
+                        <DatePicker
+                            style={styles.dateInputs}
+                            date={dob}
+                            mode="date"
+                            placeholder="Select date"
+                            format={DATE_FORMAT}
+                            maxDate={Moment().format(DATE_FORMAT)}
+                            confirmBtnText="Confirm"
+                            cancelBtnText="Cancel"
+                            androidMode="spinner"
+                            customStyles={{
+                                dateIcon: {
+                                    position: 'absolute',
+                                    left: 0,
+                                    top: 4,
+                                    marginLeft: 0
+                                },
+                                dateInput: {
+                                    marginLeft: 0
+                                }
+                            }}
+                            // showIcon={false}
+                            onDateChange={newDate => setDob(newDate)}
+                            value={dob}
+                        />
                     </View>
                     {linkedNode.spouse ?
-                    /* Gender options */
+                        /* Gender options */
                         <View style={styles.gender}>
                             <Text>Gender: </Text>
                             <View >
-                                <Text value={gender} onPress={() => setGender('m')} style={{...styles.genderButton, backgroundColor: gender === 'm' ? '#579B93' : '#a1a1a1'}}>
+                                <Text value={gender} onPress={() => setGender('m')} style={{ ...styles.genderButton, backgroundColor: gender === 'm' ? '#579B93' : '#a1a1a1' }}>
                                     Male
                                 </Text>
                             </View>
-                            
+
                             <View>
-                                <Text value={gender} onPress={() => setGender('f')} style={{...styles.genderButton, backgroundColor: gender === 'f' ? '#579B93' : '#a1a1a1'}}>
+                                <Text value={gender} onPress={() => setGender('f')} style={{ ...styles.genderButton, backgroundColor: gender === 'f' ? '#579B93' : '#a1a1a1' }}>
                                     Female
                                 </Text>
                             </View>
-          
+
 
                         </View>
                         // <TextInput
@@ -178,7 +179,7 @@ export default function AddFamilyMemberScreen({ navigation }) {
                         </Text>
                 </View>
             </>
-        )
+        );
     }
 
     const [tab, setTab] = useState({
@@ -190,7 +191,6 @@ export default function AddFamilyMemberScreen({ navigation }) {
     });
 
     return (
-        <>
         <ScrollView style={styles.allContainer}>
             <View style={styles.container}>
                 <Text style={styles.add}>Find your</Text>
@@ -215,21 +215,20 @@ export default function AddFamilyMemberScreen({ navigation }) {
                 initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
             />
         </ScrollView>
-        </>
-    )
+    );
 };
 
 const styles = StyleSheet.create({
-    gender:{
+    gender: {
         marginTop: 10,
         padding: 5,
         paddingLeft: 10,
         marginLeft: '5%',
         marginRight: '5%',
-        flexDirection:'row',
-        justifyContent:'space-around',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
     },
-    genderButton:{
+    genderButton: {
         // backgroundColor: '#EC6268',
         // borderColor: '#EC6268',
         borderWidth: 0,
@@ -238,20 +237,20 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         textAlign: 'center',
         color: 'white',
-        justifyContent:'center'
+        justifyContent: 'center'
         // justifyContent: 'center',
         // alignSelf: 'center',
         // marginVertical: 20,
     },
-    genderText:{
+    genderText: {
         textAlign: 'center',
         color: 'white'
     },
     allContainer: {
         backgroundColor: '#f5f7fb',
     },
-    search:{
-        marginTop:10,
+    search: {
+        marginTop: 10,
     },
     textInput: {
         borderBottomColor: 'black',
@@ -335,10 +334,10 @@ const styles = StyleSheet.create({
         marginLeft: '5%',
         marginRight: '5%',
     },
-    dobPicker:{
+    dobPicker: {
         padding: 5,
-        paddingLeft:10,
-        marginLeft:'5%',
+        paddingLeft: 10,
+        marginLeft: '5%',
         marginRight: '5%',
-    },  
+    },
 });

@@ -323,7 +323,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 	const [lines, setLines] = useState([]);
 	const [familyMemberSearch, setFamilyMemberSearch] = useState('');
 	const [isSvgDimensionsSet, setSvgDimensionsSet] = useState(false);
-
+	const [hide, setHide] = useState(true);
 	const [svgWidth, setSvgWidth] = useState(Dimensions.get('window').width);
 	const [svgHeight, setSvgHeight] = useState(Dimensions.get('window').height);
 
@@ -336,7 +336,6 @@ function FamilyTreeScreen({ ctx, navigation }) {
 				console.log(user);
 				const res = await axios.get(`${BACK_END_ENDPOINT}/users`);
 				const familyMembers = res.data;
-
 
 				const familyTreeInfo = generateFamilyTree(familyMembers, user._id);
 				const { familyTree, ancestors } = familyTreeInfo;

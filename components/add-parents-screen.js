@@ -28,10 +28,9 @@ export default function AddParentsScreen({ navigation }) {
     });
 
     function renderSearchResult({ item: { _id: parentId, name, pictureUrl, spouse } }) {
-        const disabled = childNode._id === parentId || !spouse || spouse && childNode.spouse === parentId;
+        // const disabled = childNode._id === parentId || !spouse || spouse && childNode.spouse === parentId;
         return (
             <TouchableOpacity
-                disabled={disabled}
                 onPress={() => {
                     Alert.alert(
                         'Add parent',
@@ -53,7 +52,6 @@ export default function AddParentsScreen({ navigation }) {
                     );
                 }
                 }
-                style={{ backgroundColor: disabled ? 'red' : 'white' }}
             >
                 <View style={{ flexDirection: 'row', marginHorizontal: 30, marginTop: 10, marginBottom: 20, }}>
                     <Image
