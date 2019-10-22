@@ -39,6 +39,7 @@ export default function UploadImageScreen({ navigation }) {
 			value,
 			description,
 		};
+		data.owner = await AsyncStorage.getItem('userId');
 		if (validateInput()) {
 			try {
 				data.file = await AsyncStorage.getItem('artefactPictureUrl');

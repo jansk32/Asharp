@@ -5,6 +5,7 @@ import moment from 'moment';
 import OneSignal from 'react-native-onesignal';
 
 import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default function NotificationScreen({ navigation }) {
 	const { navigate } = navigation;
@@ -12,7 +13,7 @@ export default function NotificationScreen({ navigation }) {
 
 	useEffect(() => {
 		async function fetchNotifications() {
-			const userRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
+			const userRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
 			const user = userRes.data;
 			console.log(user._id);
 

@@ -59,6 +59,7 @@ export default function ProfileSettingScreen({ navigation }) {
 			const newImage = await uploadImage(image.uri);
 			data.pictureUrl = newImage;
 		}
+		data.userId = await AsyncStorage.getItem("userId");
 		const res = await axios.put(`${BACK_END_ENDPOINT}/user/update`, data);
 		const updatedProfile = res.data;
 		console.log(updatedProfile);

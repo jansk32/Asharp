@@ -84,7 +84,6 @@ export default function AddFamilyMemberScreen({ navigation }) {
             <>
                 <Text style={styles.manualHeader}>Add details manually</Text>
                 <View style={styles.inputContainer}>
-
                     <TextInput
                         placeholder="Name"
                         style={styles.textInput}

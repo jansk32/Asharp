@@ -62,42 +62,82 @@ OneSignal.init(ONESIGNAL_APP_ID);
 OneSignal.inFocusDisplaying(2);
 OneSignal.addEventListener('received', () => console.log('RECEIVED ONESIGNAL'));
 
-const familyMemberStack = createStackNavigator({
-	FamilyTree: {screen: FamilyTreeScreen,
-		navigationOptions:{
+const familyStack = createStackNavigator({
+	FamilyTree: {
+		screen: FamilyTreeScreen,
+		navigationOptions: {
 			header: null,
-			
+
 		}
 	},
-	NewProfile: {screen: ProfileScreen},
-})
+	NewProfile: { screen: ProfileScreen },
+	AddFamilyMember: { screen: AddFamilyMemberScreen },
+	AddParentsManually: { screen: AddParentsManuallyScreen },
+	AddParents: { screen: AddParentsScreen },
+});
 
 const notifStack = createStackNavigator({
-	Notification: {screen: NotificationScreen,
-		navigationOptions:{
+	Notification: {
+		screen: NotificationScreen,
+		navigationOptions: {
 			header: null,
-			
 		}
 	},
-	NewProfile: {screen: ProfileScreen},
-})
+	ItemDetail: { screen: ItemDetailScreen },
+	NewProfile: { screen: ProfileScreen },
+});
+
+// Stack navigator for uploading artefact
+const uploadArtefactStack = createStackNavigator({
+	Home: { screen: HomeScreen,
+		navigationOptions: {
+			header: null,
+		}
+	},
+	AddImageDetails: { screen: AddImageDetailsScreen },
+},
+	{
+		navigationOptions: {
+			header: null,
+		},
+	});
+
+// Stack for profile
+const profileStack = createStackNavigator({
+	Profile: { screen: ProfileScreen,
+		navigationOptions: {
+			header: null,
+		} 
+	},
+	ItemDetail: { screen: ItemDetailScreen },
+	ProfileSetting: { screen: ProfileSettingScreen },
+});
+
+const timelineStack = createStackNavigator({
+	Timeline: { screen: TimelineScreen,
+		navigationOptions: {
+			header: null,
+		}  
+	},
+	ItemDetail: { screen: ItemDetailScreen },
+});
 
 // Main bottom tab navigator to navigate the main functionalities of the application
 const MainNavigator = createBottomTabNavigator({
 	Timeline: {
-		screen: TimelineScreen,
+		screen: timelineStack,
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon name="md-hourglass" color={tintColor} size={30} />
 		},
 	},
 	FamilyTree: {
-		screen: familyMemberStack,
+		screen: familyStack,
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon2 name="tree" color={tintColor} size={30} />
 		},
 	},
 	Home: {
-		screen: HomeScreen,
+		screen: uploadArtefactStack,
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon name="md-add" color={tintColor} size={30} />
 		},
@@ -110,7 +150,7 @@ const MainNavigator = createBottomTabNavigator({
 	},
 	Profile: {
 		// screen: ProfileDrawer,
-		screen: ProfileScreen,
+		screen: profileStack,
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon name="md-person" color={tintColor} size={30} />
 		},
@@ -128,7 +168,7 @@ const MainNavigator = createBottomTabNavigator({
 			style: {
 				backgroundColor: '#f5f7fb',
 				borderTopColor: '#f5f7fb',
-				 adfndnnkfnkdnkfnkdfnk: .5,
+				adfndnnkfnkdnkfnkdfnk: .5,
 				height: Dimensions.get('window').height / 14,
 				paddingTop: 5,
 			},
@@ -143,16 +183,6 @@ const MainNavigator = createBottomTabNavigator({
 
 	},
 );
-
-// Stack navigator for uploading artefact
-const uploadArtefactStack = createStackNavigator({
-	AddImageDetails: { screen: AddImageDetailsScreen },
-},
-	{
-		navigationOptions: {
-			header: null,
-		},
-	});
 
 // Authentication stack navigator for sign up
 const SignUpStack = createStackNavigator({
@@ -173,27 +203,10 @@ const SignUpStack = createStackNavigator({
 	},
 });
 
-const familyStack = createStackNavigator({
-	MainNavigator,
-	FamilyTree: {screen: FamilyTreeScreen},
-	AddFamilyMember: {screen: AddFamilyMemberScreen},
-	AddParentsManually: {screen:AddParentsManuallyScreen},
-	AddParents: {screen:AddParentsScreen},
-});
-
-// Stack navigator for looking at item details from gallery
-const itemStack = createStackNavigator({
-	MainNavigator,
-	Profile: { screen: ProfileScreen },
-	ProfileSetting: {screen: ProfileSettingScreen},
-	Timeline: { screen: TimelineScreen },
-	Notification: { screen: NotificationScreen },
-	ItemDetail: { screen: ItemDetailScreen },
-});
-
+// Sending artefact to family stack
 const sendFamilyStack = createStackNavigator({
-	ItemDetail: { screen: ItemDetailScreen },	
-	FamilyTree: {screen: FamilyTreeScreen},
+	ItemDetail: { screen: ItemDetailScreen },
+	FamilyTree: { screen: FamilyTreeScreen },
 });
 
 const Stack = createSwitchNavigator({
@@ -201,11 +214,7 @@ const Stack = createSwitchNavigator({
 	SignUpStack,
 	Login: { screen: LoginScreen },
 	MainNavigator,
-	itemStack,
 	sendFamilyStack,
-	uploadArtefactStack,
-	familyStack,
-	familyMemberStack,
 });
 
 const NavigationContainer = createAppContainer(Stack);
