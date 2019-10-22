@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, Image, TouchableOpacity, Dimensions, TouchableHighlight, FlatList } from 'react-native';
+import { Text, ActivityIndicator, StyleSheet, View, Image, TouchableOpacity, Dimensions, TouchableHighlight, FlatList } from 'react-native';
 import Timeline from 'react-native-timeline-feed';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
@@ -16,6 +16,7 @@ export default function TimelineScreen({ navigation }) {
 
 	const { navigate } = navigation;
 	const [artefacts, setArtefacts] = useState([]);
+	const [hide, setHide] = useState(true);
 
 	function formatTime(timeData) {
 		// TIMELINE FORMAT
@@ -57,6 +58,7 @@ export default function TimelineScreen({ navigation }) {
 				const res = await axios.get(`${BACK_END_ENDPOINT}/artefact`);
 				setArtefacts(res.data);
 				console.log(res.data)
+				setHide(false)
 			} catch (e) {
 				console.error(e);
 			}
@@ -143,6 +145,7 @@ export default function TimelineScreen({ navigation }) {
 			<View style={styles.containers}>
 				<Text style={styles.title}>Memories Left Behind</Text>
 				<Text style={styles.artefactTitle}>Artefact</Text>
+				<ActivityIndicator size="large" color="#0000ff" animating={hide} />
 			</View>
 			<TabView
 				navigationState={tab}

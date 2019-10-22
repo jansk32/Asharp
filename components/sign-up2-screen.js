@@ -17,6 +17,7 @@ export default function SignUp2({ navigation }) {
 	const [name, setName] = useState('');
 	const [dob, setDob] = useState('');
 	const [password, setPassword] = useState('');
+	const [gender, setGender] = useState('');
 
 	// Validate respective textinputs
 	function validateInput(){
@@ -27,16 +28,21 @@ export default function SignUp2({ navigation }) {
 		if(password.length < 6){
 				alert("password must be at least 6 characters long");
 				return false
+				
 		// } else if (!(password.includes(/[-!$%^&*()_+|~=`{}[]:;'<>?,./]/))){
 		// 	alert("must include one symbol");
 		// 	return false;
 	}
+		if(gender.length < 1){
+			alert("Please put in a gender");
+			return false;
+		}
 	return true;
 	}
 
 	// Stores input in a temporary storage
 	async function goToNextPage() {
-		const data = { name, dob, password }
+		const data = { name, dob, password, gender }
 		if (validateInput() === true){
 			for (const key in data) {
 				try {
@@ -106,7 +112,22 @@ export default function SignUp2({ navigation }) {
 							/>
 						</View>
 					</View>
+					<View style={styles.gender}>
+					<Text style={styles.text}>Gender: </Text>
+					<View >
+						<Text value={gender} onPress={() => setGender('m')} style={{...styles.genderButton, backgroundColor: gender === 'm' ? '#579B93' : '#a1a1a1'}}>
+							Male
+						</Text>
+					</View>
+					
+					<View>
+						<Text value={gender} onPress={() => setGender('f')} style={{...styles.genderButton, backgroundColor: gender === 'f' ? '#579B93' : '#a1a1a1'}}>
+							Female
+						</Text>
+					</View>
+                </View>
 				</View>
+				
 				<TouchableOpacity
 					onPress={goToNextPage}>
 					<View style={styles.redButton}>
@@ -116,6 +137,8 @@ export default function SignUp2({ navigation }) {
 							</Text>
 					</View>
 				</TouchableOpacity>
+				
+				
 			</View>
 		</>
 	);
@@ -161,6 +184,26 @@ const styles = StyleSheet.create({
 	},
 	inputElem: {
 		marginBottom: 18,
-	}
-}
-)
+	},
+	gender:{
+        // marginTop: 10,
+        padding: 5,
+        // paddingLeft: 10,
+        // marginLeft: '5%',
+        // marginRight: '5%',
+        flexDirection:'row',
+		justifyContent:'space-around',
+		marginBottom: 18,
+	},
+	genderButton:{
+        borderWidth: 0,
+        width: 80,
+        height: 30,
+        borderRadius: 50,
+        textAlign: 'center',
+        color: 'white',
+		justifyContent:'center',
+		fontSize:15,
+		paddingTop: 3,
+	},
+});

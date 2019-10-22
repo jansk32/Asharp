@@ -337,12 +337,14 @@ function FamilyTreeScreen({ ctx, navigation }) {
 				const res = await axios.get(`${BACK_END_ENDPOINT}/users`);
 				const familyMembers = res.data;
 
+
 				const familyTreeInfo = generateFamilyTree(familyMembers, user._id);
 				const { familyTree, ancestors } = familyTreeInfo;
 				const lines = mainDrawLines(familyTree, ancestors);
 
 				setFamilyTree(familyTree);
 				setLines(lines);
+				setHide(false)
 			} catch (e) {
 				console.trace(e);
 			}
@@ -366,6 +368,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 			<View style={styles.headerContainer}>
 				<Text style={styles.add}>This is your</Text>
 				<Text style={styles.title}>Family Tree</Text>
+				<ActivityIndicator size="large" color="#0000ff" animating={hide} />
 				<View style={styles.searchContainer}>
 					<Icon name="md-search" size={30} color={'#2d2e33'} />
 					<TextInput
