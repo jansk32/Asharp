@@ -69,7 +69,7 @@ export default function ProfileSettingScreen({ navigation }) {
 	// Get user details
 	useEffect(() => {
 		async function fetchProfile() {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
+			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
 			const user = res.data;
 			console.log(user);
 			setUser(user);
