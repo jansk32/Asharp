@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const axios = require('axios');
 const moment = require('moment');
-const cors = require('cors');
 const { ensureLoggedIn } = require('connect-ensure-login');
 
 // Environment variables
@@ -70,11 +69,7 @@ passport.deserializeUser(async function (_id, done) {
 });
 
 // Cookies
-// app.set('trust proxy', 1);
-app.use(cors({
-	credentials: true,
-	origin: 'http://localhost:3000'
-}));
+app.set('trust proxy', 1);
 
 app.use(session({
 	secret: 'secret_string',
