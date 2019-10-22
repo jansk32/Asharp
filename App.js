@@ -21,8 +21,6 @@ import AddParentsManually from './components/add-parents-manually-screen';
 
 import { MenuProvider } from 'react-native-popup-menu';
 
-
-
 // Import react navigation tools
 import {
 	createBottomTabNavigator,
@@ -62,8 +60,14 @@ OneSignal.init(ONESIGNAL_APP_ID);
 OneSignal.inFocusDisplaying(2);
 OneSignal.addEventListener('received', () => console.log('RECEIVED ONESIGNAL'));
 
+// Sending artefact to family stack
+const sendFamilyStack = createStackNavigator({
+	ItemDetail: { screen: ItemDetailScreen },
+	FamilyTree: { screen: FamilyTreeScreen },
+});
+
 const familyStack = createStackNavigator({
-	FamilyTree: {
+	HomeFamilyTree: {
 		screen: FamilyTreeScreen,
 		navigationOptions: {
 			header: null,
@@ -109,7 +113,7 @@ const profileStack = createStackNavigator({
 			header: null,
 		} 
 	},
-	ItemDetail: { screen: ItemDetailScreen },
+	sendFamilyStack,
 	ProfileSetting: { screen: ProfileSettingScreen },
 });
 
@@ -130,7 +134,7 @@ const MainNavigator = createBottomTabNavigator({
 			tabBarIcon: ({ tintColor }) => <Icon name="md-hourglass" color={tintColor} size={30} />
 		},
 	},
-	FamilyTree: {
+	HomeFamilyTree: {
 		screen: familyStack,
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon2 name="tree" color={tintColor} size={30} />
@@ -203,18 +207,13 @@ const SignUpStack = createStackNavigator({
 	},
 });
 
-// Sending artefact to family stack
-const sendFamilyStack = createStackNavigator({
-	ItemDetail: { screen: ItemDetailScreen },
-	FamilyTree: { screen: FamilyTreeScreen },
-});
+
 
 const Stack = createSwitchNavigator({
 	Welcome: { screen: WelcomeScreen },
 	SignUpStack,
 	Login: { screen: LoginScreen },
 	MainNavigator,
-	sendFamilyStack,
 });
 
 const NavigationContainer = createAppContainer(Stack);
