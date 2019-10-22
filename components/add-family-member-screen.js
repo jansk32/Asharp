@@ -84,7 +84,6 @@ export default function AddFamilyMemberScreen({ navigation }) {
             <>
                 <Text style={styles.manualHeader}>Add details manually</Text>
                 <View style={styles.inputContainer}>
-
                     <TextInput
                         placeholder="Name"
                         style={styles.textInput}
@@ -212,7 +211,6 @@ const styles = StyleSheet.create({
         padding: 5,
         paddingLeft: 10,
         width: Dimensions.get('window').width / 2,
-        marginBottom: 20,
     },
     searchContainer: {
         flexDirection: 'row',
