@@ -336,6 +336,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 				const familyMembers = res.data;
 				console.log(familyMembers);
 
+				
 				const familyTreeInfo = generateFamilyTree(familyMembers, user._id);
 				const { familyTree, ancestors } = familyTreeInfo;
 				const lines = mainDrawLines(familyTree, ancestors);
@@ -354,6 +355,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 		if (familyTree.length) {
 			// Highlight the nodes that match the search string
 			// If the search string is empty, there are no matches
+			setHide(false)
 			setFamilyTree(familyTree
 				.map(node =>
 					({ ...node, matchesSearch: familyMemberSearch ? node.name.toLowerCase().includes(familyMemberSearch.toLowerCase()) : false })));
@@ -365,6 +367,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 			<View style={styles.headerContainer}>
 				<Text style={styles.add}>This is your</Text>
 				<Text style={styles.title}>Family Tree</Text>
+				<ActivityIndicator size="large" color="#0000ff" animating={hide} />
 				<View style={styles.searchContainer}>
 					<Icon name="md-search" size={30} color={'#2d2e33'} />
 					<TextInput
