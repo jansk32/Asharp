@@ -7,11 +7,12 @@ import DatePicker from 'react-native-datepicker';
 import axios from 'axios';
 import downloadImage from '../image-tools';
 import AsyncStorage from '@react-native-community/async-storage';
-import Moment from 'moment';
-var moment = require('moment');
+import moment from 'moment';
+
+import { BACK_END_ENDPOINT } from '../constants';
 
 // Import date formatting module moment.js
-Moment.locale('en');
+moment.locale('en');
 
 export default function UploadImageScreen({ navigation }) {
 	const { navigate } = navigation;
@@ -47,7 +48,7 @@ export default function UploadImageScreen({ navigation }) {
 			}
 			try {
 				console.log(data);
-				await axios.post('http://asharp-mementos.herokuapp.com/artefact/create', data);
+				await axios.post(`${BACK_END_ENDPOINT}/artefact/create`, data);
 				navigate('Home');
 			} catch (e) {
 				console.log(e);
@@ -95,7 +96,7 @@ export default function UploadImageScreen({ navigation }) {
 			<ScrollView>
 				<View style={styles.container}>
 					<Image
-						source={ load ?  { uri: image} : require("../app_icon.jpeg")}
+						source={load ? { uri: image } : require("../app_icon.jpeg")}
 						style={styles.imageStyle}
 					/>
 					<View style={styles.inputBox}>

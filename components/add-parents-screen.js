@@ -5,6 +5,8 @@ import axios from 'axios';
 import { FlatList } from 'react-native-gesture-handler';
 import UserSearchBox from './user-search-box';
 
+import { BACK_END_ENDPOINT } from '../constants';
+
 export default function AddParentsScreen({ navigation }) {
     const { navigate } = navigation;
     const { linkedNode: childNode } = navigation.state.params;
@@ -25,7 +27,7 @@ export default function AddParentsScreen({ navigation }) {
                             {
                                 text: 'OK',
                                 onPress: () => {
-                                    axios.put('http://localhost:3000/user/add-parent', {
+                                    axios.put(`${BACK_END_ENDPOINT}/user/add-parent`, {
                                         childId: childNode._id,
                                         parentId,
                                     });

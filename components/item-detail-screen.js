@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { BACK_END_ENDPOINT } from '../constants';
 
 moment.locale('en');
 
@@ -11,7 +11,7 @@ function useCurrentUser() {
 
     useEffect(() => {
         async function fetchCurrentUser() {
-            const res = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
+            const res = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
             setCurrentUser(res.data);
         }
         fetchCurrentUser();
@@ -32,10 +32,10 @@ export default function ItemDetailScreen({ navigation }) {
     useEffect(() => {
         // Get a specific artefact
         async function fetchArtefact() {
-            const res = await axios.get(`http://asharp-mementos.herokuapp.com/artefact/find/${artefactId}`);
+            const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/find/${artefactId}`);
             setArtefact(res.data);
 
-            const ownerRes = await axios.get('http://asharp-mementos.herokuapp.com/user/artefact', {
+            const ownerRes = await axios.get(`${BACK_END_ENDPOINT}/user/artefact`, {
                 params: {
                     _id: res.data.owner
                 }

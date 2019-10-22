@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, View, Image, TouchableOpacity, TextInput, Dimensions, ScrollView } from 'react-native';
 import axios from 'axios';
 import DatePicker from 'react-native-datepicker';
-import Moment from 'moment';
+import moment from 'moment';
 
-
-Moment.locale('en');
-
+moment.locale('en');
 
 export default function AddParentsManuallyScreen({navigation}){
-    const {navigate} = navigation;
+    const { navigate } = navigation;
     const [dob, setDob] = useState('');
     const [dobMother, setDobMother] = useState('');
 
@@ -20,7 +18,7 @@ export default function AddParentsManuallyScreen({navigation}){
                     <Text style={styles.add}>Add manually</Text>
                     <Text style={styles.title}>Parents</Text>
                 </View>
-                
+
                 <View style={styles.inputContainer}>
                     <Text style={styles.manualHeader}>Add Father</Text>
                     <TextInput
@@ -36,7 +34,7 @@ export default function AddParentsManuallyScreen({navigation}){
 								mode="date"
 								placeholder="Select date"
 								format="YYYY-MM-DD"
-								maxDate={Moment().format('DD-MM-YYYY')}
+								maxDate={moment().format('DD-MM-YYYY')}
 								confirmBtnText="Confirm"
 								cancelBtnText="Cancel"
 								androidMode="spinner"
@@ -63,8 +61,8 @@ export default function AddParentsManuallyScreen({navigation}){
                     <TextInput
                         placeholder="Name"
                         style={styles.textInput}
-                        // value={name}
-                        // onChangeText={setName}
+                    // value={name}
+                    // onChangeText={setName}
                     />
                     <Text style = {styles.dobText}>Date of Birth:</Text>
                     <View style = {styles.dobPicker}>
@@ -74,7 +72,7 @@ export default function AddParentsManuallyScreen({navigation}){
                         mode="date"
                         placeholder="Select date"
                         format="YYYY-MM-DD"
-                        maxDate={Moment().format('DD-MM-YYYY')}
+                        maxDate={moment().format('DD-MM-YYYY')}
                         confirmBtnText="Confirm"
                         cancelBtnText="Cancel"
                         androidMode="spinner"
@@ -170,11 +168,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginLeft: 10,
     },
-    results:{
-        fontSize:15,
+    results: {
+        fontSize: 15,
         color: '#2d2e33',
-        marginLeft:10,
-        fontWeight:'bold',
+        marginLeft: 10,
+        fontWeight: 'bold',
     },
     add: {
         fontSize: 25,
@@ -192,7 +190,7 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 15,
         textAlign: 'center',
-        paddingTop:40,
+        paddingTop: 40,
         color: 'white'
     },
     button: {

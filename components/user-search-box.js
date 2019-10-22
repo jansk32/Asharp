@@ -4,6 +4,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import { FlatList } from 'react-native-gesture-handler';
 
+import { BACK_END_ENDPOINT } from '../constants';
+
 export default function UserSearchBox({ renderItem }) {
     // parameters:
     // - onPress of TouchableOpacity of search result
@@ -15,7 +17,7 @@ export default function UserSearchBox({ renderItem }) {
 
     useEffect(() => {
         async function searchUsers() {
-            const res = await axios.get('http://localhost:3000/user/search', {
+            const res = await axios.get(`${BACK_END_ENDPOINT}/user/search`, {
                 params: {
                     name: nameQuery
                 }

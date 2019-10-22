@@ -7,6 +7,7 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuConte
 const { SlideInMenu } = renderers;
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
 
 const NODE_RADIUS = 50;
 /* SVG panning and zooming is taken from https://snack.expo.io/@msand/svg-pinch-to-pan-and-zoom
@@ -182,9 +183,9 @@ class ZoomableSvg extends Component {
 									text: 'OK',
 									onPress: async () => {
 										try {
-											const userRes = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
+											const userRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
 											const user = userRes.data;
-											axios.put('http://asharp-mementos.herokuapp.com/artefact/assign', {
+											axios.put(`${BACK_END_ENDPOINT}/artefact/assign`, {
 												artefactId: navigation.state.params.artefactId,
 												recipientId: this.state.tappedNode._id,
 												senderId: user._id,
@@ -213,7 +214,7 @@ class ZoomableSvg extends Component {
 		 * The x coordinate of the top left corner of the family tree is set to
 		 * half the display width minus half the width of the family tree in pixels.
 		 * Same with the y coordinate of the top left corner but uses height instead of width.
-		*/
+		 */
 		if (prevProps.familyTree.length === 0) {
 			const { height, width, familyTree } = this.props;
 			const xCoords = familyTree.map(node => node.x);
@@ -296,7 +297,7 @@ function Node({ data: { x, y, name, _id, pictureUrl, matchesSearch } }) {
 				width={NODE_RADIUS * 2}
 				x={x - NODE_RADIUS}
 				y={y - NODE_RADIUS}
-				href={{ uri: pictureUrl || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
+				href={{ uri: pictureUrl || BLANK_PROFILE_PIC_URI }}
 				clipPath={`url(#${_id})`}
 				preserveAspectRatio="xMidYMid slice"
 			/>
@@ -323,20 +324,24 @@ function FamilyTreeScreen({ ctx, navigation }) {
 
 	useEffect(() => {
 		async function fetchFamilyMembers() {
-			const res = await axios.get('http://asharp-mementos.herokuapp.com/users');
-			const familyMembers = res.data;
-			console.log(familyMembers);
+			try {
+				// Get user document of current user
+				const userRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
+				const user = userRes.data;
 
-			// Get user document of current user
-			const userRes = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
-			const user = userRes.data;
+				const res = await axios.get(`${BACK_END_ENDPOINT}/users`);
+				const familyMembers = res.data;
+				console.log(familyMembers);
 
-			const familyTreeInfo = generateFamilyTree(familyMembers, user._id);
-			const { familyTree, ancestors } = familyTreeInfo;
-			const lines = mainDrawLines(familyTree, ancestors);
+				const familyTreeInfo = generateFamilyTree(familyMembers, user._id);
+				const { familyTree, ancestors } = familyTreeInfo;
+				const lines = mainDrawLines(familyTree, ancestors);
 
-			setFamilyTree(familyTree);
-			setLines(lines);
+				setFamilyTree(familyTree);
+				setLines(lines);
+			} catch (e) {
+				console.trace(e);
+			}
 		}
 		fetchFamilyMembers();
 	}, []);
@@ -379,11 +384,11 @@ function FamilyTreeScreen({ ctx, navigation }) {
 }
 
 const styles = StyleSheet.create({
-	headerContainer:{
+	headerContainer: {
 		borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
-        backgroundColor: '#f5f7fb',
-        paddingBottom: 30,
+		borderBottomRightRadius: 30,
+		backgroundColor: '#f5f7fb',
+		paddingBottom: 30,
 	},
 	searchContainer: {
 		flexDirection: 'row',
@@ -420,7 +425,7 @@ const styles = StyleSheet.create({
 		borderTopStartRadius: 20,
 		borderRadius: 20,
 		borderColor: 'black',
-		backgroundColor:"black",
+		backgroundColor: "black",
 		borderWidth: 1,
 		flex: 1 / 4,
 		width: Dimensions.get('window').width * 0.85,
@@ -432,10 +437,10 @@ const styles = StyleSheet.create({
 	menuText: {
 		textAlign: 'center',
 		fontSize: 20,
-		color:'white',
-		borderBottomWidth:1,
-		borderBottomColor:'white',
-		paddingBottom:7,
+		color: 'white',
+		borderBottomWidth: 1,
+		borderBottomColor: 'white',
+		paddingBottom: 7,
 
 		// borderTopColor:'#f5f7fb',
 		// borderLeftColor:'#f5f7fb',

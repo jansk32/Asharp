@@ -10,17 +10,14 @@ import { Assets } from 'react-navigation-stack';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
 const { SlideInMenu } = renderers;
 
+// Environment variables
+import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
+
 // Number 
 const numColumns = 3;
 
-// Array of images for the grid
-const data = [
-	{ image: require('../tim_derp.jpg') }, { image: require('../gg.png') },
-];
-
 // To format data
 const formatData = (data, numColumns) => {
-
 	const fullRowsNum = Math.floor(data.length / numColumns);
 
 	let numberOfElementsLastRow = data.length - (fullRowsNum * numColumns);
@@ -36,7 +33,7 @@ function useCurrentUser() {
 
 	useEffect(() => {
 		async function fetchCurrentUser() {
-			const res = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
+			const res = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
 			setCurrentUser(res.data);
 		}
 		fetchCurrentUser();
@@ -57,14 +54,14 @@ function ProfileScreen({ navigation, ctx }) {
 	async function getProfile() {
 		let targetId = userId;
 		if (!userId) {
-			const currentUserRes = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
+			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
 			targetId = currentUserRes.data._id;
 		}
 		try {
-			const res = await axios.get('http://localhost:3000/user/find/' + targetId);
+			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/` + targetId);
 			setProfile(res.data);
 		} catch (e) {
-			console.error(e);
+			console.trace(e);
 		}
 	}
 
@@ -72,15 +69,15 @@ function ProfileScreen({ navigation, ctx }) {
 	async function fetchArtefacts() {
 		let targetId = userId;
 		if (!userId) {
-			const currentUserRes = await axios.get('http://asharp-mementos.herokuapp.com/user', { withCredentials: true });
+			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
 			targetId = currentUserRes.data._id;
 		}
 		try {
-			const res = await axios.get('http://localhost:3000/artefact/findbyowner/' + targetId);
+			const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/findbyowner/` + targetId);
 			setArtefact(res.data);
 			setHide(false);
 		} catch (e) {
-			console.log(e);
+			console.trace(e);
 		}
 	}
 
@@ -101,12 +98,12 @@ function ProfileScreen({ navigation, ctx }) {
 	// Logout function
 	async function logout() {
 		try {
-			await axios.get('http://asharp-mementos.herokuapp.com/logout');
+			await axios.get(`${BACK_END_ENDPOINT}/logout`);
 			await AsyncStorage.multiRemove(['email', 'password']);
 			OneSignal.removeExternalUserId();
 			navigate('Welcome');
 		} catch (e) {
-			console.error(e);
+			console.trace(e);
 		}
 	}
 
@@ -154,7 +151,7 @@ function ProfileScreen({ navigation, ctx }) {
 			<ScrollView>
 				<View style={styles.profileBox}>
 					<Image
-						source={{ uri: profile.pictureUrl || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
+						source={{ uri: profile.pictureUrl || BLANK_PROFILE_PIC_URI }}
 						style={styles.image}
 					/>
 					<View style={styles.textBox}>

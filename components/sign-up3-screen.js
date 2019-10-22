@@ -8,6 +8,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import { pickImage, uploadImage } from '../image-tools';
 
+import { BACK_END_ENDPOINT } from '../constants';
 
 // Stylesheets for formatting and designing layout
 const styles = StyleSheet.create({
@@ -83,16 +84,16 @@ export default function SignUp3({ navigation }) {
 			}
 		}
 		data.isUser = true;
-		axios.post('http://asharp-mementos.herokuapp.com/user/create', data);
+		axios.post(`${BACK_END_ENDPOINT}/user/create`, data);
 	}
 
 	// Automatically login to have give available acct details
 	async function login() {
-		axios.post('http://asharp-mementos.herokuapp.com/login/local', {
+		await axios.post(`${BACK_END_ENDPOINT}/login/local`, {
 			email: await AsyncStorage.getItem('email'),
 			password: await AsyncStorage.getItem('password')
-		})
-			.then((result) => navigate('Home'));
+		});
+		navigate('Home');
 	}
 
 	// Finish sign up and log in straight into the home page
@@ -104,7 +105,7 @@ export default function SignUp3({ navigation }) {
 			ToastAndroid.show('Error storing picture URL', ToastAndroid.SHORT);
 		}
 		await uploadSignUpData();
-		await login()
+		await login();
 	}
 
 	return (

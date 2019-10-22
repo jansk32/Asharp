@@ -24,11 +24,11 @@ export default function HomeScreen({ navigation }) {
 	}
 	/*	Go to image detail page once you upload the picture */
 	async function upload() {
-		try{
-		await uploadImageArtefact()
-			.then(() => navigate('AddImageDetails'));
+		try {
+			await uploadImageArtefact();
+			navigate('AddImageDetails');
 		} catch (e) {
-			alert("Please select an Image to upload");
+			alert('Please select an Image to upload');
 		}
 	}
 	/*	A button for user to upload image, previews image, and a button to navigate 
@@ -40,21 +40,21 @@ export default function HomeScreen({ navigation }) {
 				<Text style={styles.uploadTitle}>Upload Artefact</Text>
 			</View>
 			<ScrollView>
-			<Image source={image} style={styles.imageStyle} />
-			<TouchableOpacity
-				onPress={async () => setImage(await pickImage())}
-				style={styles.pickImageButton}>
-				<Text
-					style={styles.text}>
-					Select Image
+				<Image source={image} style={styles.imageStyle} />
+				<TouchableOpacity
+					onPress={async () => setImage(await pickImage())}
+					style={styles.pickImageButton}>
+					<Text
+						style={styles.text}>
+						Select Image
 						</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				onPress={upload}
-				style={styles.uploadButton}>
-				<Text style={styles.whiteText}>Upload Image</Text>
-			</TouchableOpacity>
-			<Text>{condition}</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={upload}
+					style={styles.uploadButton}>
+					<Text style={styles.whiteText}>Upload Image</Text>
+				</TouchableOpacity>
+				<Text>{condition}</Text>
 			</ScrollView>
 		</>
 	);
