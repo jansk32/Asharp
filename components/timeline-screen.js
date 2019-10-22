@@ -145,8 +145,8 @@ export default function TimelineScreen({ navigation }) {
 			<View style={styles.containers}>
 				<Text style={styles.title}>Memories Left Behind</Text>
 				<Text style={styles.artefactTitle}>Artefact</Text>
+				<ActivityIndicator size="large" color="#0000ff" animating={hide} />
 			</View>
-			<ActivityIndicator size="large" color="#0000ff" animating={hide} />
 			<TabView
 				navigationState={tab}
 				renderScene={SceneMap({
