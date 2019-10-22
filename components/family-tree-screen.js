@@ -399,7 +399,6 @@ function FamilyTreeScreen({ ctx, navigation }) {
 						:
 						null
 				}
-
 			</View>
 		</>
 	);

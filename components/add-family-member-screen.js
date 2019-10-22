@@ -75,9 +75,8 @@ export default function AddFamilyMemberScreen({ navigation }) {
                 <View style={styles.search}>
                     <UserSearchBox renderItem={renderSearchResult} />
                 </View>
-
             </ScrollView>
-        )
+        );
     }
 
     function AddMemberRoute() {
