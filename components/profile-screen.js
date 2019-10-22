@@ -60,6 +60,7 @@ function ProfileScreen({ navigation, ctx }) {
 		try {
 			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/` + targetId);
 			setProfile(res.data);
+			setHide(false);
 		} catch (e) {
 			console.trace(e);
 		}
@@ -147,7 +148,7 @@ function ProfileScreen({ navigation, ctx }) {
 					</Menu>
 				</View>
 			</View>
-			<ActivityIndicator size="large" color="#0000ff" animating={hide === 'true'} />
+			<ActivityIndicator size="large" color="#0000ff" animating={hide} />
 			<ScrollView>
 				<View style={styles.profileBox}>
 					<Image
