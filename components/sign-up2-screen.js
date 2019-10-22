@@ -28,16 +28,21 @@ export default function SignUp2({ navigation }) {
 		if(password.length < 6){
 				alert("password must be at least 6 characters long");
 				return false
+				
 		// } else if (!(password.includes(/[-!$%^&*()_+|~=`{}[]:;'<>?,./]/))){
 		// 	alert("must include one symbol");
 		// 	return false;
 	}
+		if(gender.length < 1){
+			alert("Please put in a gender");
+			return false;
+		}
 	return true;
 	}
 
 	// Stores input in a temporary storage
 	async function goToNextPage() {
-		const data = { name, dob, password }
+		const data = { name, dob, password, gender }
 		if (validateInput() === true){
 			for (const key in data) {
 				try {
