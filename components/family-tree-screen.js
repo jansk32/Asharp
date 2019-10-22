@@ -8,10 +8,12 @@ const { SlideInMenu } = renderers;
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const NODE_RADIUS = 50;
 /* SVG panning and zooming is taken from https://snack.expo.io/@msand/svg-pinch-to-pan-and-zoom
- * Written by Mikael Sand */
+ * Written by Mikael Sand 
+ * Taken on 22 October 2019 */
 
 function calcDistance(x1, y1, x2, y2) {
 	const dx = x1 - x2;
@@ -183,7 +185,7 @@ class ZoomableSvg extends Component {
 									text: 'OK',
 									onPress: async () => {
 										try {
-											const userRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
+											const userRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
 											const user = userRes.data;
 											axios.put(`${BACK_END_ENDPOINT}/artefact/assign`, {
 												artefactId: navigation.state.params.artefactId,
@@ -327,9 +329,9 @@ function FamilyTreeScreen({ ctx, navigation }) {
 		async function fetchFamilyMembers() {
 			try {
 				// Get user document of current user
-				const userRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
+				const userRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
 				const user = userRes.data;
-
+				console.log(user);
 				const res = await axios.get(`${BACK_END_ENDPOINT}/users`);
 				const familyMembers = res.data;
 				console.log(familyMembers);
