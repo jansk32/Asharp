@@ -48,10 +48,12 @@ export default function AddParentsScreen({ navigation }) {
                 }
                 style={{ backgroundColor: disabled ? 'red' : 'white' }}
             >
-                <Image
-                    source={{ uri: pictureUrl }}
-                    style={{ height: 50, width: 50 }} />
-                <Text>{name}</Text>
+                <View style={{ flexDirection: 'row', marginHorizontal: 30, marginTop: 10, marginBottom: 20, }}>
+                    <Image
+                        source={{ uri: pictureUrl || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
+                        style={{ height: 60, width: 60, marginRight: 30, borderRadius: 50, }} />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{name}</Text>
+                </View>
             </TouchableOpacity>
         );
     }
