@@ -8,29 +8,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 export default function HomeScreen({ navigation }) {
 	const { navigate } = navigation;
-	const [condition, setCondition] = useState('');
 	const [image, setImage] = useState({});
 
-	/*	Upload the pictures to database */
-	async function uploadImageArtefact() {
-		const pictureUrl = await uploadImage(image.uri);
-		console.log(pictureUrl);
-		try {
-			await AsyncStorage.setItem('artefactPictureUrl', pictureUrl);
-		} catch (e) {
-			console.error(e);
-			ToastAndroid.show('Error storing picture URL', ToastAndroid.SHORT);
-		}
-	}
-	/*	Go to image detail page once you upload the picture */
-	async function upload() {
-		try {
-			await uploadImageArtefact();
-			navigate('AddImageDetails');
-		} catch (e) {
-			alert('Please select an Image to upload');
-		}
-	}
 	/*	A button for user to upload image, previews image, and a button to navigate 
 	   to add details page */
 	return (
@@ -42,19 +21,17 @@ export default function HomeScreen({ navigation }) {
 			<ScrollView>
 				<Image source={image} style={styles.imageStyle} />
 				<TouchableOpacity
-					onPress={async () => setImage(await pickImage())}
-					style={styles.pickImageButton}>
+					onPress={async () => {
+						const myImage = await pickImage();
+						const uri = myImage.uri;
+						navigate('AddImageDetails', { uri });
+					}}
+					style={styles.uploadButton}>
 					<Text
 						style={styles.text}>
 						Select Image
 						</Text>
 				</TouchableOpacity>
-				<TouchableOpacity
-					onPress={upload}
-					style={styles.uploadButton}>
-					<Text style={styles.whiteText}>Upload Image</Text>
-				</TouchableOpacity>
-				<Text>{condition}</Text>
 			</ScrollView>
 		</>
 	);

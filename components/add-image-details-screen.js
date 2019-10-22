@@ -5,7 +5,7 @@ import {
 import { NavigationEvents } from 'react-navigation';
 import DatePicker from 'react-native-datepicker';
 import axios from 'axios';
-import downloadImage from '../image-tools';
+import { pickImage, uploadImage } from '../image-tools';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 
@@ -16,12 +16,11 @@ moment.locale('en');
 
 export default function UploadImageScreen({ navigation }) {
 	const { navigate } = navigation;
+	const { uri } = navigation.state.params;
 	const [description, setDescription] = useState('');
 	const [value, setValue] = useState('');
 	const [name, setName] = useState('');
 	const [date, setDate] = useState('');
-	const [image, setImage] = useState('');
-	const [load, setLoad] = useState(false);
 
 	//   useEffect(() => {
 	//     // createArtefact();
@@ -33,7 +32,7 @@ export default function UploadImageScreen({ navigation }) {
 	// Function to create artefact
 	async function createArtefact() {
 		// let dataKeys = ['value', 'name', 'date', 'description','pictureUrl'];
-		let data = {
+		const data = {
 			name,
 			date,
 			value,
@@ -42,10 +41,10 @@ export default function UploadImageScreen({ navigation }) {
 		data.owner = await AsyncStorage.getItem('userId');
 		if (validateInput()) {
 			try {
-				data.file = await AsyncStorage.getItem('artefactPictureUrl');
-				setImage(data.file);
+				data.file = await uploadImage(uri);
+				// setImage(data.file);
 			} catch (e) {
-				ToastAndroid.show('Error getting pictureUrl', ToastAndroid.SHORT);
+				ToastAndroid.show('Error uploading image', ToastAndroid.SHORT);
 			}
 			try {
 				console.log(data);
@@ -77,18 +76,18 @@ export default function UploadImageScreen({ navigation }) {
 	}
 
 	// Initialise image
-	async function getImage() {
-		const file = await AsyncStorage.getItem('artefactPictureUrl');
-		setImage(file);
-		console.log(file);
-	}
+	// async function getImage() {
+	// 	// const file = await AsyncStorage.getItem('artefactPictureUrl');
+	// 	setImage({ uri });
+	// 	console.log(file);
+	// }
 
 	// Get image to show on the screen
-	useEffect(() => {
-		setLoad(false);
-		getImage();
-		setLoad(true);
-	}, []);
+	// useEffect(() => {
+	// 	setLoad(false);
+	// 	getImage();
+	// 	setLoad(true);
+	// }, []);
 
 	/* Returns a form where the user can fill in their artefacts
 	   name, description and value. */
@@ -97,7 +96,7 @@ export default function UploadImageScreen({ navigation }) {
 			<ScrollView>
 				<View style={styles.container}>
 					<Image
-						source={load ? { uri: image } : require("../app_icon.jpeg")}
+						source={{ uri }}
 						style={styles.imageStyle}
 					/>
 					<View style={styles.inputBox}>
