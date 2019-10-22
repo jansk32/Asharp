@@ -33,7 +33,7 @@ function useCurrentUser() {
 
 	useEffect(() => {
 		async function fetchCurrentUser() {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
+			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
 			setCurrentUser(res.data);
 		}
 		fetchCurrentUser();

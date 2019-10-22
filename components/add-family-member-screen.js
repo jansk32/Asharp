@@ -71,7 +71,7 @@ export default function AddFamilyMemberScreen({ navigation }) {
     function SearchMemberRoute() {
         return (
             <ScrollView>
-                <View>
+                <View style={styles.search}>
                     <UserSearchBox renderItem={renderSearchResult} />
                 </View>
 
@@ -82,7 +82,6 @@ export default function AddFamilyMemberScreen({ navigation }) {
     function AddMemberRoute() {
         return (
             <>
-                <Text style={styles.manualHeader}>Add details manually</Text>
                 <View style={styles.inputContainer}>
                     <TextInput
                         placeholder="Name"
@@ -90,11 +89,13 @@ export default function AddFamilyMemberScreen({ navigation }) {
                         value={name}
                         onChangeText={setName}
                     />
+                    <Text style = {styles.dobText}>Date of Birth:</Text>
+                    <View style={styles.dobPicker}>
                     <DatePicker
                         style={styles.dateInputs}
                         date={dob}
                         mode="date"
-                        placeholder={Moment().format(DATE_FORMAT)}
+                        placeholder="Select date"
                         format={DATE_FORMAT}
                         maxDate={Moment().format(DATE_FORMAT)}
                         confirmBtnText="Confirm"
@@ -108,20 +109,38 @@ export default function AddFamilyMemberScreen({ navigation }) {
                                 marginLeft: 0
                             },
                             dateInput: {
-                                // borderColor: 'white',
+                                marginLeft:0
                             }
                         }}
-                        showIcon={false}
+                        // showIcon={false}
                         onDateChange={newDate => setDob(newDate)}
                         value={dob}
                     />
+                    </View>
                     {linkedNode.spouse ?
-                        <TextInput
-                            placeholder="Gender"
-                            style={styles.textInput}
-                            value={gender}
-                            onChangeText={setGender}
-                        />
+                    /* Gender options */
+                        <View style={styles.gender}>
+                            <Text>Gender: </Text>
+                            <View >
+                                <Text value={gender} onPress={() => setGender('m')} style={{...styles.genderButton, backgroundColor: gender === 'm' ? '#579B93' : '#a1a1a1'}}>
+                                    Male
+                                </Text>
+                            </View>
+                            
+                            <View>
+                                <Text value={gender} onPress={() => setGender('f')} style={{...styles.genderButton, backgroundColor: gender === 'f' ? '#579B93' : '#a1a1a1'}}>
+                                    Female
+                                </Text>
+                            </View>
+          
+
+                        </View>
+                        // <TextInput
+                        //     placeholder="Gender"
+                        //     style={styles.textInput}
+                        //     value={gender}
+                        //     onChangeText={setGender}
+                        // />
                         :
                         null
                     }
@@ -172,6 +191,7 @@ export default function AddFamilyMemberScreen({ navigation }) {
 
     return (
         <>
+        <ScrollView style={styles.allContainer}>
             <View style={styles.container}>
                 <Text style={styles.add}>Find your</Text>
                 <Text style={styles.title}>{isAddingSpouse ? 'Spouse' : 'Child'}</Text>
@@ -186,7 +206,7 @@ export default function AddFamilyMemberScreen({ navigation }) {
                     <TabBar
                         {...props}
                         indicatorStyle={{ backgroundColor: '#EC6268' }}
-                        style={{ backgroundColor: '#f5f7fb' }}
+                        style={{ backgroundColor: 'white' }}
                         bounces={true}
                         labelStyle={{ color: '#2d2e33' }}
                     />
@@ -194,24 +214,54 @@ export default function AddFamilyMemberScreen({ navigation }) {
                 onIndexChange={index => setTab({ ...tab, index })}
                 initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
             />
+        </ScrollView>
         </>
     )
 };
 
 const styles = StyleSheet.create({
-    allContainer: {
-        backgroundColor: '#f5f7fb',
-        alignSelf: 'center',
-    },
-    textInput: {
-        borderColor: 'black',
-        borderWidth: 0.5,
-        borderRadius: 3,
-        alignContent: 'center',
+    gender:{
+        marginTop: 10,
         padding: 5,
         paddingLeft: 10,
-        width: Dimensions.get('window').width / 2,
-        marginBottom: 20,
+        marginLeft: '5%',
+        marginRight: '5%',
+        flexDirection:'row',
+        justifyContent:'space-around',
+    },
+    genderButton:{
+        // backgroundColor: '#EC6268',
+        // borderColor: '#EC6268',
+        borderWidth: 0,
+        width: 80,
+        height: 30,
+        borderRadius: 50,
+        textAlign: 'center',
+        color: 'white',
+        justifyContent:'center'
+        // justifyContent: 'center',
+        // alignSelf: 'center',
+        // marginVertical: 20,
+    },
+    genderText:{
+        textAlign: 'center',
+        color: 'white'
+    },
+    allContainer: {
+        backgroundColor: '#f5f7fb',
+    },
+    search:{
+        marginTop:10,
+    },
+    textInput: {
+        borderBottomColor: 'black',
+        borderBottomWidth: 1,
+        alignContent: 'center',
+        marginTop: 10,
+        padding: 5,
+        paddingLeft: 10,
+        marginLeft: '5%',
+        marginRight: '5%',
     },
     searchContainer: {
         flexDirection: 'row',
@@ -245,7 +295,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 35,
         color: '#2d2e33',
-        paddingBottom: '8%',
+        // paddingBottom: '8%',
         fontWeight: 'bold',
         marginLeft: 10,
     },
@@ -256,12 +306,11 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     inputContainer: {
+        marginTop: '10%',
         backgroundColor: 'white',
         borderRadius: 25,
+        padding: '10%',
         marginHorizontal: 15,
-        marginTop: 20,
-        alignSelf: 'center',
-        justifyContent: 'space-evenly',
     },
     buttonText: {
         fontSize: 15,
@@ -279,9 +328,17 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginVertical: 20,
     },
-    dateInputs: {
-        alignContent: 'center',
-        width: Dimensions.get('window').width / 2,
-        marginBottom: 20,
+    dobText: {
+        marginTop: 10,
+        padding: 5,
+        paddingLeft: 10,
+        marginLeft: '5%',
+        marginRight: '5%',
     },
+    dobPicker:{
+        padding: 5,
+        paddingLeft:10,
+        marginLeft:'5%',
+        marginRight: '5%',
+    },  
 });

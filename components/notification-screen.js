@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, FlatList, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, ActivityIndicator, StyleSheet, View, FlatList, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
 import OneSignal from 'react-native-onesignal';
@@ -10,11 +10,13 @@ import AsyncStorage from '@react-native-community/async-storage';
 export default function NotificationScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [notifications, setNotifications] = useState([]);
+	const [hide, setHide] = useState(true);
 
 	useEffect(() => {
 		async function fetchNotifications() {
 			const userRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
 			const user = userRes.data;
+			
 			console.log(user._id);
 
 			const res = await axios.get(`${BACK_END_ENDPOINT}/notification`, {
@@ -23,6 +25,9 @@ export default function NotificationScreen({ navigation }) {
 				}
 			});
 			const notifs = res.data;
+			if(notifs){
+				setHide(false);
+			}
 			console.log(notifs);
 			// Sort notifications so the most recent one appears first
 			notifs.sort((a, b) => moment(b.time).diff(moment(a.time)));
@@ -34,12 +39,7 @@ export default function NotificationScreen({ navigation }) {
 		OneSignal.addEventListener('received', fetchNotifications);
 	}, []);
 
-	// Make flatlist of notifications
-	/* Notifications
-		* When you receive artefact
-		* etc
-    */
-
+	// List of notification when user received an item
 	function renderItem({ item: { sender, artefact }, index }) {
 		return (
 			<View style={styles.notifBox}>
@@ -72,6 +72,7 @@ export default function NotificationScreen({ navigation }) {
 				<Text style={styles.title}>View Updates</Text>
 				<Text style={styles.galleryTitle}>Notification</Text>
 			</View>
+			<ActivityIndicator size="large" color="#0000ff" animating={hide} />
 			<ScrollView>
 				<FlatList
 					data={notifications}
@@ -94,7 +95,6 @@ const styles = StyleSheet.create({
 		fontSize: 30,
 		marginLeft: 10,
 		fontWeight: 'bold',
-		paddingBottom: '8%',
 	},
 	headerContainer: {
 		borderBottomLeftRadius: 25,
