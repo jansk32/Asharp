@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, ActivityIndicator, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
 import { BACK_END_ENDPOINT } from '../constants';
@@ -34,19 +34,17 @@ export default function ItemDetailScreen({ navigation }) {
         async function fetchArtefact() {
             const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/find/${artefactId}`);
             setArtefact(res.data);
-
+            setHide(false);
             const ownerRes = await axios.get(`${BACK_END_ENDPOINT}/user/artefact`, {
                 params: {
                     _id: res.data.owner
                 }
             });
             if (ownerRes.data) {
-                setHide(false);
                 setOwner(ownerRes.data.name);
             }
         }
         fetchArtefact();
-        setHide(false);
     }, []);
 
     return (
@@ -64,6 +62,7 @@ export default function ItemDetailScreen({ navigation }) {
                             <Text style={styles.dateStyle}>{moment(artefact.date).format('L')}</Text>
                         </View>
                     </View>
+                    <ActivityIndicator size="large" color="#0000ff" animating={hide} />
                     <View style={styles.desc}>
                         <Text style={styles.boldHeader}>Description:</Text>
                         <Text style={styles.descriptionStyle}>{artefact.description}</Text>
@@ -108,8 +107,7 @@ const styles = StyleSheet.create({
     },
     headerCont: {
         paddingHorizontal: '8%',
-        paddingVertical: '5%',
-        marginBottom: '2%',
+        paddingTop: '5%',
         borderBottomEndRadius: 30,
         borderBottomStartRadius: 30,
         justifyContent: 'space-between',
@@ -121,7 +119,7 @@ const styles = StyleSheet.create({
     },
     desc: {
         marginHorizontal: '8%',
-        marginVertical: 20,
+        marginBottom: 40,
         justifyContent: 'space-between',
     },
     descriptionStyle: {
