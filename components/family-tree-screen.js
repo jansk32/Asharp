@@ -184,7 +184,7 @@ class ZoomableSvg extends Component {
 									text: 'OK',
 									onPress: async () => {
 										try {
-											const userRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
+											const userRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
 											const user = userRes.data;
 											axios.put(`${BACK_END_ENDPOINT}/artefact/assign`, {
 												artefactId: navigation.state.params.artefactId,
