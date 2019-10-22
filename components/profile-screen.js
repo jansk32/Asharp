@@ -33,7 +33,7 @@ function useCurrentUser() {
 
 	useEffect(() => {
 		async function fetchCurrentUser() {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
+			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
 			setCurrentUser(res.data);
 		}
 		fetchCurrentUser();
@@ -52,14 +52,16 @@ function ProfileScreen({ navigation, ctx }) {
 
 	// Get profile details
 	async function getProfile() {
-		let targetId = userId;
+		let targetId = userId
+		console.log(targetId);
 		if (!userId) {
-			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
+			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
 			targetId = currentUserRes.data._id;
 		}
 		try {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/` + targetId);
+			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${targetId}`);
 			setProfile(res.data);
+			setHide(false);
 		} catch (e) {
 			console.trace(e);
 		}
@@ -69,11 +71,11 @@ function ProfileScreen({ navigation, ctx }) {
 	async function fetchArtefacts() {
 		let targetId = userId;
 		if (!userId) {
-			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
+			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
 			targetId = currentUserRes.data._id;
 		}
 		try {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/findbyowner/` + targetId);
+			const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/findbyowner/${targetId}`);
 			setArtefact(res.data);
 			setHide(false);
 		} catch (e) {
@@ -99,7 +101,7 @@ function ProfileScreen({ navigation, ctx }) {
 	async function logout() {
 		try {
 			await axios.get(`${BACK_END_ENDPOINT}/logout`);
-			await AsyncStorage.multiRemove(['email', 'password']);
+			await AsyncStorage.multiRemove(['email', 'password', "userId"]);
 			OneSignal.removeExternalUserId();
 			navigate('Welcome');
 		} catch (e) {
@@ -147,7 +149,7 @@ function ProfileScreen({ navigation, ctx }) {
 					</Menu>
 				</View>
 			</View>
-			<ActivityIndicator size="large" color="#0000ff" animating={hide === 'true'} />
+			<ActivityIndicator size="large" color="#0000ff" animating={hide} />
 			<ScrollView>
 				<View style={styles.profileBox}>
 					<Image

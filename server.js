@@ -44,7 +44,7 @@ passport.use(new LocalStrategy(
 			if (!found) {
 				return done(null, false, { message: 'Incorrect username or password' });
 			}
-			if (!(found.password === password)) {
+			if (found.password !== password) {
 				return done(null, false, { message: 'Incorrect username or password' });
 			}
 			console.log('SUCCESSFUL LOG IN');
@@ -59,21 +59,26 @@ passport.serializeUser(function (user, done) {
 
 passport.deserializeUser(async function (_id, done) {
 	try {
-		const user = await userModel.findById(mongoose.Types.ObjectId(_id));
-		console.log('DESERIALIZED: ' + user.name);
+		const user = await userModel.findById(_id);
+		// console.log('DESERIALIZED: ' + user.name);
 		done(null, user);
 	} catch (e) {
-		console.log('ERROR IN DESERIALIZE');
+		// console.log('ERROR IN DESERIALIZE');
 		done(e);
 	}
 });
 
 // Cookies
 app.set('trust proxy', 1);
+
 app.use(session({
-	secret: 'secret',
+	secret: 'secret_string',
 	resave: false,
-	saveUninitialized: true
+	saveUninitialized: true,
+	cookie: {
+		secure: false,
+		maxAge: 60 * 60 * 1000,  // 1 hour
+	},
 }));
 
 // app.use middlewares
@@ -92,19 +97,26 @@ app.get('/', (req, res) => {
 /* User routes */
 
 // Get logged-in user
-app.get('/user', ensureLoggedIn(), async (req, res) => {
-	// res.send(req.user);
-	// return;
+app.get('/user', async (req, res) => {
+	console.log('ACCESS COOKIE = ' + req.headers.cookie);
+	console.log('ACCESS SESSION ID = ' + req.session.id);
+
+	if (!req.user) {
+		console.log('req.user is undefined');
+		res.send('No user in session');
+		return;
+	}
+	res.send(req.user);
+	return;
 	// Change later
 	// const id = req.session.passport.user._id;
-
 	const id = req.user._id;
 	console.log('ID = ' + id);
 	console.log('Authenticating user with id: ' + id);
 	try {
 		const user = await userModel.findById(id);
 		res.send(user);
-		console.log('AUTHENTICATED user with id: ' + id);
+		// console.log('AUTHENTICATED user with id: ' + id);
 	} catch (e) {
 		console.trace(e);
 	}
@@ -308,7 +320,7 @@ app.get('/users', async (req, res) => {
 
 // Update logged-in user
 app.put('/user/update', (req, res) => {
-	const id = req.session.passport.user._id;
+	const id = req.body.userId;
 	userModel.findOneAndUpdate({ _id: id }, req.body, { new: true }, (err, result) => {
 		if (err) throw err;
 		res.send(result);
@@ -398,8 +410,7 @@ app.get('/artefact/find/:artefactId', async (req, res) => {
 
 // Create an artefact
 app.post('/artefact/create', ({
-	body: { name, date, value, description, file },
-	session: { passport: { user: { _id: owner } } } }, res) => {
+	body: { name, date, value, description, file, owner } }, res) => {
 	const artefact = artefactModel({
 		name,
 		date,
@@ -476,6 +487,7 @@ app.get('/notification/', async ({ query: { recipient } }, res) => {
 // login local
 app.post('/login/local', passport.authenticate('local'), (req, res) => {
 	res.send(req.user);
+	console.log('LOGIN SESSION ID = ' + req.session.id);
 });
 
 

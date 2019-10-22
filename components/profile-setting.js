@@ -9,14 +9,13 @@ import { pickImage, uploadImage } from '../image-tools';
 import axios from 'axios';
 import moment from 'moment';
 
-import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
+import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI, DATE_FORMAT } from '../constants';
 
 // import moment from 'moment';
 moment.locale('en');
 
 // Edit user details: Name, DOB, password, profile picture
 export default function ProfileSettingScreen({ navigation }) {
-	const DATE_FORMAT = 'YYYY-MM-DD';
 	const { navigate } = navigation;
 	// const handleProfileChange = navigation.getParam('handleProfileChange');
 	const setProfile = navigation.state.params.setProfile;
@@ -60,6 +59,7 @@ export default function ProfileSettingScreen({ navigation }) {
 			const newImage = await uploadImage(image.uri);
 			data.pictureUrl = newImage;
 		}
+		data.userId = await AsyncStorage.getItem("userId");
 		const res = await axios.put(`${BACK_END_ENDPOINT}/user/update`, data);
 		const updatedProfile = res.data;
 		console.log(updatedProfile);
@@ -69,7 +69,7 @@ export default function ProfileSettingScreen({ navigation }) {
 	// Get user details
 	useEffect(() => {
 		async function fetchProfile() {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
+			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
 			const user = res.data;
 			console.log(user);
 			setUser(user);
@@ -277,4 +277,4 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	}
 }
-)
+);
