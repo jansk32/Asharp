@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, ScrollView, Text, Alert } from 'react-native';
+import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, ScrollView, Text, Alert, ActivityIndicator, } from 'react-native';
 import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text as SvgText } from 'react-native-svg';
 import generateFamilyTree, { mainDrawLines } from '../build-family-tree';
 import axios from 'axios';
@@ -319,6 +319,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 	const [familyTree, setFamilyTree] = useState([]);
 	const [lines, setLines] = useState([]);
 	const [familyMemberSearch, setFamilyMemberSearch] = useState('');
+	const [hide, setHide] = useState(true);
 
 	const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
