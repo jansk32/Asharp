@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginLeft: '5%',
         marginRight: '5%',
-        backgroundColor: '#f5f7fb',
-        borderColor: '#f5f7fb'
+        backgroundColor: 'white',
+        borderColor: 'white'
     },
     searchInput: {
         flex: 1,
@@ -105,8 +105,9 @@ const styles = StyleSheet.create({
     results: {
         fontSize: 15,
         color: '#2d2e33',
-        marginLeft: 10,
+        marginLeft: 20,
         fontWeight: 'bold',
+        marginTop:15,
     },
     add: {
         fontSize: 25,
