@@ -211,6 +211,7 @@ const styles = StyleSheet.create({
         padding: 5,
         paddingLeft: 10,
         width: Dimensions.get('window').width / 2,
+        marginBottom: 20,
     },
     searchContainer: {
         flexDirection: 'row',
