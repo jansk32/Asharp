@@ -336,13 +336,14 @@ function FamilyTreeScreen({ ctx, navigation }) {
 				const familyMembers = res.data;
 				console.log(familyMembers);
 
-				
+
 				const familyTreeInfo = generateFamilyTree(familyMembers, user._id);
 				const { familyTree, ancestors } = familyTreeInfo;
 				const lines = mainDrawLines(familyTree, ancestors);
 
 				setFamilyTree(familyTree);
 				setLines(lines);
+				setHide(false)
 			} catch (e) {
 				console.trace(e);
 			}
@@ -355,7 +356,6 @@ function FamilyTreeScreen({ ctx, navigation }) {
 		if (familyTree.length) {
 			// Highlight the nodes that match the search string
 			// If the search string is empty, there are no matches
-			setHide(false)
 			setFamilyTree(familyTree
 				.map(node =>
 					({ ...node, matchesSearch: familyMemberSearch ? node.name.toLowerCase().includes(familyMemberSearch.toLowerCase()) : false })));
