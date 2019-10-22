@@ -52,13 +52,14 @@ function ProfileScreen({ navigation, ctx }) {
 
 	// Get profile details
 	async function getProfile() {
-		let targetId = userId;
-		if (!userId) {
-			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
-			targetId = currentUserRes.data._id;
-		}
+		let targetId = await AsyncStorage.getItem('userId');
+		console.log(targetId);
+		// if (!userId) {
+		// 	const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
+		// 	targetId = currentUserRes.data._id;
+		// }
 		try {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/` + targetId);
+			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${targetId}`);
 			setProfile(res.data);
 		} catch (e) {
 			console.trace(e);
@@ -67,9 +68,9 @@ function ProfileScreen({ navigation, ctx }) {
 
 	// Get the artefacts of the user
 	async function fetchArtefacts() {
-		let targetId = userId;
+		let targetId = await AsyncStorage.getItem('userId');
 		if (!userId) {
-			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
+			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${targetId}`);
 			targetId = currentUserRes.data._id;
 		}
 		try {
@@ -99,7 +100,7 @@ function ProfileScreen({ navigation, ctx }) {
 	async function logout() {
 		try {
 			await axios.get(`${BACK_END_ENDPOINT}/logout`);
-			await AsyncStorage.multiRemove(['email', 'password']);
+			await AsyncStorage.multiRemove(['email', 'password', "userId"]);
 			OneSignal.removeExternalUserId();
 			navigate('Welcome');
 		} catch (e) {

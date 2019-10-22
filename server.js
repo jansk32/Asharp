@@ -97,7 +97,6 @@ app.get('/user', ensureLoggedIn(), async (req, res) => {
 	// return;
 	// Change later
 	// const id = req.session.passport.user._id;
-
 	const id = req.user._id;
 	console.log('ID = ' + id);
 	console.log('Authenticating user with id: ' + id);
@@ -308,7 +307,7 @@ app.get('/users', async (req, res) => {
 
 // Update logged-in user
 app.put('/user/update', (req, res) => {
-	const id = req.session.passport.user._id;
+	const id = req.body.userId;
 	userModel.findOneAndUpdate({ _id: id }, req.body, { new: true }, (err, result) => {
 		if (err) throw err;
 		res.send(result);
@@ -398,8 +397,7 @@ app.get('/artefact/find/:artefactId', async (req, res) => {
 
 // Create an artefact
 app.post('/artefact/create', ({
-	body: { name, date, value, description, file },
-	session: { passport: { user: { _id: owner } } } }, res) => {
+	body: { name, date, value, description, file, owner } }, res) => {
 	const artefact = artefactModel({
 		name,
 		date,
