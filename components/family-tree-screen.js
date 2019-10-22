@@ -337,7 +337,6 @@ function FamilyTreeScreen({ ctx, navigation }) {
 				const res = await axios.get(`${BACK_END_ENDPOINT}/users`);
 				const familyMembers = res.data;
 
-
 				const familyTreeInfo = generateFamilyTree(familyMembers, user._id);
 				const { familyTree, ancestors } = familyTreeInfo;
 				const lines = mainDrawLines(familyTree, ancestors);

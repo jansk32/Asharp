@@ -74,7 +74,7 @@ export default function SignUp3({ navigation }) {
 
 	// Upload sign up data
 	async function uploadSignUpData() {
-		const dataKeys = ['email', 'name', 'dob', 'password', 'pictureUrl'];
+		const dataKeys = ['email', 'name', 'dob', 'password', 'pictureUrl', 'gender'];
 		const data = {};
 		for (const key of dataKeys) {
 			try {
