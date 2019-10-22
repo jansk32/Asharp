@@ -155,7 +155,7 @@ app.post('/user/create', async ({ body: {
 	artefact,
 	pictureUrl,
 	isUser } }, res) => {
-	let user = userModel({
+	const user = new userModel({
 		name,
 		dob,
 		email,
@@ -350,6 +350,34 @@ app.put('/user/add-parent', async ({ body: { childId, parentId } }, res) => {
 	child.save();
 });
 
+// Add parents manually
+app.post('/user/add-parents-manually', async ({ body: { fatherName, fatherDob, motherName, motherDob, personId } }, res) => {
+	console.log(personId);
+	const father = new userModel({
+		name: fatherName,
+		dob: fatherDob,
+		gender: 'm',
+		isUser: false,
+	});
+
+	const mother = new userModel({
+		name: motherName,
+		dob: motherDob,
+		gender: 'f',
+		isUser: false,
+		spouse: father._id,
+	});
+
+	father.spouse = mother._id;
+
+	father.save();
+	mother.save();
+
+	// Link person to their parents
+	// findByIdAndUpdate must be called with await, else it won't work
+	await userModel.findByIdAndUpdate(personId, { father: father._id, mother: mother._id });
+});
+
 // Add spouse
 app.put('/user/add-spouse', async ({ body: { personId, spouseId } }, res) => {
 	// Make sure that person and potential spouse don't have a spouse yet
@@ -411,7 +439,7 @@ app.get('/artefact/find/:artefactId', async (req, res) => {
 // Create an artefact
 app.post('/artefact/create', ({
 	body: { name, date, value, description, file, owner } }, res) => {
-	const artefact = artefactModel({
+	const artefact = new artefactModel({
 		name,
 		date,
 		owner,

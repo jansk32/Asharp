@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema({
     spouse: String,
     father: String,
     mother: String,
-    artefact: [String],
     pictureUrl: String,
     isUser: Boolean,
 });

@@ -214,9 +214,9 @@ function buildFamilyTree(family, _id) {
 function mainArrangeFamilyTree(familyTree, ancestors, targetId) {
 	const targetPerson = familyTree.find(person => person._id === targetId);
 	for (const ancestor of ancestors) {
-		if (!('marriageOffset' in ancestor)) {
-			ancestor.width = recursiveArrangeFamilyTree(familyTree, ancestor, targetPerson);
-		}
+		// if (!('marriageOffset' in ancestor)) {
+		ancestor.width = recursiveArrangeFamilyTree(familyTree, ancestor, targetPerson);
+		// }
 	}
 }
 
@@ -227,36 +227,43 @@ function recursiveArrangeFamilyTree(familyTree, node, targetPerson) {
 	if (!node.spouse) {
 		return baseWidth;
 	}
-	const baseMarriageOffset = baseWidth / 4;
 
-	// By default, marriageOffset is determined by gender
-	// This is for father, mother, and everyone who is not in their generation
-	node.marriageOffset = node.gender === 'm' ? -baseMarriageOffset : baseMarriageOffset;
-	// But, if current parent is in the generation of the target person's parent:
-	// and is sibling of father, put to the left in marriage
-	// and is sibling of mother, put to the right in marriage
-	// and is father or mother themself, ignore since it's been handled by the default case
-	if (node.gen === targetPerson.gen - 1) {
-		// Father of the target person
-		const father = familyTree.find(person => person._id === targetPerson.father);
-		if (node._id !== father._id && node.father === father.father) {
-			node.marriageOffset = -baseMarriageOffset;
-		}
-		// Mother of the target person
-		const mother = familyTree.find(person => person._id === targetPerson.mother);
-		if (node._id !== mother._id && node.father === mother.father) {
-			node.marriageOffset = baseMarriageOffset;
-		}
-	}
+	// START COMMENT OUT
+
+	// const baseMarriageOffset = baseWidth / 4;
+
+	// // By default, marriageOffset is determined by gender
+	// // This is for father, mother, and everyone who is not in their generation
+	// node.marriageOffset = node.gender === 'm' ? -baseMarriageOffset : baseMarriageOffset;
+	// // But, if current parent is in the generation of the target person's parent:
+	// // and is sibling of father, put to the left in marriage
+	// // and is sibling of mother, put to the right in marriage
+	// // and is father or mother themself, ignore since it's been handled by the default case
+	// if (node.gen === targetPerson.gen - 1) {
+	// 	// Father of the target person
+	// 	const father = familyTree.find(person => person._id === targetPerson.father);
+	// 	if (node._id !== father._id && node.father === father.father) {
+	// 		node.marriageOffset = -baseMarriageOffset;
+	// 	}
+	// 	// Mother of the target person
+	// 	const mother = familyTree.find(person => person._id === targetPerson.mother);
+	// 	if (node._id !== mother._id && node.father === mother.father) {
+	// 		node.marriageOffset = baseMarriageOffset;
+	// 	}
+	// }
+
+	// const spouse = familyTree.find(spouse => spouse._id === node.spouse);
+	// spouse.marriageOffset = -node.marriageOffset;
+
+	// END COMMENT OUT
 
 
-	const spouse = familyTree.find(spouse => spouse._id === node.spouse);
-	spouse.marriageOffset = -node.marriageOffset;
 	const children = familyTree.filter(child => child.father === node._id || child.mother === node._id);
 	// Base case: no children
 	if (!children.length) {
 		return baseWidth;
 	}
+
 	for (const child of children) {
 		child.width = recursiveArrangeFamilyTree(familyTree, child, targetPerson);
 	}
@@ -278,15 +285,55 @@ function recursiveArrangeFamilyTree(familyTree, node, targetPerson) {
 
 	// Shift children to the left
 	const leftOffset = children[children.length - 1].xOffset / 2;
-	console.log(children[0]._id + ' ' + leftOffset);
-	children.forEach(child => console.log(child.xOffset));
 	children.forEach(child => child.xOffset -= leftOffset);
+
 	const totalWidth = children.reduce((sum, child) => sum + child.width, 0);
 	return totalWidth > baseWidth ? totalWidth : baseWidth;
 }
 
-// Assign x coordinates for each family member for drawing on SVG
-function mainAssignX(familyTree, ancestors) {
+function mainAssignMarriageOffset(familyTree) {
+	const maxGen = Math.max(...familyTree.map(node => node.gen));
+	for (let i = 0; i <= maxGen; i++) {
+		const genNodes = familyTree.filter(node => node.gen === i);
+		genNodes.forEach(node => assignMarriageOffset(familyTree, node));
+
+		const shouldEqualizeMarriageOffset = true;
+		if (shouldEqualizeMarriageOffset) {
+			genNodes.forEach(node => {
+				if (!node.spouse) {
+					return;
+				}
+				const spouse = familyTree.find(person => person._id === node.spouse);
+				const higherOffset = Math.max(Math.abs(node.marriageOffset), Math.abs(spouse.marriageOffset));
+				node.marriageOffset = Math.sign(node.marriageOffset) * higherOffset;
+				spouse.marriageOffset = Math.sign(spouse.marriageOffset) * higherOffset;
+			});
+		}
+	}
+}
+
+function assignMarriageOffset(familyTree, node) {
+	// Deal with parents clashing
+	// If node is an ancestor (no parents), set leftWidth and rightWidth to 0
+	if (!node.mother || !node.father) {
+		node.leftWidth = 0;
+		node.rightWidth = 0;
+	} else {
+		// If node has parents, add parent's width and parent's marriage offset
+		const father = familyTree.find(person => person._id === node.father);
+		const mother = familyTree.find(person => person._id === node.mother);
+		node.leftWidth = father.marriageOffset - node.xOffset + father.leftWidth;
+		node.rightWidth = mother.marriageOffset - node.xOffset + mother.rightWidth;
+	}
+
+	const baseMarriageOffset = baseWidth / 4;
+	node.marriageOffset = node.gender === 'm'
+		? -(node.rightWidth + radius + baseMarriageOffset)
+		: -(node.leftWidth - radius - baseMarriageOffset);
+}
+
+// Assign absolute (not relative) x coordinates for each family member for drawing on SVG
+function mainAssignX(familyTree, ancestors, targetId) {
 	const ancestorsCopy = [...ancestors];
 	const initialAncestor = ancestorsCopy.splice(ancestorsCopy.findIndex(ancestor => ancestor.gen === 0), 1)[0];
 	initialAncestor.x = 0;
@@ -299,6 +346,11 @@ function mainAssignX(familyTree, ancestors) {
 
 		assignX(familyTree, ancestor);
 	}
+
+	// Normalize x coordinates so that the target person has an x coordinate of 0
+	const targetNode = familyTree.find(node => node._id === targetId);
+	const offset = targetNode.x;
+	familyTree.forEach(node => node.x -= offset);
 }
 
 // The passed node should already have its x assigned
@@ -309,6 +361,7 @@ function assignX(familyTree, node) {
 	}
 	const spouse = familyTree.find(spouse => spouse._id === node.spouse);
 	spouse.x = node.x + spouse.marriageOffset - node.marriageOffset;
+
 	const children = familyTree.filter(child => child.father === node._id || child.mother === node._id);
 	children.forEach(child => child.x = node.x - node.marriageOffset + child.xOffset);
 	children.forEach(child => assignX(familyTree, child));
@@ -356,8 +409,13 @@ function assignXUp(familyTree, node) {
 	assignXUp(familyTree, mother);
 }
 
-function assignY(familyTree) {
-	familyTree.forEach(node => node.y = node.gen * verticalGap);
+function assignY(familyTree, targetId) {
+	const targetNode = familyTree.find(node => node._id === targetId);
+	const targetGen = targetNode.gen;
+
+	// Target node should have a y coordinate of 0, adjust everyone else according
+	// to the target node
+	familyTree.forEach(node => node.y = (node.gen - targetGen) * verticalGap);
 }
 
 /* Accepts a family object and the id of the target person.
@@ -369,9 +427,9 @@ export default function generateFamilyTree(family, targetId) {
 	const familyTree = buildFamilyTree(family, targetId);
 	const ancestors = getAncestors(family, targetId);
 	mainArrangeFamilyTree(familyTree, ancestors, targetId);
-	console.log(familyTree.map(node => [node._id, node.xOffset]));
-	mainAssignX(familyTree, ancestors);
-	assignY(familyTree);
+	mainAssignMarriageOffset(familyTree);
+	mainAssignX(familyTree, ancestors, targetId);
+	assignY(familyTree, targetId);
 	return { familyTree, ancestors };
 }
 
@@ -427,6 +485,7 @@ function recursiveDrawLines(familyTree, node) {
 			x2: node.x - node.marriageOffset,
 			y2: node.y + verticalGap / 2
 		});
+
 		// Draw horizontal line to span all kids
 		lines.push({
 			x1: Math.min(...children.map(child => child.x)),
@@ -434,6 +493,7 @@ function recursiveDrawLines(familyTree, node) {
 			x2: Math.max(...children.map(child => child.x)),
 			y2: node.y + verticalGap / 2
 		});
+
 		// Recurse into each child
 		for (const child of children) {
 			lines.push(...recursiveDrawLines(familyTree, child));

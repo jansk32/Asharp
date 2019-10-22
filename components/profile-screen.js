@@ -33,7 +33,7 @@ function useCurrentUser() {
 
 	useEffect(() => {
 		async function fetchCurrentUser() {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
+			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
 			setCurrentUser(res.data);
 		}
 		fetchCurrentUser();
@@ -55,7 +55,7 @@ function ProfileScreen({ navigation, ctx }) {
 		let targetId = userId
 		console.log(targetId);
 		if (!userId) {
-			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
+			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
 			targetId = currentUserRes.data._id;
 		}
 		try {
@@ -101,7 +101,7 @@ function ProfileScreen({ navigation, ctx }) {
 	async function logout() {
 		try {
 			await axios.get(`${BACK_END_ENDPOINT}/logout`);
-			await AsyncStorage.multiRemove(['email', 'password', "userId"]);
+			await AsyncStorage.multiRemove(['email', 'password', 'userId']);
 			OneSignal.removeExternalUserId();
 			navigate('Welcome');
 		} catch (e) {

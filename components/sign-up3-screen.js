@@ -74,8 +74,8 @@ export default function SignUp3({ navigation }) {
 
 	// Upload sign up data
 	async function uploadSignUpData() {
-		let dataKeys = ['email', 'name', 'dob', 'password', 'pictureUrl'];
-		let data = {};
+		const dataKeys = ['email', 'name', 'dob', 'password', 'pictureUrl'];
+		const data = {};
 		for (const key of dataKeys) {
 			try {
 				data[key] = await AsyncStorage.getItem(key);
@@ -89,10 +89,11 @@ export default function SignUp3({ navigation }) {
 
 	// Automatically login to have give available acct details
 	async function login() {
-		await axios.post(`${BACK_END_ENDPOINT}/login/local`, {
+		const res = await axios.post(`${BACK_END_ENDPOINT}/login/local`, {
 			email: await AsyncStorage.getItem('email'),
 			password: await AsyncStorage.getItem('password')
 		});
+		AsyncStorage.setItem('userId', res.data._id);
 		navigate('Home');
 	}
 
@@ -100,7 +101,7 @@ export default function SignUp3({ navigation }) {
 	async function finishSignUp() {
 		const pictureUrl = await uploadImage(image.uri);
 		try {
-			await AsyncStorage.setItem('pictureUrl', pictureUrl);
+			const res = await AsyncStorage.setItem('pictureUrl', pictureUrl);
 		} catch (e) {
 			ToastAndroid.show('Error storing picture URL', ToastAndroid.SHORT);
 		}

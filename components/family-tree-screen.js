@@ -37,7 +37,7 @@ class ZoomableSvg extends Component {
 	resolution = this.viewBoxSize / Math.min(this.props.height, this.props.width);
 
 	state = {
-		zoom: 2,
+		zoom: 1,
 		left: 0,
 		top: 0,
 		isGesture: false,
@@ -224,8 +224,9 @@ class ZoomableSvg extends Component {
 			const yCoords = familyTree.map(node => node.y);
 			const familyTreeHeight = (Math.max(...yCoords) - Math.min(...yCoords)) / this.resolution;
 			this.setState({
-				left: (width - familyTreeWidth) / 2,
-				top: (height - familyTreeHeight) / 4,
+				left: width / 2,
+				top: height / 2,
+				zoom: 2,
 			});
 		}
 	}
@@ -321,9 +322,10 @@ function FamilyTreeScreen({ ctx, navigation }) {
 	const [familyTree, setFamilyTree] = useState([]);
 	const [lines, setLines] = useState([]);
 	const [familyMemberSearch, setFamilyMemberSearch] = useState('');
-	const [hide, setHide] = useState(true);
+	const [isSvgDimensionsSet, setSvgDimensionsSet] = useState(false);
 
-	const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+	const [svgWidth, setSvgWidth] = useState(Dimensions.get('window').width);
+	const [svgHeight, setSvgHeight] = useState(Dimensions.get('window').height);
 
 	useEffect(() => {
 		async function fetchFamilyMembers() {
@@ -334,7 +336,6 @@ function FamilyTreeScreen({ ctx, navigation }) {
 				console.log(user);
 				const res = await axios.get(`${BACK_END_ENDPOINT}/users`);
 				const familyMembers = res.data;
-				console.log(familyMembers);
 
 				const familyTreeInfo = generateFamilyTree(familyMembers, user._id);
 				const { familyTree, ancestors } = familyTreeInfo;
@@ -375,13 +376,29 @@ function FamilyTreeScreen({ ctx, navigation }) {
 					/>
 				</View>
 			</View>
-			<ZoomableSvg
-				width={screenWidth}
-				height={screenHeight}
-				familyTree={familyTree}
-				lines={lines}
-				ctx={ctx}
-				navigation={navigation} />
+			<View style={{ flex: 1, alignSelf: 'stretch' }} onLayout={event => {
+				const { width, height } = event.nativeEvent.layout;
+				if (isSvgDimensionsSet) {
+					return;
+				}
+				setSvgWidth(width);
+				setSvgHeight(height);
+				setSvgDimensionsSet(true);
+			}}>
+				{
+					isSvgDimensionsSet ?
+						<ZoomableSvg
+							width={svgWidth}
+							height={svgHeight}
+							familyTree={familyTree}
+							lines={lines}
+							ctx={ctx}
+							navigation={navigation} />
+						:
+						null
+				}
+
+			</View>
 		</>
 	);
 }

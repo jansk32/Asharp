@@ -14,7 +14,7 @@ export async function axiosLocal(objData) {
 	console.log(objData);
 	try {
 		const res = await axios.post(`${BACK_END_ENDPOINT}/login/local`, objData);
-		AsyncStorage.setItem('userId',res.data._id); 
+		AsyncStorage.setItem('userId', res.data._id); 
 		OneSignal.setExternalUserId(res.data._id);
 		return true;
 	} catch (e) {

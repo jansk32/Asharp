@@ -3,6 +3,7 @@ import { Text, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity
 import axios from 'axios';
 import moment from 'moment';
 import { BACK_END_ENDPOINT } from '../constants';
+import AsyncStorage from '@react-native-community/async-storage';
 
 moment.locale('en');
 
@@ -27,7 +28,7 @@ export default function ItemDetailScreen({ navigation }) {
     const [artefact, setArtefact] = useState({});
     const [owner, setOwner] = useState('');
     const [hide, setHide] = useState(true);
-    const currentUser = useCurrentUser();
+    const [currentUser, setCurrentUser] = useState();
 
     useEffect(() => {
         // Get a specific artefact
@@ -46,6 +47,12 @@ export default function ItemDetailScreen({ navigation }) {
             }
         }
         fetchArtefact();
+
+        async function fetchCurrentUser() {
+            const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
+            setCurrentUser(res.data);
+        }
+        fetchCurrentUser();
         setHide(false);
     }, []);
 
@@ -74,18 +81,18 @@ export default function ItemDetailScreen({ navigation }) {
                     </View>
                     {
                         // If the artefact owner is the current user, allow them to send the artefact
-                        artefact.owner === currentUser._id &&
-                            (
-                                <View style={styles.buttonBox}>
-                                    <TouchableOpacity
-                                        onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
-                                        style={styles.sendButton}>
-                                        <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
-                                            Send Artefact
+                        currentUser && artefact.owner === currentUser._id &&
+                        (
+                            <View style={styles.buttonBox}>
+                                <TouchableOpacity
+                                    onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
+                                    style={styles.sendButton}>
+                                    <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
+                                        Send Artefact
                                         </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )
+                                </TouchableOpacity>
+                            </View>
+                        )
                     }
 
                 </View >

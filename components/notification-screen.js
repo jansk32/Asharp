@@ -14,7 +14,7 @@ export default function NotificationScreen({ navigation }) {
 
 	useEffect(() => {
 		async function fetchNotifications() {
-			const userRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
+			const userRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
 			const user = userRes.data;
 			
 			console.log(user._id);

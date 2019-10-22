@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, Image, StyleSheet, ToastAndroid, Picker, TouchableOpacity, Dimensions, ScrollView,
+	Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, ScrollView,
 } from 'react-native';
-import { throwStatement } from '@babel/types';
-import { pickImage, uploadImage } from '../image-tools';
-import AsyncStorage from '@react-native-community/async-storage';
+import { pickImage } from '../image-tools';
 
 export default function HomeScreen({ navigation }) {
 	const { navigate } = navigation;
