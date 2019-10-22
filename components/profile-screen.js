@@ -52,12 +52,12 @@ function ProfileScreen({ navigation, ctx }) {
 
 	// Get profile details
 	async function getProfile() {
-		let targetId = await AsyncStorage.getItem('userId');
+		let targetId = userId
 		console.log(targetId);
-		// if (!userId) {
-		// 	const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
-		// 	targetId = currentUserRes.data._id;
-		// }
+		if (!userId) {
+			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
+			targetId = currentUserRes.data._id;
+		}
 		try {
 			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${targetId}`);
 			setProfile(res.data);
@@ -68,13 +68,13 @@ function ProfileScreen({ navigation, ctx }) {
 
 	// Get the artefacts of the user
 	async function fetchArtefacts() {
-		let targetId = await AsyncStorage.getItem('userId');
+		let targetId = userId;
 		if (!userId) {
-			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${targetId}`);
+			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
 			targetId = currentUserRes.data._id;
 		}
 		try {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/findbyowner/` + targetId);
+			const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/findbyowner/${targetId}`);
 			setArtefact(res.data);
 			setHide(false);
 		} catch (e) {
