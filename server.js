@@ -183,132 +183,6 @@ app.post('/user/create', async ({ body: {
 // Get all users (registered and non-registered)
 // The front end will decide which ones are relevant to the user
 app.get('/users', async (req, res) => {
-	const family = [
-		{
-			_id: 'th',
-			gender: 'm',
-			m: 'yb',
-			f: 'ah'
-		}, {
-			_id: 'fh',
-			gender: 'f',
-			spouse: 'mg',
-			m: 'yb',
-			f: 'ah'
-		}, {
-			_id: 'mg',
-			gender: 'm',
-			spouse: 'fh'
-		}, {
-			_id: 'yb',
-			gender: 'f',
-			spouse: 'ah',
-			m: 'pp',
-			f: 'gg'
-		}, {
-			_id: 'vb',
-			gender: 'f',
-			spouse: 'tk',
-			m: 'pp',
-			f: 'gg'
-		}, {
-			_id: 'tk',
-			gender: 'm',
-			spouse: 'vb',
-		}, {
-			_id: 'j0',
-			gender: 'm',
-			m: 'vb',
-			f: 'tk'
-		}, {
-			_id: 'j1',
-			gender: 'f',
-			m: 'vb',
-			f: 'tk'
-		}, {
-			_id: 'j2',
-			gender: 'f',
-			m: 'vb',
-			f: 'tk'
-		}, {
-			_id: 'lb',
-			gender: 'f',
-			spouse: 'ak',
-			m: 'pp',
-			f: 'gg'
-		}, {
-			_id: 'ak',
-			gender: 'm',
-			spouse: 'lb',
-		}, {
-			_id: 'ad',
-			gender: 'm',
-			m: 'lb',
-			f: 'ak'
-		}, {
-			_id: 'nd',
-			gender: 'f',
-			m: 'lb',
-			f: 'ak'
-		}, {
-			_id: 'ah',
-			gender: 'm',
-			spouse: 'yb',
-			m: 'gm',
-			f: 'gf'
-		}, {
-			_id: 'lh',
-			gender: 'f',
-			spouse: 'jk',
-			f: 'gf',
-			m: 'gm'
-		}, {
-			_id: 'jk',
-			gender: 'm',
-			spouse: 'lh'
-		}, {
-			_id: 'dh',
-			gender: 'm',
-			spouse: 'yh',
-			m: 'gm',
-			f: 'gf'
-		}, {
-			_id: 'yh',
-			gender: 'f',
-			spouse: 'dh'
-		}, {
-			_id: 'pp',
-			gender: 'f',
-			spouse: 'gg'
-		},
-		{
-			_id: 'gg',
-			gender: 'm',
-			spouse: 'pp'
-		},
-		{
-			_id: 'gm',
-			gender: 'f',
-			spouse: 'gf',
-			f: 'ggf',
-			m: 'ggm'
-		}, {
-			_id: 'ggf',
-			gender: 'm',
-			spouse: 'ggm'
-		}, {
-			_id: 'ggm',
-			gender: 'f',
-			spouse: 'ggf'
-		}, {
-			_id: 'gf',
-			gender: 'm',
-			spouse: 'gm'
-		},
-	];
-
-	// res.send(family);
-	// return;
 
 	try {
 		const users = await userModel.find();
@@ -414,6 +288,14 @@ app.put('/user/add-child', async ({ body: { personId, childId } }, res) => {
 	child.save();
 });
 
+// Delete a family member or user
+app.delete('/user/delete/:id', (req,res) => {
+	userModel.findByIdAndDelete(req.params.id, (err,resp) => {
+		if(err) throw err;
+		res.send(resp);
+	})
+})
+
 /* Artefact routes */
 // Get ALL artefacts
 app.get('/artefact', async (req, res) => {
@@ -498,6 +380,22 @@ app.get('/artefact/findbyowner/:id', async ({ params: { id } }, res) => {
 	}
 });
 
+// Update an artefact
+app.put('/artefact/update/:id', (req,res) => {
+	artefactModel.findByIdAndUpdate(req.params.id,req.body, (err,resp) => {
+		if(err) throw err;
+		res.send(resp);
+	})
+})
+
+// Delete an artefact
+app.delete('/artefact/delete/:id', (req,res) => {
+	artefactModel.findByIdAndDelete(req.params.id, (err,resp) => {
+		if(err) throw err;
+		res.send(resp);
+	})
+})
+
 /* Notification routes */
 // Get all notifications that are meant for a certain user
 app.get('/notification/', async ({ query: { recipient } }, res) => {
@@ -523,17 +421,6 @@ app.get('/logout', (req, res) => {
 	console.log('Logging out');
 	req.logOut();
 	res.send();
-
-	// if (req.session) {
-	// 	// delete session object
-	// 	req.session.destroy(function (err) {
-	// 		if (err) {
-	// 			return next(err);
-	// 		} else {
-	// 			return res.send('Success');
-	// 		}
-	// 	});
-	// }
 });
 
 process.on('unhandledRejection', (reason, p) => {
