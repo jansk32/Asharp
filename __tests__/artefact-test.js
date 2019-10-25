@@ -162,7 +162,7 @@ describe('Artefacts', () => {
           .end((err, res) => {
               if(err) return done(err);
               res.status.should.be.equal(200);
-              res.body.should.be.a('object')
+              res.body.should.be.a('array')
               done();
           })
       })
