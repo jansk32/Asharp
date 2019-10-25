@@ -5,7 +5,7 @@ const userSchema = require('../schema/userSchema');
 const chai = require('chai');
 const {expect, assert} = require("chai");
 const chaiHttp = require('chai-http');
-const server = require('../server');
+const {after} = require('mocha');
 const should = chai.should();
 
 chai.use(chaiHttp);
@@ -14,14 +14,38 @@ const User = mongoose.model("userSchema", userSchema);
 
 //Our parent block
 describe('Logging in', () => {
+    let server = require("../server");
+    // let server = http.createServer(require('../server'));
+    // server.listen(process.env.PORT)
+    // enableDestroy(server);
+
     beforeEach((done) => { //Before each test we empty the database
         User.remove({}, (err) => { 
            done();           
         });        
     });
+
+
 /*
   * Test the /GET route
   */
+ describe('login fail', () => {
+    it('should fail login', (done) => {
+        let loginDeets = {
+            email: "fifikwong70@yahoo.com",
+            password: 'janseniscool'
+        };
+    
+        chai.request(server)
+          .post('login/local')
+          .send(loginDeets)
+          .end((err,res) => {
+              expect(res).to.be.undefined;
+              assert.property(err,'errno');
+              done();
+          })
+    })
+})
   describe("login", () => {
       it('should successfully login the user', (done) => {
           let loginDeets = {
@@ -57,21 +81,5 @@ describe('Logging in', () => {
       });
   });
 
-  describe('login fail', () => {
-    it('should fail login', (done) => {
-        let loginDeets = {
-            email: "fifikwong70@yahoo.com",
-            password: 'janseniscool'
-        };
-    
-        chai.request(server)
-          .post('login/local')
-          .send(loginDeets)
-          .end((err,res) => {
-              expect(res).to.be.undefined;
-              assert.property(err,'errno');
-              done();
-          })
-    })
-})
+  
 });

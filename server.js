@@ -541,9 +541,11 @@ process.on('unhandledRejection', (reason, p) => {
 	// application specific logging, throwing an error, or other logic here
 });
 
-
 const port = process.env.PORT || 3000;
-app.listen(port, '0.0.0.0');
+
+if (process.env.NODE_ENV !== 'test') {
+	app.listen(port, '0.0.0.0');
+  }
 console.log('Listening to port ' + port);
 
 module.exports = app;
