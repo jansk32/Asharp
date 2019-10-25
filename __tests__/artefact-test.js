@@ -168,4 +168,35 @@ describe('Artefacts', () => {
       })
   })
 
+  describe('To update an artefact\'s details', () => {
+    let id = '';
+    let update ={
+
+    };
+    it('update an artefact', (done) => {
+          chai.request(server)
+          .put('/artefact/update' + id)
+          .send(update)
+          .end((err, res) => {
+              if(err) return done(err);
+              res.body.should.be.a('array');
+              res.status.should.be.equal(200);
+              done();
+          })
+      })
+  })
+
+  describe('To delete an artefact', () => {
+      it('To delete an artefact', (done) => {
+        let id = "5db24279ec69a40abbc276b8";
+        chai.request(server)
+        .delete('/artefact/delete')
+        .end((err,res) => {
+            if(err) return done(err);
+            res.status.should.be.equal(200);
+            res.body.should.be.a('object');
+        })
+      })
+  })
+
 });
