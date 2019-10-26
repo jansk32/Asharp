@@ -17,8 +17,6 @@ import AddFamilyMemberScreen from './components/add-family-member-screen';
 import ViewFamilyMemberScreen from './components/view-family-member-screen';
 import AddParentsScreen from './components/add-parents-screen';
 import AddParentsManually from './components/add-parents-manually-screen';
-
-
 import { MenuProvider } from 'react-native-popup-menu';
 
 // Import react navigation tools
@@ -35,7 +33,7 @@ import Icon2 from 'react-native-vector-icons/Entypo';
 
 // Import Firebase.
 import * as firebase from 'firebase';
-import { Dimensions, Text } from 'react-native';
+import { Dimensions, Text, TouchableOpacity, View, NavigationActions } from 'react-native';
 import { HeaderTitle } from 'react-navigation-stack';
 import OneSignal from 'react-native-onesignal';
 import AddParentsManuallyScreen from './components/add-parents-manually-screen';
@@ -62,16 +60,26 @@ OneSignal.addEventListener('received', () => console.log('RECEIVED ONESIGNAL'));
 
 // Sending artefact to family stack
 const sendFamilyStack = createStackNavigator({
-	ItemDetail: { screen: ItemDetailScreen },
-	FamilyTree: { screen: FamilyTreeScreen },
-});
+	ItemDetail: {
+		screen: ItemDetailScreen,
+		navigationOptions: {
+			header: null,
+		}
+	},
+	FamilyTree: {
+		screen: FamilyTreeScreen,
+		navigationOptions: {
+			header: null,
+		}
+	},
+},
+);
 
 const familyStack = createStackNavigator({
 	HomeFamilyTree: {
 		screen: FamilyTreeScreen,
 		navigationOptions: {
 			header: null,
-
 		}
 	},
 	NewProfile: { screen: ProfileScreen },
@@ -93,7 +101,8 @@ const notifStack = createStackNavigator({
 
 // Stack navigator for uploading artefact
 const uploadArtefactStack = createStackNavigator({
-	Home: { screen: HomeScreen,
+	Home: {
+		screen: HomeScreen,
 		navigationOptions: {
 			header: null,
 		}
@@ -108,20 +117,22 @@ const uploadArtefactStack = createStackNavigator({
 
 // Stack for profile
 const profileStack = createStackNavigator({
-	Profile: { screen: ProfileScreen,
+	Profile: {
+		screen: ProfileScreen,
 		navigationOptions: {
 			header: null,
-		} 
+		}
 	},
 	sendFamilyStack,
 	ProfileSetting: { screen: ProfileSettingScreen },
 });
 
 const timelineStack = createStackNavigator({
-	Timeline: { screen: TimelineScreen,
+	Timeline: {
+		screen: TimelineScreen,
 		navigationOptions: {
 			header: null,
-		}  
+		}
 	},
 	ItemDetail: { screen: ItemDetailScreen },
 });

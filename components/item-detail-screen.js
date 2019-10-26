@@ -5,7 +5,9 @@ import moment from 'moment';
 import { BACK_END_ENDPOINT } from '../constants';
 import AsyncStorage from '@react-native-community/async-storage';
 import DatePicker from 'react-native-datepicker';
-
+import Icon from 'react-native-vector-icons/EvilIcons';
+import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
+const { SlideInMenu } = renderers;
 
 moment.locale('en');
 
@@ -24,7 +26,7 @@ function useCurrentUser() {
 }
 
 // See the details of each individual artefact
-export default function ItemDetailScreen({ navigation }) {
+function ItemDetailScreen({ navigation, ctx }) {
     const { navigate } = navigation;
     const { artefactId } = navigation.state.params;
     const [owner, setOwner] = useState('');
@@ -82,12 +84,28 @@ export default function ItemDetailScreen({ navigation }) {
                     />
                     <View style={styles.headerCont}>
                         {/* <Text style={styles.title}>{artefact.name}</Text>*/}
-                        <TextInput
-                            style={styles.title}
-                            value={name}
-                            onChangeText={setName}
-                            editable={isEditing}
-                        />
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                            <TextInput
+                                style={[styles.title, {color: isEditing ? 'gray' : 'black'}]}
+                                value={name}
+                                onChangeText={setName}
+                                editable={isEditing}
+                            />
+                            <View style={{ justifyContent: 'center' }}>
+                                <Icon
+                                    name="navicon" size={40} color={'#2d2e33'}
+                                    onPress={() => ctx.menuActions.openMenu('itemMenu')}
+                                />
+                            </View>
+                        </View>
+                        <Menu name="itemMenu" renderer={SlideInMenu}>
+                            <MenuTrigger>
+                            </MenuTrigger>
+                            <MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
+                                <MenuOption onSelect={() => setIsEditing(true)} text="Edit Artefact" />
+                                <MenuOption onSelect={() => navigate('Home')} text="Delete Artefact" />
+                            </MenuOptions>
+                        </Menu>
                         <View style={styles.headerDesc}>
                             <Text style={styles.owner}>Owned by {owner}</Text>
                             <DatePicker
@@ -114,7 +132,7 @@ export default function ItemDetailScreen({ navigation }) {
                                 }}
                                 showIcon={false}
                                 onDateChange={setDate}
-                                value={moment(artefact.date).format('L')}
+                                value={moment(date).format('L')}
                             />
                         </View>
                     </View>
@@ -122,7 +140,7 @@ export default function ItemDetailScreen({ navigation }) {
                     <View style={styles.desc}>
                         <Text style={styles.boldHeader}>Description:</Text>
                         <TextInput
-                            style={styles.descriptionStyle}
+                            style={[styles.descriptionStyle, {borderColor: isEditing ? 'red' : 'black'}]}
                             value={description}
                             onChangeText={setDescription}
                             editable={isEditing}
@@ -134,11 +152,12 @@ export default function ItemDetailScreen({ navigation }) {
                         <Text style={styles.boldHeader}>Value:</Text>
                         {/* <Text style={styles.descriptionStyle}>{artefact.value}</Text> */}
                         <TextInput
-                            style={styles.descriptionStyle}
+                            style={[styles.descriptionStyle, {borderColor: isEditing ? 'red' : 'black'}]}
                             value={value}
                             onChangeText={setValue}
                             editable={isEditing}
-                            multiline={true} />
+                            multiline={true} 
+                            />
                     </View>
                     {
                         // If the artefact owner is the current user, allow them to send the artefact
@@ -151,13 +170,6 @@ export default function ItemDetailScreen({ navigation }) {
                                         style={styles.sendButton}>
                                         <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
                                             Send Artefact
-                                        </Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        onPress={() => setIsEditing(true)}
-                                        style={styles.editButton}>
-                                        <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
-                                            Edit Artefact
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
@@ -205,8 +217,9 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingBottom: 30,
         borderRadius: 5,
-        borderColor: 'black',
-        borderWidth: 0.5
+        borderColor:'black',
+        borderWidth: 0.5,
+        color: 'black'
     },
     title: {
         color: 'black',
@@ -242,15 +255,27 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         justifyContent: 'center',
         alignSelf: 'center',
-        marginBottom: 20,
     },
-    editButton: {
-        backgroundColor: '#579B93',
-        width: Dimensions.get('window').width / 1.75,
-        height: Dimensions.get('window').width / 8,
-        borderRadius: 50,
-        justifyContent: 'center',
-        alignSelf: 'center',
+    menuStyle: {
+        borderTopEndRadius: 20,
+        borderTopStartRadius: 20,
+        borderColor: 'black',
+        borderWidth: 0.5,
+        paddingTop: 20,
+        justifyContent: 'space-between',
+        paddingBottom: 80,
     },
-})
+    menuWrapper: {
+        paddingVertical: 15,
+        borderBottomColor: 'black',
+        borderBottomWidth: 0.5,
+        marginHorizontal: 50,
+    },
+    menuText: {
+        textAlign: 'left',
+        fontSize: 20,
+    },
+});
+
+export default withMenuContext(ItemDetailScreen);
 
