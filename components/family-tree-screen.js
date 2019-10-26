@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Component } from 'react';
 import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, ScrollView, Text, Alert, ActivityIndicator, } from 'react-native';
 import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text as SvgText } from 'react-native-svg';
-import generateFamilyTree, { mainDrawLines } from '../build-family-tree';
+import { arrangeFamilyTree, mainDrawLines, getAncestors } from '../build-family-tree';
 import axios from 'axios';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
 const { SlideInMenu } = renderers;
@@ -232,7 +232,7 @@ class ZoomableSvg extends Component {
 	}
 
 	render() {
-		const { height, width, familyTree, lines, navigation: { navigate } } = this.props;
+		const { height, width, familyTree, lines, fetchFamilyMembers, navigation: { navigate } } = this.props;
 		const { left, top, zoom } = this.state;
 
 		return (
@@ -241,9 +241,17 @@ class ZoomableSvg extends Component {
 					<MenuTrigger>
 					</MenuTrigger>
 					<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
-						<MenuOption onSelect={() => navigate('AddParents', { linkedNode: this.state.tappedNode })} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
-						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode, isAddingSpouse: true })} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
-						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode, isAddingSpouse: false })} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
+						<MenuOption onSelect={() => navigate('AddParents', { linkedNode: this.state.tappedNode, fetchFamilyMembers })} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
+						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode, fetchFamilyMembers, isAddingSpouse: true })} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
+						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode, fetchFamilyMembers, isAddingSpouse: false })} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
+						<MenuOption onSelect={async () => {
+							await axios.put(`${BACK_END_ENDPOINT}/user/remove-child/${this.state.tappedNode._id}`);
+							fetchFamilyMembers();
+						}} text="Remove child" />
+						<MenuOption onSelect={async () => {
+							await axios.put(`${BACK_END_ENDPOINT}/user/remove-spouse/${this.state.tappedNode._id}`);
+							fetchFamilyMembers();
+						}} text="Remove spouse" />
 					</MenuOptions>
 				</Menu>
 				<Svg
@@ -327,27 +335,29 @@ function FamilyTreeScreen({ ctx, navigation }) {
 	const [svgWidth, setSvgWidth] = useState(Dimensions.get('window').width);
 	const [svgHeight, setSvgHeight] = useState(Dimensions.get('window').height);
 
-	useEffect(() => {
-		async function fetchFamilyMembers() {
-			try {
-				// Get user document of current user
-				const userRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
-				const user = userRes.data;
-				console.log(user);
-				const res = await axios.get(`${BACK_END_ENDPOINT}/users`);
-				const familyMembers = res.data;
+	async function fetchFamilyMembers() {
+		try {
+			const userId = await AsyncStorage.getItem('userId');
+			const familyTreeRes = await axios.get(`${BACK_END_ENDPOINT}/family-tree/${userId}`);
+			const familyTree = familyTreeRes.data;
 
-				const familyTreeInfo = generateFamilyTree(familyMembers, user._id);
-				const { familyTree, ancestors } = familyTreeInfo;
-				const lines = mainDrawLines(familyTree, ancestors);
+			// getAncestors needs to be called at the client side to make the objects in ancestors
+			// refer to the same objects in familyTree
+			const ancestors = getAncestors(familyTree, userId);
 
-				setFamilyTree(familyTree);
-				setLines(lines);
-				setHide(false)
-			} catch (e) {
-				console.trace(e);
-			}
+			arrangeFamilyTree(familyTree, ancestors, userId);
+			const lines = mainDrawLines(familyTree, ancestors);
+
+			console.log(familyTree);
+			setFamilyTree(familyTree);
+			setLines(lines);
+			setHide(false)
+		} catch (e) {
+			console.trace(e);
 		}
+	}
+
+	useEffect(() => {
 		fetchFamilyMembers();
 	}, []);
 
@@ -395,7 +405,8 @@ function FamilyTreeScreen({ ctx, navigation }) {
 							familyTree={familyTree}
 							lines={lines}
 							ctx={ctx}
-							navigation={navigation} />
+							navigation={navigation}
+							fetchFamilyMembers={fetchFamilyMembers} />
 						:
 						null
 				}

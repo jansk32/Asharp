@@ -7,19 +7,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 moment.locale('en');
 
-function useCurrentUser() {
-    const [currentUser, setCurrentUser] = useState({});
-
-    useEffect(() => {
-        async function fetchCurrentUser() {
-            const res = await axios.get(`${BACK_END_ENDPOINT}/user`, { withCredentials: true });
-            setCurrentUser(res.data);
-        }
-        fetchCurrentUser();
-    }, []);
-
-    return currentUser;
-}
 
 // See the details of each individual artefact
 export default function ItemDetailScreen({ navigation }) {

@@ -1,5 +1,5 @@
 // Data set for testing
-export const family = [{
+const family = [{
 	_id: 'th',
 	gender: 'm',
 	m: 'yb',
@@ -211,18 +211,16 @@ function buildFamilyTree(family, _id) {
 }
 
 // Assign SVG positions to each family member
-function mainArrangeFamilyTree(familyTree, ancestors, targetId) {
+function mainAssignXOffset(familyTree, ancestors, targetId) {
 	const targetPerson = familyTree.find(person => person._id === targetId);
 	for (const ancestor of ancestors) {
-		// if (!('marriageOffset' in ancestor)) {
-		ancestor.width = recursiveArrangeFamilyTree(familyTree, ancestor, targetPerson);
-		// }
+		ancestor.width = recursiveAssignXOffset(familyTree, ancestor, targetPerson);
 	}
 }
 
 /* Recursively assign SVG positions to a person and their children,
  * then the children's children */
-function recursiveArrangeFamilyTree(familyTree, node, targetPerson) {
+function recursiveAssignXOffset(familyTree, node, targetPerson) {
 	// Base case: no spouse
 	if (!node.spouse) {
 		return baseWidth;
@@ -265,7 +263,7 @@ function recursiveArrangeFamilyTree(familyTree, node, targetPerson) {
 	}
 
 	for (const child of children) {
-		child.width = recursiveArrangeFamilyTree(familyTree, child, targetPerson);
+		child.width = recursiveAssignXOffset(familyTree, child, targetPerson);
 	}
 
 	// Manually reorder siblings if it's the target person's parent generation
@@ -291,11 +289,11 @@ function recursiveArrangeFamilyTree(familyTree, node, targetPerson) {
 	return totalWidth > baseWidth ? totalWidth : baseWidth;
 }
 
-function mainAssignMarriageOffset(familyTree) {
+function mainAssignMarriageOffset(familyTree, targetId) {
 	const maxGen = Math.max(...familyTree.map(node => node.gen));
 	for (let i = 0; i <= maxGen; i++) {
 		const genNodes = familyTree.filter(node => node.gen === i);
-		genNodes.forEach(node => assignMarriageOffset(familyTree, node));
+		genNodes.forEach(node => assignMarriageOffset(familyTree, node, targetId));
 
 		const shouldEqualizeMarriageOffset = true;
 		if (shouldEqualizeMarriageOffset) {
@@ -312,24 +310,31 @@ function mainAssignMarriageOffset(familyTree) {
 	}
 }
 
-function assignMarriageOffset(familyTree, node) {
-	// Deal with parents clashing
-	// If node is an ancestor (no parents), set leftWidth and rightWidth to 0
-	if (!node.mother || !node.father) {
+// Deal with parents clashing
+function assignMarriageOffset(familyTree, node, targetId) {
+	const targetPerson = familyTree.find(person => person._id === targetId);
+	const father = familyTree.find(person => person._id === node.father);
+	const mother = familyTree.find(person => person._id === node.mother);
+	
+	if (!father || !mother || node.gen >= targetPerson.gen && node._id !== targetId) {
+		// If node is an ancestor (no parents), set leftWidth and rightWidth to 0
+		// Or node is in the same generation as the target person but not the target person themself
+		// since the parents of their spouses won't be shown
 		node.leftWidth = 0;
 		node.rightWidth = 0;
 	} else {
 		// If node has parents, add parent's width and parent's marriage offset
-		const father = familyTree.find(person => person._id === node.father);
-		const mother = familyTree.find(person => person._id === node.mother);
 		node.leftWidth = father.marriageOffset - node.xOffset + father.leftWidth;
 		node.rightWidth = mother.marriageOffset - node.xOffset + mother.rightWidth;
 	}
 
 	const baseMarriageOffset = baseWidth / 4;
+	// node.marriageOffset = node.gender === 'm'
+	// 	? -(node.rightWidth + radius + baseMarriageOffset)
+	// 	: -(node.leftWidth - radius - baseMarriageOffset);
 	node.marriageOffset = node.gender === 'm'
-		? -(node.rightWidth + radius + baseMarriageOffset)
-		: -(node.leftWidth - radius - baseMarriageOffset);
+		? -(node.rightWidth + baseMarriageOffset)
+		: -(node.leftWidth - baseMarriageOffset);
 }
 
 // Assign absolute (not relative) x coordinates for each family member for drawing on SVG
@@ -423,18 +428,36 @@ function assignY(familyTree, targetId) {
  * the target person and their spouses.
  * Returns an object consisting of the family tree itself and ancestors 
  * of the target person (used for other functions) */
-export default function generateFamilyTree(family, targetId) {
+function generateFamilyTree(family, targetId) {
+	// Cast MongoDB ObjectIDs to strings
+	family.forEach(person => person._id = person._id.toString());
+
 	const familyTree = buildFamilyTree(family, targetId);
-	const ancestors = getAncestors(family, targetId);
-	mainArrangeFamilyTree(familyTree, ancestors, targetId);
-	mainAssignMarriageOffset(familyTree);
+	const ancestors = getAncestors(familyTree, targetId);
+
+	familyTree.forEach(person => {
+		if (person.name === 'Grandma') {
+			person.nice = true;
+		}
+	});
+
+	mainAssignXOffset(familyTree, ancestors, targetId);
+	mainAssignMarriageOffset(familyTree, targetId);
+	mainAssignX(familyTree, ancestors, targetId);
+	assignY(familyTree, targetId);
+	return { familyTree, ancestors };
+}
+
+function arrangeFamilyTree(familyTree, ancestors, targetId) {
+	mainAssignXOffset(familyTree, ancestors, targetId);
+	mainAssignMarriageOffset(familyTree, targetId);
 	mainAssignX(familyTree, ancestors, targetId);
 	assignY(familyTree, targetId);
 	return { familyTree, ancestors };
 }
 
 // Create lines for family tree
-export function mainDrawLines(familyTree, ancestors) {
+function mainDrawLines(familyTree, ancestors) {
 	let lines = [];
 	for (const ancestor of ancestors) {
 		lines.push(...recursiveDrawLines(familyTree, ancestor));
@@ -502,4 +525,11 @@ function recursiveDrawLines(familyTree, node) {
 
 	node.hasLines = true;
 	return lines;
+}
+
+module.exports = {
+	buildFamilyTree,
+	arrangeFamilyTree,
+	mainDrawLines,
+	getAncestors
 }

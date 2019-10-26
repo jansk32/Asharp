@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import { FlatList } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
-import generateFamilyTree from '../build-family-tree';
+import { buildFamilyTree } from '../build-family-tree';
 
 import { BACK_END_ENDPOINT } from '../constants';
 
@@ -16,31 +16,19 @@ export default function UserSearchBox({ renderItem }) {
 
     const [nameQuery, setNameQuery] = useState('');
     const [searchedUsers, setSearchedUsers] = useState([]);
+    const [nonFamilials, setNonFamilials] = useState([]);
 
     useEffect(() => {
-        async function searchUsers() {
-            const searchedUsersRes = await axios.get(`${BACK_END_ENDPOINT}/user/search`, {
-                params: {
-                    name: nameQuery
-                }
-            });
-            const searchedUsers = searchedUsersRes.data;
-
-            const userRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
-            const user = userRes.data;
-            const allUsersRes = await axios.get(`${BACK_END_ENDPOINT}/users`);
-            const allUsers = allUsersRes.data;
-
-            const familyTreeInfo = generateFamilyTree(allUsers, user._id);
-            const { familyTree, ancestors } = familyTreeInfo;
-
-            const familyIds = familyTree.map(node => node._id);
-            const users = searchedUsers.filter(node => !familyIds.includes(node._id));
-
-            setSearchedUsers(users);
+        async function fetchNonFamilials() {
+            const res = await axios.get(`${BACK_END_ENDPOINT}/family-tree/non-familial/${await AsyncStorage.getItem('userId')}`);
+            setNonFamilials(res.data);
         }
-        searchUsers();
-    }, [nameQuery]);
+        fetchNonFamilials();
+    }, []);
+
+    useEffect(() => {
+        setSearchedUsers(nonFamilials.filter(person => person.name.toLowerCase().includes(nameQuery.toLowerCase())));
+    }, [nameQuery, nonFamilials]);
 
     return (
         <>

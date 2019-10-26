@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { pickImage, uploadImage } from '../image-tools';
 
 import { BACK_END_ENDPOINT } from '../constants';
+import PictureFrame from './picture-frame';
 
 // Stylesheets for formatting and designing layout
 const styles = StyleSheet.create({
@@ -113,7 +114,7 @@ export default function SignUp3({ navigation }) {
 		<>
 			<ScrollView>
 				<View style={styles.container}>
-					<Image source={image} style={styles.imageStyle} />
+					{/* <Image source={image} style={styles.imageStyle} />
 					<View style={styles.buttonBox}>
 						<TouchableOpacity
 							onPress={async () => setImage(await pickImage())}>
@@ -124,7 +125,16 @@ export default function SignUp3({ navigation }) {
 									</Text>
 							</View>
 						</TouchableOpacity>
-					</View>
+					</View> */}
+
+					<PictureFrame
+						image={image}
+						setImage={setImage}
+						width={Dimensions.get('window').width * 0.75}
+						height={Dimensions.get('window').width * 0.75}
+						editable={true}
+						circular={true}
+					/>
 
 					<TouchableOpacity
 						onPress={finishSignUp}>

@@ -17,7 +17,7 @@ moment.locale('en');
 
 export default function AddParentsScreen({ navigation }) {
     const { navigate } = navigation;
-    const { linkedNode: childNode } = navigation.state.params;
+    const { linkedNode: childNode, fetchFamilyMembers } = navigation.state.params;
 
     const [tab, setTab] = useState({
         index: 0,
@@ -41,11 +41,13 @@ export default function AddParentsScreen({ navigation }) {
                             },
                             {
                                 text: 'OK',
-                                onPress: () => {
-                                    axios.put(`${BACK_END_ENDPOINT}/user/add-parent`, {
+                                onPress: async () => {
+                                    await axios.put(`${BACK_END_ENDPOINT}/user/add-parent`, {
                                         childId: childNode._id,
                                         parentId,
                                     });
+                                    fetchFamilyMembers();
+                                    navigation.goBack();
                                 }
                             }
                         ]

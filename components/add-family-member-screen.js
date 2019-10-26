@@ -11,17 +11,15 @@ import Moment from 'moment';
 Moment.locale('en');
 
 import { BACK_END_ENDPOINT } from '../constants';
+import PictureFrame from './picture-frame';
+import { uploadImage } from '../image-tools';
 
 export default function AddFamilyMemberScreen({ navigation }) {
     // isAddingSpouse is false if adding a child
     const { navigate } = navigation;
-    const { linkedNode, isAddingSpouse } = navigation.state.params;
-    const [name, setName] = useState('');
-    const [dob, setDob] = useState('');
-    const [gender, setGender] = useState('');
+    const { linkedNode, isAddingSpouse, fetchFamilyMembers } = navigation.state.params;
 
     const DATE_FORMAT = 'YYYY-MM-DD';
-
 
     function renderSearchResult({ item: { _id, name, pictureUrl } }) {
         // const disabled = linkedNode._id === parentId || !spouse || spouse && linkedNode.spouse === parentId;
@@ -39,18 +37,20 @@ export default function AddFamilyMemberScreen({ navigation }) {
                             },
                             {
                                 text: 'OK',
-                                onPress: () => {
+                                onPress: async () => {
                                     if (isAddingSpouse) {
-                                        axios.put(`${BACK_END_ENDPOINT}/user/add-spouse`, {
+                                        await axios.put(`${BACK_END_ENDPOINT}/user/add-spouse`, {
                                             personId: linkedNode._id,
                                             spouseId: _id,
                                         });
                                     } else {
-                                        axios.put(`${BACK_END_ENDPOINT}/user/add-child`, {
+                                        await axios.put(`${BACK_END_ENDPOINT}/user/add-child`, {
                                             personId: linkedNode._id,
                                             childId: _id,
                                         });
                                     }
+                                    fetchFamilyMembers();
+                                    navigation.goBack();
                                 }
                             }
                         ]
@@ -80,6 +80,11 @@ export default function AddFamilyMemberScreen({ navigation }) {
     }
 
     function AddMemberRoute() {
+        const [name, setName] = useState('');
+        const [dob, setDob] = useState('');
+        const [gender, setGender] = useState('');
+        const [image, setImage] = useState();
+
         return (
             <>
                 <View style={styles.inputContainer}>
@@ -144,18 +149,21 @@ export default function AddFamilyMemberScreen({ navigation }) {
                         :
                         null
                     }
-                    <TextInput
-                        placeholder="Picture"
-                        style={styles.textInput}
+                    <Text>Profile picture</Text>
+                    <PictureFrame
+                        image={image}
+                        setImage={setImage}
+                        editable={true}
                     />
                 </View>
                 <View style={styles.button}>
                     <Text
                         style={styles.buttonText}
-                        onPress={() => {
+                        onPress={async () => {
                             const newUserInfo = {
                                 name,
                                 dob,
+                                pictureUrl: await uploadImage(image.uri)
                             };
 
                             if (linkedNode.spouse) {
@@ -171,7 +179,8 @@ export default function AddFamilyMemberScreen({ navigation }) {
                                 newUserInfo.spouse = linkedNode._id;
                                 newUserInfo.gender = linkedNode.gender === 'm' ? 'f' : 'm';
                             }
-                            axios.post(`${BACK_END_ENDPOINT}/user/create`, newUserInfo);
+                            await axios.post(`${BACK_END_ENDPOINT}/user/create`, newUserInfo);
+                            fetchFamilyMembers();
                             navigation.goBack();
                         }}>
                         Add

@@ -11,6 +11,8 @@ const { ensureLoggedIn } = require('connect-ensure-login');
 const constants = require('./server-constants');
 const { ONESIGNAL_ENDPOINT, ONESIGNAL_APP_ID } = constants;
 
+const { buildFamilyTree } = require('./build-family-tree');
+
 /* Database */
 // Schemas
 const userSchema = require('./schema/userSchema');
@@ -18,9 +20,9 @@ const artefactSchema = require('./schema/artefactSchema');
 const notificationSchema = require('./schema/notificationSchema');
 
 // Create the mongoose model 
-const userModel = mongoose.model('user', userSchema);
-const artefactModel = mongoose.model('artefact', artefactSchema);
-const notificationModel = mongoose.model('notification', notificationSchema);
+const User = mongoose.model('User', userSchema);
+const Artefact = mongoose.model('Artefact', artefactSchema);
+const Notification = mongoose.model('Notification', notificationSchema);
 
 // Connect to mongodb
 require('./controller/mongooseController');
@@ -36,7 +38,7 @@ passport.use(new LocalStrategy(
 		passwordField: 'password'
 	},
 	function (username, password, done) {
-		userModel.findOne({ email: username }, function (err, found) {
+		User.findOne({ email: username }, function (err, found) {
 			if (err) {
 				return done(err);
 			}
@@ -59,7 +61,7 @@ passport.serializeUser(function (user, done) {
 
 passport.deserializeUser(async function (_id, done) {
 	try {
-		const user = await userModel.findById(_id);
+		const user = await User.findById(_id);
 		// console.log('DESERIALIZED: ' + user.name);
 		done(null, user);
 	} catch (e) {
@@ -114,7 +116,7 @@ app.get('/user', async (req, res) => {
 	console.log('ID = ' + id);
 	console.log('Authenticating user with id: ' + id);
 	try {
-		const user = await userModel.findById(id);
+		const user = await User.findById(id);
 		res.send(user);
 		// console.log('AUTHENTICATED user with id: ' + id);
 	} catch (e) {
@@ -125,7 +127,7 @@ app.get('/user', async (req, res) => {
 // Get limited information about another user
 app.get('/user/find/:id', async (req, res) => {
 	try {
-		const user = await userModel.findById(req.params.id);
+		const user = await User.findById(req.params.id);
 		delete user.email;
 		delete user.password;
 		res.send(user);
@@ -136,7 +138,7 @@ app.get('/user/find/:id', async (req, res) => {
 
 // Get user by id for artefacts
 app.get('/user/artefact', (req, res) => {
-	userModel.findOne(req.query, (err, result) => {
+	User.findOne(req.query, (err, result) => {
 		if (err) throw err;
 		res.send(result);
 	});
@@ -155,7 +157,7 @@ app.post('/user/create', async ({ body: {
 	artefact,
 	pictureUrl,
 	isUser } }, res) => {
-	const user = new userModel({
+	const user = new User({
 		name,
 		dob,
 		email,
@@ -174,10 +176,11 @@ app.post('/user/create', async ({ body: {
 
 	// If new user has a spouse, add them as a spouse to their spouse
 	if (spouse) {
-		const spouseNode = await userModel.findById(spouse);
+		const spouseNode = await User.findById(spouse);
 		spouseNode.spouse = savedUser._id;
-		spouseNode.save();
+		await spouseNode.save();
 	}
+	res.send();
 });
 
 // Get all users (registered and non-registered)
@@ -185,7 +188,7 @@ app.post('/user/create', async ({ body: {
 app.get('/users', async (req, res) => {
 
 	try {
-		const users = await userModel.find();
+		const users = await User.find();
 		res.send(users);
 	} catch (e) {
 		console.error(e);
@@ -195,46 +198,37 @@ app.get('/users', async (req, res) => {
 // Update logged-in user
 app.put('/user/update', (req, res) => {
 	const id = req.body.userId;
-	userModel.findOneAndUpdate({ _id: id }, req.body, { new: true }, (err, result) => {
+	User.findOneAndUpdate({ _id: id }, req.body, { new: true }, (err, result) => {
 		if (err) throw err;
 		res.send(result);
 	});
 });
 
-// Get users by name for adding as parents
-app.get('/user/search', async ({ query: { name } }, res) => {
-	const users = await userModel.find({
-		name: {
-			$regex: new RegExp(name, 'i')
-		}
-	});
-	res.send(users);
-});
-
 // Add parent who already has a spouse
 app.put('/user/add-parent', async ({ body: { childId, parentId } }, res) => {
 	// Make sure that parent already has a spouse
-	const parent = await userModel.findById(parentId);
+	const parent = await User.findById(parentId);
 	if (!parent.spouse) {
 		return;
 	}
-	const child = await userModel.findById(childId);
+	const child = await User.findById(childId);
 	child.father = parent.gender === 'm' ? parent._id : parent.spouse;
 	child.mother = parent.gender === 'f' ? parent._id : parent.spouse;
-	child.save();
+	await child.save();
+	res.send();
 });
 
 // Add parents manually
 app.post('/user/add-parents-manually', async ({ body: { fatherName, fatherDob, motherName, motherDob, personId } }, res) => {
 	console.log(personId);
-	const father = new userModel({
+	const father = new User({
 		name: fatherName,
 		dob: fatherDob,
 		gender: 'm',
 		isUser: false,
 	});
 
-	const mother = new userModel({
+	const mother = new User({
 		name: motherName,
 		dob: motherDob,
 		gender: 'f',
@@ -249,58 +243,109 @@ app.post('/user/add-parents-manually', async ({ body: { fatherName, fatherDob, m
 
 	// Link person to their parents
 	// findByIdAndUpdate must be called with await, else it won't work
-	await userModel.findByIdAndUpdate(personId, { father: father._id, mother: mother._id });
+	await User.findByIdAndUpdate(personId, { father: father._id, mother: mother._id });
 });
 
 // Add spouse
 app.put('/user/add-spouse', async ({ body: { personId, spouseId } }, res) => {
 	// Make sure that person and potential spouse don't have a spouse yet
-	const person = await userModel.findById(personId);
-	const spouse = await userModel.findById(spouseId);
+	const person = await User.findById(personId);
+	const spouse = await User.findById(spouseId);
 	if (person.spouse || spouse.spouse) {
 		return;
 	}
 
 	person.spouse = spouse._id;
-	person.save();
+	await person.save();
 	spouse.spouse = person._id;
-	spouse.save();
+	await spouse.save();
+	res.send();
 });
 
 // Add child
 app.put('/user/add-child', async ({ body: { personId, childId } }, res) => {
 	// Make sure that potential child doesn't have parents yet
 	// and potential parent is married
-	const child = await userModel.findById(childId);
+	const child = await User.findById(childId);
 	if (child.father || child.mother) {
-		console.log('returning cos of child already having parents');
 		return;
 	}
 
-	const parent = await userModel.findById(personId);
+	const parent = await User.findById(personId);
 	if (!parent.spouse) {
-		console.log('returning cos parent doesnt have spouse');
 		return;
 	}
 
 	child.father = parent.gender === 'm' ? parent._id : parent.spouse;
 	child.mother = parent.gender === 'f' ? parent._id : parent.spouse;
-	child.save();
+	await child.save();
+	res.send();
+});
+
+// Remove a user's child
+app.put('/user/remove-child/:id', async ({ params: { id } }, res) => {
+	await User.findByIdAndUpdate(id, { $unset: { father: null, mother: null } });
+	res.send();
+});
+
+// Remove a user's spouse
+// Also remove the user and their spouse as parents of their children
+app.put('/user/remove-spouse/:id', async ({ params: { id } }, res) => {
+	// Remove spouse from user and user from spouse
+	const oldUser = await User.findByIdAndUpdate(id, { $unset: { spouse: null } });
+	const oldSpouse = await User.findByIdAndUpdate(oldUser.spouse, { $unset: { spouse: null } });
+
+	// Remove user and spouse as parents of their children
+	const father = oldUser.gender === 'm' ? oldUser._id : oldSpouse._id;
+	const mother = oldUser.gender === 'f' ? oldUser._id : oldSpouse._id;
+	await User.updateMany({ father, mother }, { $unset: { father: null, mother: null } });
+	res.send();
 });
 
 // Delete a family member or user
-app.delete('/user/delete/:id', (req,res) => {
-	userModel.findByIdAndDelete(req.params.id, (err,resp) => {
-		if(err) throw err;
+app.delete('/user/delete/:id', (req, res) => {
+	User.findByIdAndDelete(req.params.id, (err, resp) => {
+		if (err) throw err;
 		res.send(resp);
-	})
-})
+	});
+});
+
+/* Family tree routes */
+
+async function getFamilyTree(id) {
+	// Query uses .lean() so query results are plain JS objects instead of mongoose documents
+	// This is to allow casting of id from MongoDB ObjectID to String
+	const allUsers = await User.find().lean();
+
+	// Cast MongoDB ObjectIDs to strings (self, father, mother, spouse)
+	allUsers.forEach(user => user._id = user._id.toString());
+
+	const familyTree = buildFamilyTree(allUsers, id);
+	return familyTree;
+}
+
+app.get('/family-tree/:id', async ({ params: { id } }, res) => {
+	try {
+		const familyTree = await getFamilyTree(id);
+		res.send(familyTree);
+	} catch (e) {
+		console.error(e);
+	}
+});
+
+// Get users who are not in the family tree of a certain user so they can be added
+app.get('/family-tree/non-familial/:id', async ({ params: { id } }, res) => {
+	const familyTree = await getFamilyTree(id);
+	const nonFamilialUsers = await User.find({_id: {$nin: familyTree.map(person => person._id)}});
+	res.send(nonFamilialUsers);
+});
+
 
 /* Artefact routes */
 // Get ALL artefacts
 app.get('/artefact', async (req, res) => {
 	try {
-		const artefacts = await artefactModel.find();
+		const artefacts = await Artefact.find();
 		res.send(artefacts);
 	} catch (e) {
 		console.trace(e);
@@ -311,7 +356,7 @@ app.get('/artefact', async (req, res) => {
 // Get a single artefact by id
 app.get('/artefact/find/:artefactId', async (req, res) => {
 	try {
-		const artefact = await artefactModel.findById(req.params.artefactId);
+		const artefact = await Artefact.findById(req.params.artefactId);
 		res.send(artefact);
 	} catch (e) {
 		console.trace(e);
@@ -321,7 +366,7 @@ app.get('/artefact/find/:artefactId', async (req, res) => {
 // Create an artefact
 app.post('/artefact/create', ({
 	body: { name, date, value, description, file, owner } }, res) => {
-	const artefact = new artefactModel({
+	const artefact = new Artefact({
 		name,
 		date,
 		owner,
@@ -342,7 +387,7 @@ app.post('/artefact/create', ({
 // Re-assign artefact to certain user
 app.put('/artefact/assign', ({ body: { artefactId, recipientId, senderId } }, res) => {
 	// Request should include id of artefact, and id of new owner
-	artefactModel.updateOne({ _id: artefactId }, { owner: recipientId }, (err, resp) => {
+	Artefact.updateOne({ _id: artefactId }, { owner: recipientId }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp);
 	});
@@ -360,7 +405,7 @@ app.put('/artefact/assign', ({ body: { artefactId, recipientId, senderId } }, re
 	});
 
 	// Add new notification document to database
-	const notif = new notificationModel({
+	const notif = new Notification({
 		time: moment().toISOString(),
 		artefact: artefactId,
 		recipient: recipientId,
@@ -373,7 +418,7 @@ app.put('/artefact/assign', ({ body: { artefactId, recipientId, senderId } }, re
 // Get artefacts by owner id
 app.get('/artefact/findbyowner/:id', async ({ params: { id } }, res) => {
 	try {
-		const artefacts = await artefactModel.find({ owner: id });
+		const artefacts = await Artefact.find({ owner: id });
 		res.send(artefacts);
 	} catch (e) {
 		console.trace(e);
@@ -381,26 +426,26 @@ app.get('/artefact/findbyowner/:id', async ({ params: { id } }, res) => {
 });
 
 // Update an artefact
-app.put('/artefact/update/:id', (req,res) => {
-	artefactModel.findByIdAndUpdate(req.params.id,req.body, (err,resp) => {
-		if(err) throw err;
+app.put('/artefact/update/:id', (req, res) => {
+	Artefact.findByIdAndUpdate(req.params.id, req.body, (err, resp) => {
+		if (err) throw err;
 		res.send(resp);
-	})
-})
+	});
+});
 
 // Delete an artefact
-app.delete('/artefact/delete/:id', (req,res) => {
-	artefactModel.findByIdAndDelete(req.params.id, (err,resp) => {
-		if(err) throw err;
+app.delete('/artefact/delete/:id', (req, res) => {
+	Artefact.findByIdAndDelete(req.params.id, (err, resp) => {
+		if (err) throw err;
 		res.send(resp);
-	})
-})
+	});
+});
 
 /* Notification routes */
 // Get all notifications that are meant for a certain user
 app.get('/notification/', async ({ query: { recipient } }, res) => {
 	try {
-		const notifications = await notificationModel.find({ recipient })
+		const notifications = await Notification.find({ recipient })
 			.populate('recipient')
 			.populate('sender')
 			.populate('artefact');
@@ -423,6 +468,7 @@ app.get('/logout', (req, res) => {
 	res.send();
 });
 
+
 process.on('unhandledRejection', (reason, p) => {
 	console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
 	// application specific logging, throwing an error, or other logic here
@@ -432,7 +478,7 @@ const port = process.env.PORT || 3000;
 
 if (process.env.NODE_ENV !== 'test') {
 	app.listen(port, '0.0.0.0');
-  }
+}
 console.log('Listening to port ' + port);
 
 module.exports = app;

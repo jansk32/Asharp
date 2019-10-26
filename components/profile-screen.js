@@ -12,6 +12,7 @@ const { SlideInMenu } = renderers;
 
 // Environment variables
 import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
+import PictureFrame from './picture-frame';
 
 // Number 
 const numColumns = 3;
@@ -152,10 +153,13 @@ function ProfileScreen({ navigation, ctx }) {
 			<ActivityIndicator size="large" color="#0000ff" animating={hide} />
 			<ScrollView>
 				<View style={styles.profileBox}>
-					<Image
-						source={{ uri: profile.pictureUrl || BLANK_PROFILE_PIC_URI }}
-						style={styles.image}
+					<PictureFrame
+						image={{ uri: profile.pictureUrl || BLANK_PROFILE_PIC_URI }}
+						circular={true}
+						width={100}
+						height={100}
 					/>
+
 					<View style={styles.textBox}>
 						<Text
 							style={styles.nameText}>{profile.name}</Text>
