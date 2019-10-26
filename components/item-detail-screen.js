@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Text, ActivityIndicator, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, TextInput, ActivityIndicator, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
 import { BACK_END_ENDPOINT } from '../constants';
 import AsyncStorage from '@react-native-community/async-storage';
+import DatePicker from 'react-native-datepicker';
+
 
 moment.locale('en');
 
@@ -25,16 +27,30 @@ function useCurrentUser() {
 export default function ItemDetailScreen({ navigation }) {
     const { navigate } = navigation;
     const { artefactId } = navigation.state.params;
-    const [artefact, setArtefact] = useState({});
     const [owner, setOwner] = useState('');
     const [hide, setHide] = useState(true);
     const [currentUser, setCurrentUser] = useState();
+    const [isEditing, setIsEditing] = useState(false);
+
+    const [artefact, setArtefact] = useState({});
+
+    /* Editing the input when the edit button is pressed */
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [value, setValue] = useState('');
+    const [date, setDate] = useState('');
 
     useEffect(() => {
         // Get a specific artefact
         async function fetchArtefact() {
             const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/find/${artefactId}`);
-            setArtefact(res.data);
+            const artefact = res.data;
+            setArtefact(artefact);
+            setName(artefact.name);
+            setDescription(artefact.description);
+            setValue(artefact.value);
+            setDate(artefact.date);
+
             setHide(false);
             const ownerRes = await axios.get(`${BACK_END_ENDPOINT}/user/artefact`, {
                 params: {
@@ -52,7 +68,7 @@ export default function ItemDetailScreen({ navigation }) {
             setCurrentUser(res.data);
         }
         fetchCurrentUser();
-        
+
         setHide(false);
     }, []);
 
@@ -65,34 +81,87 @@ export default function ItemDetailScreen({ navigation }) {
                         source={{ uri: artefact.file }}
                     />
                     <View style={styles.headerCont}>
-                        <Text style={styles.title}>{artefact.name}</Text>
+                        {/* <Text style={styles.title}>{artefact.name}</Text>*/}
+                        <TextInput
+                            style={styles.title}
+                            value={name}
+                            onChangeText={setName}
+                            editable={isEditing}
+                        />
                         <View style={styles.headerDesc}>
                             <Text style={styles.owner}>Owned by {owner}</Text>
-                            <Text style={styles.dateStyle}>{moment(artefact.date).format('L')}</Text>
+                            <DatePicker
+                                disabled={!isEditing}
+                                style={styles.dateStyle}
+                                date={date}
+                                mode="date"
+                                placeholder="Select date"
+                                format="YYYY-MM-DD"
+                                maxDate={moment().format('DD-MM-YYYY')}
+                                confirmBtnText="Confirm"
+                                cancelBtnText="Cancel"
+                                androidMode="spinner"
+                                customStyles={{
+                                    dateIcon: {
+                                        position: 'absolute',
+                                        left: 0,
+                                        top: 4,
+                                        marginLeft: 0
+                                    },
+                                    dateInput: {
+                                        marginLeft: 0
+                                    }
+                                }}
+                                showIcon={false}
+                                onDateChange={setDate}
+                                value={moment(artefact.date).format('L')}
+                            />
                         </View>
                     </View>
                     <ActivityIndicator size="large" color="#0000ff" animating={hide} />
                     <View style={styles.desc}>
                         <Text style={styles.boldHeader}>Description:</Text>
-                        <Text style={styles.descriptionStyle}>{artefact.description}</Text>
+                        <TextInput
+                            style={styles.descriptionStyle}
+                            value={description}
+                            onChangeText={setDescription}
+                            editable={isEditing}
+                            multiline={true}
+                        />
+                        {/*<Text style={styles.descriptionStyle}>{artefact.description}</Text>*/}
                     </View>
                     <View style={styles.desc}>
                         <Text style={styles.boldHeader}>Value:</Text>
-                        <Text style={styles.descriptionStyle}>{artefact.value}</Text>
+                        {/* <Text style={styles.descriptionStyle}>{artefact.value}</Text> */}
+                        <TextInput
+                            style={styles.descriptionStyle}
+                            value={value}
+                            onChangeText={setValue}
+                            editable={isEditing}
+                            multiline={true} />
                     </View>
                     {
                         // If the artefact owner is the current user, allow them to send the artefact
                         currentUser && artefact.owner === currentUser._id &&
                         (
-                            <View style={styles.buttonBox}>
-                                <TouchableOpacity
-                                    onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
-                                    style={styles.sendButton}>
-                                    <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
-                                        Send Artefact
+                            <>
+                                <View style={styles.buttonBox}>
+                                    <TouchableOpacity
+                                        onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
+                                        style={styles.sendButton}>
+                                        <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
+                                            Send Artefact
                                         </Text>
-                                </TouchableOpacity>
-                            </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() => setIsEditing(true)}
+                                        style={styles.editButton}>
+                                        <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
+                                            Edit Artefact
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </>
                         )
                     }
 
@@ -164,10 +233,19 @@ const styles = StyleSheet.create({
     buttonBox: {
         justifyContent: 'center',
         marginHorizontal: 20,
-        marginVertical: 40,
+        marginVertical: 20,
     },
     sendButton: {
         backgroundColor: '#EC6268',
+        width: Dimensions.get('window').width / 1.75,
+        height: Dimensions.get('window').width / 8,
+        borderRadius: 50,
+        justifyContent: 'center',
+        alignSelf: 'center',
+        marginBottom: 20,
+    },
+    editButton: {
+        backgroundColor: '#579B93',
         width: Dimensions.get('window').width / 1.75,
         height: Dimensions.get('window').width / 8,
         borderRadius: 50,
