@@ -32,7 +32,7 @@ function calcCenter(x1, y1, x2, y2) {
 	};
 }
 
-class ZoomableSvg extends Component {
+class FamilyTreeSvg extends Component {
 	viewBoxSize = 1200;
 	resolution = this.viewBoxSize / Math.min(this.props.height, this.props.width);
 
@@ -131,6 +131,9 @@ class ZoomableSvg extends Component {
 						// so on touch release, a tap isn't registered
 						this.longPressTimeout = null;
 					}, LONG_PRESS_DURATION);
+				} else {
+					// No node was tapped, clear previous tapped node
+					this.setState({ tappedNode: null });
 				}
 			},
 			onPanResponderTerminate: () => { },
@@ -399,7 +402,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 			}}>
 				{
 					isSvgDimensionsSet ?
-						<ZoomableSvg
+						<FamilyTreeSvg
 							width={svgWidth}
 							height={svgHeight}
 							familyTree={familyTree}
@@ -496,7 +499,7 @@ const styles = StyleSheet.create({
 		textAlign: 'left',
 		fontSize: 20,
 	},
-})
+});
 
 FamilyTreeScreen.navigationOptions = {
 	title: 'Family tree'

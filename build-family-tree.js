@@ -290,6 +290,8 @@ function recursiveAssignXOffset(familyTree, node, targetPerson) {
 }
 
 function mainAssignMarriageOffset(familyTree, targetId) {
+	const targetPerson = familyTree.find(person => person._id === targetId);
+
 	const maxGen = Math.max(...familyTree.map(node => node.gen));
 	for (let i = 0; i <= maxGen; i++) {
 		const genNodes = familyTree.filter(node => node.gen === i);
@@ -307,16 +309,61 @@ function mainAssignMarriageOffset(familyTree, targetId) {
 				spouse.marriageOffset = Math.sign(spouse.marriageOffset) * higherOffset;
 			});
 		}
+		
+		genNodes.forEach(node => {
+			// By default, marriageOffset is determined by gender
+			// This is for father, mother, and everyone who is not in their generation
+
+			// But, if current parent is in the generation of the target person's parent:
+			// and is sibling of father, put to the left in marriage
+			// and is sibling of mother, put to the right in marriage
+			// and is father or mother themself, ignore since it's been handled by the default case
+			const spouse = familyTree.find(person => person._id === node.spouse);
+			if (!spouse) {
+				return;
+			}
+			if (node.gen === targetPerson.gen - 1) {
+				// Sibling of the father of the target person
+				const targetFather = familyTree.find(person => person._id === targetPerson.father);
+				if (node._id !== targetFather._id && node.father === targetFather.father) {
+					node.marriageOffset = -Math.abs(node.marriageOffset);
+					spouse.marriageOffset = Math.abs(spouse.marriageOffset);
+				}
+				// Sibling of the mother of the target person
+				const targetMother = familyTree.find(person => person._id === targetPerson.mother);
+				if (node._id !== targetMother._id && node.father === targetMother.father) {
+					node.marriageOffset = Math.abs(node.marriageOffset);
+					spouse.marriageOffset = -Math.abs(spouse.marriageOffset);
+				}
+			} else if (node.gen >= targetPerson.gen) {
+				const father = familyTree.find(person => person._id === node.father);
+				const mother = familyTree.find(person => person._id === node.mother);			
+				const spouseFather = familyTree.find(person => person._id === spouse.father);
+				const spouseMother = familyTree.find(person => person._id === spouse.mother);
+				
+				if (!spouseFather || !spouseMother) {
+					node.marriageOffset = -Math.abs(node.marriageOffset);
+					spouse.marriageOffset = Math.abs(spouse.marriageOffset);
+				} else if (!father || !mother) {
+					node.marriageOffset = Math.abs(node.marriageOffset);
+					spouse.marriageOffset = -Math.abs(spouse.marriageOffset);
+				}
+			}
+		});
 	}
 }
 
 // Deal with parents clashing
 function assignMarriageOffset(familyTree, node, targetId) {
 	const targetPerson = familyTree.find(person => person._id === targetId);
+	const spouse = familyTree.find(person => person._id === node.spouse);
+	if (!spouse) {
+		return;
+	}
 	const father = familyTree.find(person => person._id === node.father);
 	const mother = familyTree.find(person => person._id === node.mother);
-	
-	if (!father || !mother || node.gen >= targetPerson.gen && node._id !== targetId) {
+
+	if (!father || !mother || node.gen >= targetPerson.gen) {
 		// If node is an ancestor (no parents), set leftWidth and rightWidth to 0
 		// Or node is in the same generation as the target person but not the target person themself
 		// since the parents of their spouses won't be shown
@@ -326,6 +373,15 @@ function assignMarriageOffset(familyTree, node, targetId) {
 		// If node has parents, add parent's width and parent's marriage offset
 		node.leftWidth = father.marriageOffset - node.xOffset + father.leftWidth;
 		node.rightWidth = mother.marriageOffset - node.xOffset + mother.rightWidth;
+
+		// If the child node is within the width of the parent, reset leftWidth or rightWidth
+		// to 0
+		if (node.leftWidth > 0) {
+			node.leftWidth = 0;
+		}
+		if (node.rightWidth < 0) {
+			node.rightWidth = 0;
+		}
 	}
 
 	const baseMarriageOffset = baseWidth / 4;

@@ -122,7 +122,7 @@ export default function AddFamilyMemberScreen({ navigation }) {
                             value={dob}
                         />
                     </View>
-                    {linkedNode.spouse ?
+                    {linkedNode.spouse &&
                         /* Gender options */
                         <View style={styles.gender}>
                             <Text>Gender: </Text>
@@ -137,8 +137,6 @@ export default function AddFamilyMemberScreen({ navigation }) {
                                     Female
                                 </Text>
                             </View>
-
-
                         </View>
                         // <TextInput
                         //     placeholder="Gender"
@@ -146,8 +144,6 @@ export default function AddFamilyMemberScreen({ navigation }) {
                         //     value={gender}
                         //     onChangeText={setGender}
                         // />
-                        :
-                        null
                     }
                     <Text>Profile picture</Text>
                     <PictureFrame
