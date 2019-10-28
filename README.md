@@ -5,6 +5,7 @@
 ### Sign-Up & Login: 
 - Sign-up and login using email 
 - Implement email and input verification
+- After signed up or logged in, the app will remember the user's credentials until they log out.
   
 ### Family Tree:
 - Display the tree structure including profile pictures of each of the family member
