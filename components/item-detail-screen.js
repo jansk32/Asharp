@@ -79,17 +79,17 @@ function ItemDetailScreen({ navigation, ctx }) {
         <>
             <ScrollView>
                 <View style={styles.container}>
-                    {isEditing && (<Text style={{ textAlign: 'center', marginTop: 20, fontSize: 20, textDecorationLine: 'underline', }}>Edit Artefact Details</Text>)}
                     <Image
                         style={styles.image}
                         source={{ uri: artefact.file }}
                     />
                     {isEditing && (
-                        <TouchableOpacity 
-                            style={{width: 200, backgroundColor: 'blue', borderRadius: 50, alignItems: 'flex-end'}}
-                            onPress={()=>navigate('Home')}>
-                            <Text style={{ textAlign: 'center', padding: 20, fontSize: 20}}>Change Image</Text>
-                        </TouchableOpacity>
+                        <View style={{paddingVertical: 20, backgroundColor: '#2d2e33'}}>
+                         <Text style={{ textAlign: 'center', fontSize: 20, color: 'white', fontWeight: 'bold' }}>
+                            Edit Artefact Details
+                        </Text>
+                    </View>
+                        
                     )}
                     <View style={styles.headerCont}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
@@ -169,7 +169,7 @@ function ItemDetailScreen({ navigation, ctx }) {
                         />
                     </View>
                     {// If the artefact owner is the current user, allow them to send the artefact
-                    currentUser && artefact.owner === currentUser._id &&
+                        currentUser && artefact.owner === currentUser._id &&
                         (<View style={styles.buttonBox}>
                             {isEditing ?
                                 (
