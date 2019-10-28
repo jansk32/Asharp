@@ -97,30 +97,30 @@ app.get('/', (req, res) => {
 /* User routes */
 
 // Get logged-in user
-app.get('/user', async (req, res) => {
-	console.log('ACCESS COOKIE = ' + req.headers.cookie);
-	console.log('ACCESS SESSION ID = ' + req.session.id);
+// app.get('/user', async (req, res) => {
+// 	console.log('ACCESS COOKIE = ' + req.headers.cookie);
+// 	console.log('ACCESS SESSION ID = ' + req.session.id);
 
-	if (!req.user) {
-		console.log('req.user is undefined');
-		res.send('No user in session');
-		return;
-	}
-	res.send(req.user);
-	return;
-	// Change later
-	// const id = req.session.passport.user._id;
-	const id = req.user._id;
-	console.log('ID = ' + id);
-	console.log('Authenticating user with id: ' + id);
-	try {
-		const user = await userModel.findById(id);
-		res.send(user);
-		// console.log('AUTHENTICATED user with id: ' + id);
-	} catch (e) {
-		console.trace(e);
-	}
-});
+// 	if (!req.user) {
+// 		console.log('req.user is undefined');
+// 		res.send('No user in session');
+// 		return;
+// 	}
+// 	res.send(req.user);
+// 	return;
+// 	// Change later
+// 	// const id = req.session.passport.user._id;
+// 	const id = req.user._id;
+// 	console.log('ID = ' + id);
+// 	console.log('Authenticating user with id: ' + id);
+// 	try {
+// 		const user = await userModel.findById(id);
+// 		res.send(user);
+// 		// console.log('AUTHENTICATED user with id: ' + id);
+// 	} catch (e) {
+// 		console.trace(e);
+// 	}
+// });
 
 // Get limited information about another user
 app.get('/user/find/:id', async (req, res) => {
@@ -193,10 +193,10 @@ app.get('/users', async (req, res) => {
 });
 
 // Update logged-in user
-app.put('/user/update', (req, res) => {
-	const id = req.body.userId;
-	userModel.findOneAndUpdate({ _id: id }, req.body, { new: true }, (err, result) => {
+app.put('/user/update/:id', (req, res) => {
+	userModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }, (err, result) => {
 		if (err) throw err;
+		console.log(result);
 		res.send(result);
 	});
 });
