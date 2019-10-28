@@ -10,6 +10,7 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuConte
 import LinearGradient from 'react-native-linear-gradient';
 const { SlideInMenu } = renderers;
 
+
 moment.locale('en');
 
 
@@ -21,8 +22,6 @@ function ItemDetailScreen({ navigation, ctx }) {
 	const [isLoading, setLoading] = useState(true);
 	const [currentUser, setCurrentUser] = useState();
 	const [isEditing, setIsEditing] = useState(false);
-	ItemDetailScreen.staticIsEditing = isEditing;
-
 	const [artefact, setArtefact] = useState({});
 
 	/* Editing the input when the edit button is pressed */
@@ -198,7 +197,7 @@ function ItemDetailScreen({ navigation, ctx }) {
 							:
 							(
 								<TouchableOpacity
-									onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
+									onPress={() => navigate('SendFamilyTree', { isSendingArtefact: true, artefactId })}
 									style={styles.sendButton}>
 									<LinearGradient colors={['#ff2870', '#ffe148']}
 										start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
@@ -216,107 +215,6 @@ function ItemDetailScreen({ navigation, ctx }) {
 		</ScrollView>
 	);
 
-	// return (
-	// 	<>
-	// 		<ScrollView>
-	// 			<View style={styles.container}>
-	// 				<Image
-	// 					style={styles.image}
-	// 					source={{ uri: artefact.file }}
-	// 				/>
-	// 				<View style={styles.headerCont}>
-	// 					<View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-	// 						<TextInput
-	// 							style={[styles.title, { color: isEditing ? 'gray' : 'black' }]}
-	// 							value={name}
-	// 							onChangeText={setName}
-	// 							editable={isEditing}
-	// 						/>
-	// 						<View style={{ justifyContent: 'center' }}>
-	// 							<Icon
-	// 								name="navicon" size={40} color={'#2d2e33'}
-	// 								onPress={() => ctx.menuActions.openMenu('itemMenu')}
-	// 							/>
-	// 						</View>
-	// 					</View>
-	// 					<Menu name="itemMenu" renderer={SlideInMenu}>
-	// 						<MenuTrigger>
-	// 						</MenuTrigger>
-	// 						<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
-	// 							<MenuOption onSelect={() => setIsEditing(true)} text="Edit Artefact" />
-	// 							<MenuOption onSelect={() => navigate('Home')} text="Delete Artefact" />
-	// 						</MenuOptions>
-	// 					</Menu>
-	// 					<View style={styles.headerDesc}>
-	// 						<Text style={styles.owner}>Owned by {owner}</Text>
-	// 						<DatePicker
-	// 							disabled={!isEditing}
-	// 							style={styles.dateStyle}
-	// 							date={date}
-	// 							mode="date"
-	// 							placeholder="Select date"
-	// 							format="YYYY-MM-DD"
-	// 							maxDate={moment().format('DD-MM-YYYY')}
-	// 							confirmBtnText="Confirm"
-	// 							cancelBtnText="Cancel"
-	// 							androidMode="spinner"
-	// 							customStyles={{
-	// 								dateIcon: {
-	// 									position: 'absolute',
-	// 									left: 0,
-	// 									top: 4,
-	// 									marginLeft: 0
-	// 								},
-	// 								dateInput: {
-	// 									marginLeft: 0
-	// 								}
-	// 							}}
-	// 							showIcon={false}
-	// 							onDateChange={setDate}
-	// 							value={moment(date).format('L')}
-	// 						/>
-	// 					</View>
-	// 				</View>
-	// 				<ActivityIndicator size="large" color="#0000ff" animating={hide} />
-	// 				<View style={styles.desc}>
-	// 					<Text style={styles.boldHeader}>Description:</Text>
-	// 					<TextInput
-	// 						style={[styles.descriptionStyle, { borderColor: isEditing ? 'red' : 'black' }]}
-	// 						value={description}
-	// 						onChangeText={setDescription}
-	// 						editable={isEditing}
-	// 						multiline={true}
-	// 					/>
-	// 				</View>
-	// 				<View style={styles.desc}>
-	// 					<Text style={styles.boldHeader}>Value:</Text>
-	// 					<TextInput
-	// 						style={[styles.descriptionStyle, { borderColor: isEditing ? 'red' : 'black' }]}
-	// 						value={value}
-	// 						onChangeText={setValue}
-	// 						editable={isEditing}
-	// 						multiline={true}
-	// 					/>
-	// 				</View>
-	// 				{
-	// 					// If the artefact owner is the current user, allow them to send the artefact
-	// 					currentUser && artefact.owner === currentUser._id &&
-	// 					(
-	// 						<View style={styles.buttonBox}>
-	// 							<TouchableOpacity
-	// 								onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
-	// 								style={styles.sendButton}>
-	// 								<Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
-	// 									Send Artefact
-	// 									</Text>
-	// 							</TouchableOpacity>
-	// 						</View>
-	// 					)
-	// 				}
-	// 			</View >
-	// 		</ScrollView>
-	// 	</>
-	// );
 }
 
 {/* ItemDetailScreen.navigationOptions = ({ navigation }) => {

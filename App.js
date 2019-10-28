@@ -64,7 +64,7 @@ const sendFamilyStack = createStackNavigator({
 			header: null,
 		}
 	},
-	FamilyTree: {
+	SendFamilyTree: {
 		screen: FamilyTreeScreen,
 		navigationOptions: {
 			header: null,
@@ -74,7 +74,7 @@ const sendFamilyStack = createStackNavigator({
 );
 
 const familyStack = createStackNavigator({
-	HomeFamilyTree: {
+	FamilyTree: {
 		screen: FamilyTreeScreen,
 		navigationOptions: {
 			header: null,
@@ -213,8 +213,6 @@ const SignUpStack = createStackNavigator({
 		}),
 	},
 });
-
-
 
 const Stack = createSwitchNavigator({
 	Welcome: { screen: WelcomeScreen },

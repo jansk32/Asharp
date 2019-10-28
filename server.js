@@ -320,9 +320,10 @@ app.delete('/user/delete/:id', async ({ params: { id } }, res) => {
 		}
 
 		// Delete artefacts
-		const deletedArtefacts = await Artefact.deleteMany({ owner: id });
+		const artefactsToDelete = await Artefact.find({ owner: id });
+		await Artefact.deleteMany({ owner: id });
 		// Delete notifications related to artefacts
-		await Notification.deleteMany({ artefact: { $in: deletedArtefacts.map(artefact => artefact._id) } });
+		await Notification.deleteMany({ artefact: { $in: artefactsToDelete.map(artefact => artefact._id) } });
 
 		// Delete notifications related to user
 		await Notification.deleteMany({ $or: [{ sender: id }, { recipient: id }] });

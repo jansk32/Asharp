@@ -24,19 +24,22 @@ export default function HomeScreen({ navigation }) {
 			{/* </View> */}
 			<ScrollView>
 				<Image source={image} style={styles.imageStyle} />
-			
+				<LinearGradient colors={['#06beb6', '#48b1bf']} 
+					start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+					style={styles.uploadButton}>
 				<TouchableOpacity
 					onPress={async () => {
 						const myImage = await pickImage();
 						const uri = myImage.uri;
 						navigate('AddImageDetails', { uri });
 					}}
-					style={styles.uploadButton}>
+					>
 					<Text
 						style={styles.text}>
 						Select Image
 						</Text>
 				</TouchableOpacity>
+				</LinearGradient>
 			</ScrollView>
 		</>
 	);

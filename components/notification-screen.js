@@ -11,13 +11,13 @@ import AsyncStorage from '@react-native-community/async-storage';
 export default function NotificationScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [notifications, setNotifications] = useState([]);
-	const [hide, setHide] = useState(true);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		async function fetchNotifications() {
 			const userRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
 			const user = userRes.data;
-			
+
 			console.log(user._id);
 
 			const res = await axios.get(`${BACK_END_ENDPOINT}/notification`, {
@@ -26,8 +26,8 @@ export default function NotificationScreen({ navigation }) {
 				}
 			});
 			const notifs = res.data;
-			if(notifs){
-				setHide(false);
+			if (notifs) {
+				setLoading(false);
 			}
 			console.log(notifs);
 			// Sort notifications so the most recent one appears first
@@ -45,7 +45,7 @@ export default function NotificationScreen({ navigation }) {
 		return (
 			<View style={styles.notifBox}>
 				<TouchableOpacity
-					onPress={() => navigate('NewProfile', {userId: sender._id})}>
+					onPress={() => navigate('NewProfile', { userId: sender._id })}>
 					<Image
 						source={{ uri: sender.pictureUrl || BLANK_PROFILE_PIC_URI }}
 						style={styles.profPicStyle}
@@ -69,24 +69,21 @@ export default function NotificationScreen({ navigation }) {
 
 	return (
 		<>
-			{/* <View style={styles.headerContainer}> */}
-			<LinearGradient colors={['#F9AD6A', '#D46C4E']} 
-            	start={{x: 0, y: 0}} end={{x: 1, y: 0}}
-                 style={styles.headerContainer}>
+			<LinearGradient colors={['#F9AD6A', '#D46C4E']}
+				start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+				style={styles.headerContainer}>
 				<Text style={styles.title}>View Updates</Text>
 				<Text style={styles.galleryTitle}>Notification</Text>
 			</LinearGradient>
-			{/* </View> */}
-			{ hide &&
-				(
-					<ActivityIndicator size="large" color="#0000ff" animating={hide} />
-					)
-				}
+			{loading &&
+				<ActivityIndicator size="large" color="#0000ff" />
+			}
 			<ScrollView>
 				<FlatList
 					data={notifications}
 					renderItem={renderItem}
 					keyExtractor={item => item._id}
+					ListEmptyComponent={<Text style={styles.textStyle}>No notifications yet</Text>}
 				/>
 			</ScrollView>
 		</>
@@ -97,9 +94,8 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 20,
 		marginLeft: 10,
-		// color: '#2d2e33',
 		color: 'white',
-		paddingTop: '5%',
+		paddingTop: '8%',
 	},
 	galleryTitle: {
 		fontSize: 30,

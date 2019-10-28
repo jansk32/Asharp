@@ -44,17 +44,6 @@ function useCurrentUser() {
 	return currentUser;
 }
 
-export async function logout() {
-	try {
-		await axios.get(`${BACK_END_ENDPOINT}/logout`);
-		await AsyncStorage.multiRemove(['email', 'password', 'userId']);
-		OneSignal.removeExternalUserId();
-		navigate('Welcome');
-	} catch (e) {
-		ToastAndroid.show('Error logging out', ToastAndroid.SHORT);
-	}
-}
-
 
 function ProfileScreen({ navigation, ctx }) {
 	const { navigate } = navigation;
@@ -104,6 +93,18 @@ function ProfileScreen({ navigation, ctx }) {
 		}
 		await getProfile();
 	}
+
+	async function logout() {
+		try {
+			await axios.get(`${BACK_END_ENDPOINT}/logout`);
+			await AsyncStorage.multiRemove(['email', 'password', 'userId']);
+			OneSignal.removeExternalUserId();
+			navigate('Welcome');
+		} catch (e) {
+			ToastAndroid.show('Error logging out', ToastAndroid.SHORT);
+		}
+	}
+	
 
 	// Get profile and artefacts by owner
 	useEffect(() => {
@@ -298,7 +299,8 @@ const styles = StyleSheet.create({
 	menuStyle: {
 		borderTopEndRadius: 20,
 		borderTopStartRadius: 20,
-		borderColor: 'black',
+		borderColor: '#f5f7fb',
+		backgroundColor:'#f5f7fb',
 		borderWidth: 0.5,
 		paddingTop: 20,
 		justifyContent: 'space-between',
@@ -306,7 +308,7 @@ const styles = StyleSheet.create({
 	},
 	menuWrapper: {
 		paddingVertical: 15,
-		borderBottomColor: 'black',
+		borderBottomColor: '#2d2e33',
 		borderBottomWidth: 0.5,
 		marginHorizontal: 50,
 	},

@@ -188,7 +188,6 @@ const styles = StyleSheet.create({
 		fontSize: 15,
 		paddingLeft: 5,
 	},
-
 	containers: {
 		backgroundColor: '#f5f7fb',
 	},
@@ -196,7 +195,7 @@ const styles = StyleSheet.create({
 		fontSize: 30,
 		marginLeft: 10,
 		fontWeight: 'bold',
-		paddingBottom: '3%',
+		paddingBottom: '5%',
 		color:'white',
 	},
 	image: {
@@ -223,12 +222,6 @@ const styles = StyleSheet.create({
 		color: 'white',
 		paddingTop: '8%',
 
-	},
-	galleryTitle: {
-		fontSize: 30,
-		marginLeft: 10,
-		fontWeight: 'bold',
-		paddingBottom: '8%',
 	},
 	item: {
 		height: Dimensions.get('window').width / numColumns, // approximate a square

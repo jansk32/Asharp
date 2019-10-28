@@ -6,8 +6,9 @@ import DatePicker from 'react-native-datepicker';
 import AsyncStorage from '@react-native-community/async-storage';
 import { pickImage, uploadImage } from '../image-tools';
 import axios from 'axios';
+import OneSignal from 'react-native-onesignal';
 import moment from 'moment';
-import { logout } from './profile-screen'
+import LinearGradient from 'react-native-linear-gradient';
 
 import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI, DATE_FORMAT } from '../constants';
 
@@ -19,9 +20,11 @@ export default function ProfileSettingScreen({ navigation }) {
 	const { navigate } = navigation;
 	// const handleProfileChange = navigation.getParam('handleProfileChange');
 	const setProfile = navigation.state.params.setProfile;
+
 	const [user, setUser] = useState({});
+
 	const [name, setName] = useState('');
-	const [dob, setDob] = useState('');
+	const [dob, setDob] = useState(moment());
 	const [oldPassword, setOldPassword] = useState('');
 	const [password, setPassword] = useState('');
 	const [image, setImage] = useState({});
@@ -68,6 +71,17 @@ export default function ProfileSettingScreen({ navigation }) {
 		setProfile(updatedProfile);
 	}
 
+	async function logout() {
+		try {
+			await axios.get(`${BACK_END_ENDPOINT}/logout`);
+			await AsyncStorage.multiRemove(['email', 'password', 'userId']);
+			OneSignal.removeExternalUserId();
+			navigate('Welcome');
+		} catch (e) {
+			ToastAndroid.show('Error logging out', ToastAndroid.SHORT);
+		}
+	}
+
 	// Get user details
 	useEffect(() => {
 		async function fetchProfile() {
@@ -75,6 +89,9 @@ export default function ProfileSettingScreen({ navigation }) {
 			const user = res.data;
 			console.log(user);
 			setUser(user);
+			setName(user.name);
+			setDob(moment(user.dob, 'DD-MM-YYYY'));
+			
 			setImage({ uri: user.pictureUrl });
 			setLoading(false);
 		}
@@ -135,8 +152,7 @@ export default function ProfileSettingScreen({ navigation }) {
 								}
 							}}
 							showIcon={false}
-							onDateChange={newDate => setDob(newDate)}
-							value={dob}
+							onDateChange={(dateStr, date) => setDob(moment(date))}
 						/>
 					</View>
 					<View style={styles.inputElem}>
@@ -162,18 +178,20 @@ export default function ProfileSettingScreen({ navigation }) {
 						/>
 					</View>
 				</View>
-				<TouchableOpacity
-					onPress={() => {
-						updateProfile();
-						navigate('Profile');
-					}}>
-					<View style={styles.redButton}>
-						<Text
-							style={styles.whiteText}>
-							Done
+				<LinearGradient colors={['#c33764', '#1d2671']}
+						start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+						style={styles.redButton}>
+						<TouchableOpacity
+							onPress={() => {
+								updateProfile();
+								navigate('Profile');
+							}}>
+								<Text
+									style={styles.whiteText}>
+									Save Changes
 							</Text>
-					</View>
-				</TouchableOpacity>
+						</TouchableOpacity>
+					</LinearGradient>
 				<TouchableOpacity
 					onPress={() => {
 						Alert.alert('Delete profile', 'Are you sure you would like to delete your profile? You will lose all of your artefacts. This action cannot be undone.', [
@@ -184,7 +202,7 @@ export default function ProfileSettingScreen({ navigation }) {
 								text: 'OK',
 								onPress: async () => {
 									setLoading(true);
-									await axios.delete(`${BACK_END_ENDPOINT}/user/delete/${user._id}`);
+									await axios.delete(`${BACK_END_ENDPOINT}/user/delete/${await AsyncStorage.getItem('userId')}`);
 									setLoading(false);
 									logout();
 								},
@@ -250,13 +268,11 @@ const styles = StyleSheet.create({
 	},
 	imageStyle: {
 		margin: 2,
-		marginTop: '20%',
-		width: Dimensions.get('window').width / 4,
-		height: Dimensions.get('window').width / 4,
+		marginTop: '10%',
+		width: Dimensions.get('window').width / 3,
+		height: Dimensions.get('window').width / 3,
 		alignSelf: 'center',
-		borderColor: '#233439',
-		borderWidth: 1,
-		borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
+		borderRadius: 20,
 	},
 	buttonBox: {
 		backgroundColor: '#fff',
@@ -286,6 +302,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
+		marginBottom: 20,
 	},
 	textInput: {
 		borderColor: 'black',
