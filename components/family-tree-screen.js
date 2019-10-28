@@ -367,18 +367,15 @@ function FamilyTreeScreen({ ctx, navigation }) {
 	return (
 		<>
 			{/* <View style={styles.headerContainer}> */}
-			<LinearGradient colors={['#02aab0', '#00cdac']} 
-            	start={{x: 0, y: 0}} end={{x: 1, y: 0}}
-                 style={styles.headerContainer}>
+			<LinearGradient colors={['#02aab0', '#00cdac']}
+				start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+				style={styles.headerContainer}>
 				<Text style={styles.add}>This is your</Text>
 				<Text style={styles.title}>Family Tree</Text>
-				{ hide &&
-					(
-						<ActivityIndicator size="large" color="#0000ff" animating={hide} />
-					)
-				}
 				<View style={styles.searchContainer}>
-					<Icon name="md-search" size={30} color={'#2d2e33'} />
+					<View style={{paddingTop:5}}>
+						<Icon name="md-search" size={25} color={'#2d2e33'} />
+					</View>
 					<TextInput
 						placeholder="Search family member"
 						value={familyMemberSearch}
@@ -388,6 +385,11 @@ function FamilyTreeScreen({ ctx, navigation }) {
 				</View>
 			</LinearGradient>
 			{/* </View> */}
+			{hide &&
+				(
+					<ActivityIndicator size="large" color="#0000ff" animating={hide} />
+				)
+			}
 			<View style={{ flex: 1, alignSelf: 'stretch' }} onLayout={event => {
 				const { width, height } = event.nativeEvent.layout;
 				if (isSvgDimensionsSet) {
@@ -419,7 +421,7 @@ const styles = StyleSheet.create({
 		// borderBottomLeftRadius: 30,
 		// borderBottomRightRadius: 30,
 		backgroundColor: '#f5f7fb',
-		paddingBottom: 30,
+		paddingBottom: 20,
 	},
 	searchContainer: {
 		flexDirection: 'row',
@@ -431,7 +433,6 @@ const styles = StyleSheet.create({
 		marginRight: '5%',
 		backgroundColor: 'white',
 		borderColor: 'white',
-		// marginTop: 15,
 	},
 	searchInput: {
 		flex: 1,
@@ -439,19 +440,17 @@ const styles = StyleSheet.create({
 		padding: 5
 	},
 	title: {
-		fontSize: 35,
-		// color: '#2d2e33',
+		fontSize: 30,
 		color: 'white',
-		paddingBottom: 10,
+		paddingBottom: '3%',
 		fontWeight: 'bold',
 		marginLeft: 10,
 	},
 	add: {
-		fontSize: 25,
-		// color: '#2d2e33',
+		fontSize: 20,
 		color: 'white',
 		marginLeft: 10,
-		marginTop: 10,
+		paddingTop: '5%',
 	},
 	menuStyle: {
 		borderTopEndRadius: 20,
