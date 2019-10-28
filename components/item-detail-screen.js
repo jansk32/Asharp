@@ -109,37 +109,37 @@ function ItemDetailScreen({ navigation, ctx }) {
                         </Menu>
                         <View style={styles.headerDesc}>
                             <Text style={styles.owner}>Owned by {owner}</Text>
-                           
+
                         </View>
-                            {!isEditing && 
-                                (<Text style={styles.dateStyle}>Date owned: {moment(date).format('L')}</Text>)}
-                            {isEditing &&
-                                (<DatePicker
-                                    disabled={!isEditing}
-                                    style={styles.dateStyle}
-                                    date={date}
-                                    mode="date"
-                                    placeholder="Select date"
-                                    format="DD-MM-YYYY"
-                                    maxDate={moment().format('DD-MM-YYYY')}
-                                    confirmBtnText="Confirm"
-                                    cancelBtnText="Cancel"
-                                    androidMode="spinner"
-                                    customStyles={{
-                                        dateIcon: {
-                                            position: 'absolute',
-                                            left: 0,
-                                            top: 4,
-                                            marginLeft: 0
-                                        },
-                                        dateInput: {
-                                            marginLeft: 0
-                                        }
-                                    }}
-                                    showIcon={false}
-                                    onDateChange={setDate}
-                                    value={moment(date).format('L')}
-                                />)}
+                        {!isEditing &&
+                            (<Text style={styles.dateStyle}>Date owned: {moment(date).format('L')}</Text>)}
+                        {isEditing &&
+                            (<DatePicker
+                                disabled={!isEditing}
+                                style={styles.dateStyle}
+                                date={date}
+                                mode="date"
+                                placeholder="Select date"
+                                format="DD-MM-YYYY"
+                                maxDate={moment().format('DD-MM-YYYY')}
+                                confirmBtnText="Confirm"
+                                cancelBtnText="Cancel"
+                                androidMode="spinner"
+                                customStyles={{
+                                    dateIcon: {
+                                        position: 'absolute',
+                                        left: 0,
+                                        top: 4,
+                                        marginLeft: 0
+                                    },
+                                    dateInput: {
+                                        marginLeft: 0
+                                    }
+                                }}
+                                showIcon={false}
+                                onDateChange={setDate}
+                                value={moment(date).format('L')}
+                            />)}
                     </View>
                     <ActivityIndicator size="large" color="#0000ff" animating={hide} />
                     <View style={styles.desc}>
@@ -169,18 +169,32 @@ function ItemDetailScreen({ navigation, ctx }) {
                         (
                             <>
                                 <View style={styles.buttonBox}>
-                                    <TouchableOpacity
-                                        onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
-                                    >
-                                         <LinearGradient colors={['#06beb6', '#48b1bf']} 
-                                         start={{x: 0, y: 0}} end={{x: 1, y: 0}}
-                                         style={styles.sendButton}>
+                                    {isEditing &&
+                                        (<TouchableOpacity
+                                            onPress={() => navigate('Home')}
+                                            style={styles.sendButton}>
+                                            <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
+                                                Finish Editing
+                                    </Text>
+                                        </TouchableOpacity>)
+                                    }
+                                    {!isEditing &&
+                                        (
+                                            <TouchableOpacity
+                                                onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
+                                                style={styles.sendButton}>
+                                                <LinearGradient colors={['#06beb6', '#48b1bf']}
+                                                    start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                                                    style={styles.sendButton}>
 
-                                        <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
-                                            Send Artefact
+                                                    <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
+                                                        Send Artefact
                                         </Text>
-                                        </LinearGradient>
-                                    </TouchableOpacity>
+                                                </LinearGradient>
+                                            </TouchableOpacity>
+                                        )
+                                    }
+
                                 </View>
                             </>
                         )
