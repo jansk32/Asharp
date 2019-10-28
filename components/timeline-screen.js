@@ -6,6 +6,7 @@ import axios from 'axios';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import moment from 'moment';
 import { BACK_END_ENDPOINT } from '../constants';
+import AsyncStorage from '@react-native-community/async-storage';
 
 // Import date formatting module moment.js
 moment.locale('en');
@@ -55,7 +56,7 @@ export default function TimelineScreen({ navigation }) {
 	useEffect(() => {
 		async function fetchArtefacts() {
 			try {
-				const res = await axios.get(`${BACK_END_ENDPOINT}/artefact`);
+				const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/${await AsyncStorage.getItem('userId')}`);
 				setArtefacts(res.data);
 				console.log(res.data)
 				setHide(false)

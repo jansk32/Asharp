@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, ScrollView, Text, Alert, ActivityIndicator, } from 'react-native';
+import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, Text, Alert, ActivityIndicator, } from 'react-native';
 import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text as SvgText } from 'react-native-svg';
 import { arrangeFamilyTree, mainDrawLines, getAncestors } from '../build-family-tree';
 import axios from 'axios';
@@ -197,7 +197,7 @@ class FamilyTreeSvg extends Component {
 											});
 
 											navigation.setParams(null);
-											navigation.goBack();
+											navigation.navigate('HomeScreen');
 										} catch (e) {
 											console.error(e);
 											ToastAndroid.show('Error sending artefact', ToastAndroid.SHORT);
@@ -281,7 +281,8 @@ class FamilyTreeSvg extends Component {
 									stroke="black"
 									strokeWidth="3"
 									key={i}
-								/>)
+								/>
+							)
 						}
 					</G>
 				</Svg>
@@ -291,6 +292,7 @@ class FamilyTreeSvg extends Component {
 }
 
 function Node({ data: { x, y, name, _id, pictureUrl, matchesSearch } }) {
+	console.log('rendering node');
 	return (
 		<>
 			<Defs>

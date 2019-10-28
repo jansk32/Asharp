@@ -336,16 +336,17 @@ app.get('/family-tree/:id', async ({ params: { id } }, res) => {
 // Get users who are not in the family tree of a certain user so they can be added
 app.get('/family-tree/non-familial/:id', async ({ params: { id } }, res) => {
 	const familyTree = await getFamilyTree(id);
-	const nonFamilialUsers = await User.find({_id: {$nin: familyTree.map(person => person._id)}});
+	const nonFamilialUsers = await User.find({ _id: { $nin: familyTree.map(person => person._id) } });
 	res.send(nonFamilialUsers);
 });
 
 
 /* Artefact routes */
-// Get ALL artefacts
-app.get('/artefact', async (req, res) => {
+// Get all artefacts which are owned by the user's family
+app.get('/artefact/:userId', async ({ params: { userId } }, res) => {
 	try {
-		const artefacts = await Artefact.find();
+		const familyTree = await getFamilyTree(userId);
+		const artefacts = await Artefact.find({ owner: { $in: familyTree.map(person => person._id) } });
 		res.send(artefacts);
 	} catch (e) {
 		console.trace(e);

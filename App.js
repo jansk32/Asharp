@@ -14,31 +14,28 @@ import AddImageDetailsScreen from './components/add-image-details-screen';
 import ProfileSettingScreen from './components/profile-setting';
 import NotificationScreen from './components/notification-screen';
 import AddFamilyMemberScreen from './components/add-family-member-screen';
-import ViewFamilyMemberScreen from './components/view-family-member-screen';
 import AddParentsScreen from './components/add-parents-screen';
-import AddParentsManually from './components/add-parents-manually-screen';
+import AddParentsManuallyScreen from './components/add-parents-manually-screen';
+
 import { MenuProvider } from 'react-native-popup-menu';
 
-// Import react navigation tools
+// Import react-navigation tools
 import {
-	createBottomTabNavigator,
 	createAppContainer,
 	createSwitchNavigator,
-	createStackNavigator,
 } from 'react-navigation';
+
+import { createStackNavigator } from 'react-navigation-stack';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 // Import icons
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/Entypo';
 
-// Import Firebase.
-import * as firebase from 'firebase';
-import { Dimensions, Text, TouchableOpacity, View, NavigationActions } from 'react-native';
-import { HeaderTitle } from 'react-navigation-stack';
-import OneSignal from 'react-native-onesignal';
-import AddParentsManuallyScreen from './components/add-parents-manually-screen';
+import { Dimensions } from 'react-native';
 
 // Initialize Firebase
+import * as firebase from 'firebase';
 const firebaseConfig = {
 	apiKey: "AIzaSyC4JLE-2HExIPeHTFE0QZmOt7f6koxTqsE",
 	authDomain: "mementos-7bca9.firebaseapp.com",
@@ -51,6 +48,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 // OneSignal
+import OneSignal from 'react-native-onesignal';
 const ONESIGNAL_APP_ID = 'f9de7906-8c82-4674-808b-a8048c4955f1';
 OneSignal.init(ONESIGNAL_APP_ID);
 // Incoming notifications are displayed in the notification bar and not as an alert box
@@ -164,7 +162,6 @@ const MainNavigator = createBottomTabNavigator({
 		},
 	},
 	Profile: {
-		// screen: ProfileDrawer,
 		screen: profileStack,
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon name="md-person" color={tintColor} size={30} />
@@ -195,7 +192,6 @@ const MainNavigator = createBottomTabNavigator({
 		navigationOptions: {
 			header: null,
 		},
-
 	},
 );
 

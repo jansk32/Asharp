@@ -6,7 +6,6 @@ import Icon from 'react-native-vector-icons/EvilIcons';
 import moment from 'moment';
 import OneSignal from 'react-native-onesignal';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Assets } from 'react-navigation-stack';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
 const { SlideInMenu } = renderers;
 
@@ -50,6 +49,7 @@ function ProfileScreen({ navigation, ctx }) {
 	const [hide, setHide] = useState(true);
 	const currentUser = useCurrentUser();
 	const userId = navigation.state.params && navigation.state.params.userId;
+	const [canChangeSettings, setCanChangeSettings] = useState(false);
 
 	// Get profile details
 	async function getProfile() {
@@ -97,6 +97,18 @@ function ProfileScreen({ navigation, ctx }) {
 		fetchArtefacts();
 	}, [userId]);
 
+	// Update canChangeSettings once currentUser is loaded
+	useEffect(() => {
+		if (!userId) {
+			// No userId from navigation, this means the screen was opened from bottom tab
+			// So the viewed user is the current user
+			setCanChangeSettings(true);
+		} else if (userId === currentUser._id) {
+			// Viewed user is the same as the current user
+			setCanChangeSettings(true);
+		}
+	}, [currentUser]);
+
 
 	// Logout function
 	async function logout() {
@@ -137,18 +149,21 @@ function ProfileScreen({ navigation, ctx }) {
 		<>
 			<View style={styles.header}>
 				<Text style={styles.profile}>Profile</Text>
-				<View style={[styles.icon, { display: !navigation.state.params ? 'flex' : 'none' }]}>
-					<Icon name="navicon" size={40} color={'#2d2e33'}
-						onPress={() => ctx.menuActions.openMenu('profileMenu')} />
-					<Menu name="profileMenu" renderer={SlideInMenu}>
-						<MenuTrigger>
-						</MenuTrigger>
-						<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
-							<MenuOption onSelect={() => navigate('ProfileSetting', { setProfile })} text="Profile Setting" />
-							<MenuOption onSelect={logout} text="Logout" />
-						</MenuOptions>
-					</Menu>
-				</View>
+				{
+					canChangeSettings &&
+					<View style={styles.icon}>
+						<Icon name="navicon" size={40} color={'#2d2e33'}
+							onPress={() => ctx.menuActions.openMenu('profileMenu')} />
+						<Menu name="profileMenu" renderer={SlideInMenu}>
+							<MenuTrigger>
+							</MenuTrigger>
+							<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
+								<MenuOption onSelect={() => navigate('ProfileSetting', { setProfile })} text="Profile Setting" />
+								<MenuOption onSelect={logout} text="Logout" />
+							</MenuOptions>
+						</Menu>
+					</View>
+				}
 			</View>
 			<ActivityIndicator size="large" color="#0000ff" animating={hide} />
 			<ScrollView>

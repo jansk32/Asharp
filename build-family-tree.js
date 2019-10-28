@@ -491,12 +491,6 @@ function generateFamilyTree(family, targetId) {
 	const familyTree = buildFamilyTree(family, targetId);
 	const ancestors = getAncestors(familyTree, targetId);
 
-	familyTree.forEach(person => {
-		if (person.name === 'Grandma') {
-			person.nice = true;
-		}
-	});
-
 	mainAssignXOffset(familyTree, ancestors, targetId);
 	mainAssignMarriageOffset(familyTree, targetId);
 	mainAssignX(familyTree, ancestors, targetId);
