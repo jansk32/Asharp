@@ -7,6 +7,13 @@ const {expect, assert} = require("chai");
 const chaiHttp = require('chai-http');
 const {after} = require('mocha');
 const should = chai.should();
+// jest.config.js
+// module.exports = {
+//   setupTestFrameworkScriptFile: './jest.setup.js'
+// }
+
+// // jest.setup.js
+// jest.setTimeout(30000)
 
 chai.use(chaiHttp);
 
@@ -188,17 +195,18 @@ describe('Artefacts', () => {
       })
   })
 
-//   describe('To delete an artefact', () => {
-//       it('To delete an artefact', (done) => {
-//         let id = "5db24279ec69a40abbc276b8";
-//         chai.request(server)
-//         .delete('/artefact/delete/' + id)
-//         .end((err,res) => {
-//             if(err) return done(err);
-//             res.status.should.be.equal(200);
-//             res.body.should.be.a('object');
-//         })
-//       })
-//   })
+  describe('To delete an artefact', () => {
+      it('To delete an artefact', (done) => {
+        let id = "5db24279ec69a40abbc276b8";
+        chai.request(server)
+        .delete('/artefact/delete/' + id)
+        .end((err,res) => {
+            if(err) return done(err);
+            res.status.should.be.equal(200);
+            res.body.should.be.a('object');
+            done();
+        })
+      })
+  })
 
 });
