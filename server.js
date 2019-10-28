@@ -342,9 +342,10 @@ app.post('/artefact/create', ({
 // Re-assign artefact to certain user
 app.put('/artefact/assign', ({ body: { artefactId, recipientId, senderId } }, res) => {
 	// Request should include id of artefact, and id of new owner
-	artefactModel.updateOne({ _id: artefactId }, { owner: recipientId }, (err, resp) => {
+	artefactModel.findByIdAndUpdate({ _id: artefactId }, { owner: recipientId }, (err, resp) => {
 		if (err) throw err;
 		res.send(resp);
+		console.log(resp);
 	});
 
 	// Send notification to recipient
