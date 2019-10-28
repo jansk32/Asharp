@@ -10,7 +10,6 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuConte
 import LinearGradient from 'react-native-linear-gradient';
 const { SlideInMenu } = renderers;
 
-
 moment.locale('en');
 
 function useCurrentUser() {
@@ -80,19 +79,12 @@ function ItemDetailScreen({ navigation, ctx }) {
         <>
             <ScrollView>
                 <View style={styles.container}>
-                    {isEditing && (<Text style={{ textAlign: 'center', marginTop: 20, fontSize: 20, textDecorationLine: 'underline', }}>Edit Artefact Details</Text>)}
                     <Image
                         style={styles.image}
                         source={{ uri: artefact.file }}
                     />
-                    {isEditing && (
-                        <TouchableOpacity 
-                            style={{width: 200, backgroundColor: 'blue', borderRadius: 50, alignItems: 'flex-end'}}
-                            onPress={()=>navigate('Home')}>
-                            <Text style={{ textAlign: 'center', padding: 20, fontSize: 20}}>Change Image</Text>
-                        </TouchableOpacity>
-                    )}
                     <View style={styles.headerCont}>
+                        {/* <Text style={styles.title}>{artefact.name}</Text>*/}
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
                             <TextInput
                                 style={[styles.title, { color: isEditing ? 'gray' : 'black' }]}
@@ -117,6 +109,7 @@ function ItemDetailScreen({ navigation, ctx }) {
                         </Menu>
                         <View style={styles.headerDesc}>
                             <Text style={styles.owner}>Owned by {owner}</Text>
+
                         </View>
                         {!isEditing &&
                             (<Text style={styles.dateStyle}>Date owned: {moment(date).format('L')}</Text>)}
@@ -161,6 +154,7 @@ function ItemDetailScreen({ navigation, ctx }) {
                     </View>
                     <View style={styles.desc}>
                         <Text style={styles.boldHeader}>Value:</Text>
+                        {/* <Text style={styles.descriptionStyle}>{artefact.value}</Text> */}
                         <TextInput
                             style={[styles.descriptionStyle, { borderColor: isEditing ? 'red' : 'black' }]}
                             value={value}
@@ -169,37 +163,41 @@ function ItemDetailScreen({ navigation, ctx }) {
                             multiline={true}
                         />
                     </View>
-                    {// If the artefact owner is the current user, allow them to send the artefact
-                    currentUser && artefact.owner === currentUser._id &&
-                        (<View style={styles.buttonBox}>
-                            {isEditing ?
-                                (
-                                    <TouchableOpacity
-                                        onPress={() => navigate('Home')}
-                                        style={styles.sendButton}>
-                                        <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
-                                            Finish Editing
-                                        </Text>
-                                    </TouchableOpacity>
-                                )
-                                :
-                                (
-                                    <TouchableOpacity
-                                        onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
-                                        style={styles.sendButton}>
-                                        <LinearGradient
-                                            colors={['#ff2870', '#ffe148']}
-                                            start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-                                            style={styles.sendButton}
-                                        >
+                    {
+                        // If the artefact owner is the current user, allow them to send the artefact
+                        currentUser && artefact.owner === currentUser._id &&
+                        (
+                            <>
+                                <View style={styles.buttonBox}>
+                                    {isEditing &&
+                                        (<TouchableOpacity
+                                            onPress={() => navigate('Home')}
+                                            style={styles.sendButton}>
                                             <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
-                                                Send Artefact
-                                            </Text>
-                                        </LinearGradient>
-                                    </TouchableOpacity>
-                                )
-                            }
-                        </View>)
+                                                Finish Editing
+                                    </Text>
+                                        </TouchableOpacity>)
+                                    }
+                                    {!isEditing &&
+                                        (
+                                            <TouchableOpacity
+                                                onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
+                                                style={styles.sendButton}>
+                                                <LinearGradient colors={['#ff2870', '#ffe148']}
+                                                    start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                                                    style={styles.sendButton}>
+
+                                                    <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
+                                                        Send Artefact
+                                        </Text>
+                                                </LinearGradient>
+                                            </TouchableOpacity>
+                                        )
+                                    }
+
+                                </View>
+                            </>
+                        )
                     }
 
                 </View >
