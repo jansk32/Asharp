@@ -33,7 +33,6 @@ function ItemDetailScreen({ navigation, ctx }) {
     const [hide, setHide] = useState(true);
     const [currentUser, setCurrentUser] = useState();
     const [isEditing, setIsEditing] = useState(false);
-
     const [artefact, setArtefact] = useState({});
 
     /* Editing the input when the edit button is pressed */
@@ -83,14 +82,21 @@ function ItemDetailScreen({ navigation, ctx }) {
                         source={{ uri: artefact.file }}
                     />
                     <View style={styles.headerCont}>
-                        {/* <Text style={styles.title}>{artefact.name}</Text>*/}
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                            <TextInput
-                                style={[styles.title, {color: isEditing ? 'gray' : 'black'}]}
-                                value={name}
-                                onChangeText={setName}
-                                editable={isEditing}
-                            />
+                            <View style={{ flexDirection: 'row' }}>
+                                {isEditing &&
+                                    (<View style={{ justifyContent: 'center' }}>
+                                        <Icon name="pencil" size={40} color={'gray'} />
+                                    </View>)
+                                }
+                                <TextInput
+                                    style={[styles.title, { color: isEditing ? 'gray' : 'black' }]}
+                                    value={name}
+                                    onChangeText={setName}
+                                    editable={isEditing}
+                                />
+                            </View>
+
                             <View style={{ justifyContent: 'center' }}>
                                 <Icon
                                     name="navicon" size={40} color={'#2d2e33'}
@@ -138,9 +144,18 @@ function ItemDetailScreen({ navigation, ctx }) {
                     </View>
                     <ActivityIndicator size="large" color="#0000ff" animating={hide} />
                     <View style={styles.desc}>
-                        <Text style={styles.boldHeader}>Description:</Text>
+                        <View style={{ flexDirection: 'row' }}>
+                            {isEditing &&
+                                (<View style={{ justifyContent: 'center' }}>
+                                    <Text style={styles.boldHeader}>
+                                        Edit
+                                    </Text>
+                                </View>)
+                            }
+                            <Text style={styles.boldHeader}>()Description:</Text>
+                        </View>
                         <TextInput
-                            style={[styles.descriptionStyle, {borderColor: isEditing ? 'red' : 'black'}]}
+                            style={[styles.descriptionStyle, { borderColor: isEditing ? 'red' : 'black', color: isEditing ? 'gray' : 'black' }]}
                             value={description}
                             onChangeText={setDescription}
                             editable={isEditing}
@@ -149,15 +164,23 @@ function ItemDetailScreen({ navigation, ctx }) {
                         {/*<Text style={styles.descriptionStyle}>{artefact.description}</Text>*/}
                     </View>
                     <View style={styles.desc}>
-                        <Text style={styles.boldHeader}>Value:</Text>
-                        {/* <Text style={styles.descriptionStyle}>{artefact.value}</Text> */}
+                        <View style={{ flexDirection: 'row' }}>
+                            {isEditing &&
+                                (<View style={{ justifyContent: 'center' }}>
+                                    <Text style={styles.boldHeader}>
+                                        Edit
+                                    </Text>
+                                </View>)
+                            }
+                            <Text style={styles.boldHeader}>Value:</Text>
+                        </View>
                         <TextInput
-                            style={[styles.descriptionStyle, {borderColor: isEditing ? 'red' : 'black'}]}
+                            style={[styles.descriptionStyle, { borderColor: isEditing ? 'red' : 'black', color: isEditing ? 'gray' : 'black' }]}
                             value={value}
                             onChangeText={setValue}
                             editable={isEditing}
-                            multiline={true} 
-                            />
+                            multiline={true}
+                        />
                     </View>
                     {
                         // If the artefact owner is the current user, allow them to send the artefact
@@ -165,6 +188,15 @@ function ItemDetailScreen({ navigation, ctx }) {
                         (
                             <>
                                 <View style={styles.buttonBox}>
+                                    {isEditing &&
+                                        (<TouchableOpacity
+                                            onPress={() => navigate('Home')}
+                                            style={styles.sendButton}>
+                                            <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
+                                                Send Artefact
+                                    </Text>
+                                        </TouchableOpacity>)
+                                    }
                                     <TouchableOpacity
                                         onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
                                         style={styles.sendButton}>
@@ -217,7 +249,7 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingBottom: 30,
         borderRadius: 5,
-        borderColor:'black',
+        borderColor: 'black',
         borderWidth: 0.5,
         color: 'black'
     },
@@ -277,5 +309,11 @@ const styles = StyleSheet.create({
     },
 });
 
+ItemDetailScreen.navigationOptions = {
+    title: 'Edit Artefact Details',
+};
+
 export default withMenuContext(ItemDetailScreen);
+
+
 
