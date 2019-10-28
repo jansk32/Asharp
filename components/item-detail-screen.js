@@ -1,27 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { Text, ActivityIndicator, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, TextInput, ActivityIndicator, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
 import { BACK_END_ENDPOINT } from '../constants';
 import AsyncStorage from '@react-native-community/async-storage';
+import DatePicker from 'react-native-datepicker';
+import Icon from 'react-native-vector-icons/EvilIcons';
+import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
+const { SlideInMenu } = renderers;
 
 moment.locale('en');
 
 
 // See the details of each individual artefact
-export default function ItemDetailScreen({ navigation }) {
+function ItemDetailScreen({ navigation, ctx }) {
     const { navigate } = navigation;
     const { artefactId } = navigation.state.params;
-    const [artefact, setArtefact] = useState({});
     const [owner, setOwner] = useState('');
     const [hide, setHide] = useState(true);
     const [currentUser, setCurrentUser] = useState();
+    const [isEditing, setIsEditing] = useState(false);
+
+    const [artefact, setArtefact] = useState({});
+
+    /* Editing the input when the edit button is pressed */
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [value, setValue] = useState('');
+    const [date, setDate] = useState('');
 
     useEffect(() => {
         // Get a specific artefact
         async function fetchArtefact() {
             const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/find/${artefactId}`);
-            setArtefact(res.data);
+            const artefact = res.data;
+            setArtefact(artefact);
+            setName(artefact.name);
+            setDescription(artefact.description);
+            setValue(artefact.value);
+            setDate(artefact.date);
+
             setHide(false);
             const ownerRes = await axios.get(`${BACK_END_ENDPOINT}/user/artefact`, {
                 params: {
@@ -39,7 +57,7 @@ export default function ItemDetailScreen({ navigation }) {
             setCurrentUser(res.data);
         }
         fetchCurrentUser();
-        
+
         setHide(false);
     }, []);
 
@@ -52,34 +70,97 @@ export default function ItemDetailScreen({ navigation }) {
                         source={{ uri: artefact.file }}
                     />
                     <View style={styles.headerCont}>
-                        <Text style={styles.title}>{artefact.name}</Text>
+                        {/* <Text style={styles.title}>{artefact.name}</Text>*/}
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                            <TextInput
+                                style={[styles.title, {color: isEditing ? 'gray' : 'black'}]}
+                                value={name}
+                                onChangeText={setName}
+                                editable={isEditing}
+                            />
+                            <View style={{ justifyContent: 'center' }}>
+                                <Icon
+                                    name="navicon" size={40} color={'#2d2e33'}
+                                    onPress={() => ctx.menuActions.openMenu('itemMenu')}
+                                />
+                            </View>
+                        </View>
+                        <Menu name="itemMenu" renderer={SlideInMenu}>
+                            <MenuTrigger>
+                            </MenuTrigger>
+                            <MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
+                                <MenuOption onSelect={() => setIsEditing(true)} text="Edit Artefact" />
+                                <MenuOption onSelect={() => navigate('Home')} text="Delete Artefact" />
+                            </MenuOptions>
+                        </Menu>
                         <View style={styles.headerDesc}>
                             <Text style={styles.owner}>Owned by {owner}</Text>
-                            <Text style={styles.dateStyle}>{moment(artefact.date).format('L')}</Text>
+                            <DatePicker
+                                disabled={!isEditing}
+                                style={styles.dateStyle}
+                                date={date}
+                                mode="date"
+                                placeholder="Select date"
+                                format="YYYY-MM-DD"
+                                maxDate={moment().format('DD-MM-YYYY')}
+                                confirmBtnText="Confirm"
+                                cancelBtnText="Cancel"
+                                androidMode="spinner"
+                                customStyles={{
+                                    dateIcon: {
+                                        position: 'absolute',
+                                        left: 0,
+                                        top: 4,
+                                        marginLeft: 0
+                                    },
+                                    dateInput: {
+                                        marginLeft: 0
+                                    }
+                                }}
+                                showIcon={false}
+                                onDateChange={setDate}
+                                value={moment(date).format('L')}
+                            />
                         </View>
                     </View>
                     <ActivityIndicator size="large" color="#0000ff" animating={hide} />
                     <View style={styles.desc}>
                         <Text style={styles.boldHeader}>Description:</Text>
-                        <Text style={styles.descriptionStyle}>{artefact.description}</Text>
+                        <TextInput
+                            style={[styles.descriptionStyle, {borderColor: isEditing ? 'red' : 'black'}]}
+                            value={description}
+                            onChangeText={setDescription}
+                            editable={isEditing}
+                            multiline={true}
+                        />
+                        {/*<Text style={styles.descriptionStyle}>{artefact.description}</Text>*/}
                     </View>
                     <View style={styles.desc}>
                         <Text style={styles.boldHeader}>Value:</Text>
-                        <Text style={styles.descriptionStyle}>{artefact.value}</Text>
+                        {/* <Text style={styles.descriptionStyle}>{artefact.value}</Text> */}
+                        <TextInput
+                            style={[styles.descriptionStyle, {borderColor: isEditing ? 'red' : 'black'}]}
+                            value={value}
+                            onChangeText={setValue}
+                            editable={isEditing}
+                            multiline={true} 
+                            />
                     </View>
                     {
                         // If the artefact owner is the current user, allow them to send the artefact
                         currentUser && artefact.owner === currentUser._id &&
                         (
-                            <View style={styles.buttonBox}>
-                                <TouchableOpacity
-                                    onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
-                                    style={styles.sendButton}>
-                                    <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
-                                        Send Artefact
+                            <>
+                                <View style={styles.buttonBox}>
+                                    <TouchableOpacity
+                                        onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
+                                        style={styles.sendButton}>
+                                        <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
+                                            Send Artefact
                                         </Text>
-                                </TouchableOpacity>
-                            </View>
+                                    </TouchableOpacity>
+                                </View>
+                            </>
                         )
                     }
 
@@ -123,8 +204,9 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingBottom: 30,
         borderRadius: 5,
-        borderColor: 'black',
-        borderWidth: 0.5
+        borderColor:'black',
+        borderWidth: 0.5,
+        color: 'black'
     },
     title: {
         color: 'black',
@@ -151,7 +233,7 @@ const styles = StyleSheet.create({
     buttonBox: {
         justifyContent: 'center',
         marginHorizontal: 20,
-        marginVertical: 40,
+        marginVertical: 20,
     },
     sendButton: {
         backgroundColor: '#EC6268',
@@ -161,5 +243,26 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignSelf: 'center',
     },
-})
+    menuStyle: {
+        borderTopEndRadius: 20,
+        borderTopStartRadius: 20,
+        borderColor: 'black',
+        borderWidth: 0.5,
+        paddingTop: 20,
+        justifyContent: 'space-between',
+        paddingBottom: 80,
+    },
+    menuWrapper: {
+        paddingVertical: 15,
+        borderBottomColor: 'black',
+        borderBottomWidth: 0.5,
+        marginHorizontal: 50,
+    },
+    menuText: {
+        textAlign: 'left',
+        fontSize: 20,
+    },
+});
+
+export default withMenuContext(ItemDetailScreen);
 
