@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import DatePicker from 'react-native-datepicker';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
+import LinearGradient from 'react-native-linear-gradient';
 const { SlideInMenu } = renderers;
 
 moment.locale('en');
@@ -86,7 +87,7 @@ function ItemDetailScreen({ navigation, ctx }) {
                         {/* <Text style={styles.title}>{artefact.name}</Text>*/}
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
                             <TextInput
-                                style={[styles.title, {color: isEditing ? 'gray' : 'black'}]}
+                                style={[styles.title, { color: isEditing ? 'gray' : 'black' }]}
                                 value={name}
                                 onChangeText={setName}
                                 editable={isEditing}
@@ -108,56 +109,59 @@ function ItemDetailScreen({ navigation, ctx }) {
                         </Menu>
                         <View style={styles.headerDesc}>
                             <Text style={styles.owner}>Owned by {owner}</Text>
-                            <DatePicker
-                                disabled={!isEditing}
-                                style={styles.dateStyle}
-                                date={date}
-                                mode="date"
-                                placeholder="Select date"
-                                format="YYYY-MM-DD"
-                                maxDate={moment().format('DD-MM-YYYY')}
-                                confirmBtnText="Confirm"
-                                cancelBtnText="Cancel"
-                                androidMode="spinner"
-                                customStyles={{
-                                    dateIcon: {
-                                        position: 'absolute',
-                                        left: 0,
-                                        top: 4,
-                                        marginLeft: 0
-                                    },
-                                    dateInput: {
-                                        marginLeft: 0
-                                    }
-                                }}
-                                showIcon={false}
-                                onDateChange={setDate}
-                                value={moment(date).format('L')}
-                            />
+                           
                         </View>
+                            {!isEditing && 
+                                (<Text style={styles.dateStyle}>Date owned: {moment(date).format('L')}</Text>)}
+                            {isEditing &&
+                                (<DatePicker
+                                    disabled={!isEditing}
+                                    style={styles.dateStyle}
+                                    date={date}
+                                    mode="date"
+                                    placeholder="Select date"
+                                    format="DD-MM-YYYY"
+                                    maxDate={moment().format('DD-MM-YYYY')}
+                                    confirmBtnText="Confirm"
+                                    cancelBtnText="Cancel"
+                                    androidMode="spinner"
+                                    customStyles={{
+                                        dateIcon: {
+                                            position: 'absolute',
+                                            left: 0,
+                                            top: 4,
+                                            marginLeft: 0
+                                        },
+                                        dateInput: {
+                                            marginLeft: 0
+                                        }
+                                    }}
+                                    showIcon={false}
+                                    onDateChange={setDate}
+                                    value={moment(date).format('L')}
+                                />)}
                     </View>
                     <ActivityIndicator size="large" color="#0000ff" animating={hide} />
                     <View style={styles.desc}>
                         <Text style={styles.boldHeader}>Description:</Text>
                         <TextInput
-                            style={[styles.descriptionStyle, {borderColor: isEditing ? 'red' : 'black'}]}
+                            style={[styles.descriptionStyle, { borderColor: isEditing ? 'red' : 'black' }]}
                             value={description}
                             onChangeText={setDescription}
                             editable={isEditing}
                             multiline={true}
                         />
-                        {/*<Text style={styles.descriptionStyle}>{artefact.description}</Text>*/}
                     </View>
                     <View style={styles.desc}>
                         <Text style={styles.boldHeader}>Value:</Text>
                         {/* <Text style={styles.descriptionStyle}>{artefact.value}</Text> */}
                         <TextInput
-                            style={[styles.descriptionStyle, {borderColor: isEditing ? 'red' : 'black'}]}
+                            style={[styles.descriptionStyle, { borderColor: isEditing ? 'red' : 'black' }]}
                             value={value}
                             onChangeText={setValue}
                             editable={isEditing}
-                            multiline={true} 
-                            />
+                            multiline={true}
+                        />
                     </View>
                     {
                         // If the artefact owner is the current user, allow them to send the artefact
@@ -167,10 +171,15 @@ function ItemDetailScreen({ navigation, ctx }) {
                                 <View style={styles.buttonBox}>
                                     <TouchableOpacity
                                         onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
-                                        style={styles.sendButton}>
+                                        >
+                                         <LinearGradient colors={['#ff2870', '#ffe148']} 
+                                         start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+                                         style={styles.sendButton}>
+
                                         <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
                                             Send Artefact
                                         </Text>
+                                        </LinearGradient>
                                     </TouchableOpacity>
                                 </View>
                             </>
@@ -217,7 +226,7 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingBottom: 30,
         borderRadius: 5,
-        borderColor:'black',
+        borderColor: 'black',
         borderWidth: 0.5,
         color: 'black'
     },
@@ -233,7 +242,7 @@ const styles = StyleSheet.create({
     dateStyle: {
         color: '#579B93',
         borderLeftColor: '#fff',
-        alignSelf: 'flex-end',
+        // alignSelf: 'flex-end',
         fontWeight: 'bold',
     },
     boldHeader: {
@@ -241,7 +250,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     value: {
-        fontSize: 16,
+        fontSize: 20,
     },
     buttonBox: {
         justifyContent: 'center',

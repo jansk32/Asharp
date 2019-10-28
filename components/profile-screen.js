@@ -7,6 +7,8 @@ import moment from 'moment';
 import OneSignal from 'react-native-onesignal';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Assets } from 'react-navigation-stack';
+import LinearGradient from 'react-native-linear-gradient';
+
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
 const { SlideInMenu } = renderers;
 
@@ -134,10 +136,14 @@ function ProfileScreen({ navigation, ctx }) {
 	// Return the whole layout for profile
 	return (
 		<>
-			<View style={styles.header}>
+			{/* <View style={styles.header}> */}
+			<LinearGradient colors={['#4568dc', '#b06ab3']} 
+            	start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+                 style={styles.header}>
+
 				<Text style={styles.profile}>Profile</Text>
 				<View style={[styles.icon, { display: !navigation.state.params ? 'flex' : 'none' }]}>
-					<Icon name="navicon" size={40} color={'#2d2e33'}
+					<Icon name="navicon" size={40} color={'white'}
 						onPress={() => ctx.menuActions.openMenu('profileMenu')} />
 					<Menu name="profileMenu" renderer={SlideInMenu}>
 						<MenuTrigger>
@@ -148,10 +154,17 @@ function ProfileScreen({ navigation, ctx }) {
 						</MenuOptions>
 					</Menu>
 				</View>
-			</View>
-			<ActivityIndicator size="large" color="#0000ff" animating={hide} />
+			</LinearGradient>
+			{/* </View> */}
+			
 			<ScrollView>
+		
 				<View style={styles.profileBox}>
+				{ hide &&
+				(
+					<ActivityIndicator size="large" color="#0000ff" animating={hide} />
+				)
+			}
 					<Image
 						source={{ uri: profile.pictureUrl || BLANK_PROFILE_PIC_URI }}
 						style={styles.image}
@@ -181,19 +194,20 @@ function ProfileScreen({ navigation, ctx }) {
 const styles = StyleSheet.create({
 	profileBox: {
 		backgroundColor: '#f5f7fb',
-		borderBottomLeftRadius: 25,
-		borderBottomRightRadius: 25,
+		// borderBottomLeftRadius: 25,
+		// borderBottomRightRadius: 25,
 	},
 	header: {
 		flexDirection: 'row',
-		paddingTop: 15,
-		margin: 10,
+		padding: 15,
+		// margin: 10,
 	},
 
 	profile: {
 		fontSize: 30,
 		fontWeight: 'bold',
-		color: '#2d2e33',
+		// color: '#2d2e33',
+		color: 'white',
 		alignItems: 'flex-start',
 		paddingLeft: 10,
 	},
