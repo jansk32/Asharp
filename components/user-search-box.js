@@ -4,31 +4,88 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import { FlatList } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
-import { buildFamilyTree } from '../build-family-tree';
 
-import { BACK_END_ENDPOINT } from '../constants';
+import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
 
-export default function UserSearchBox({ renderItem }) {
+export default function UserSearchBox({ navigation }) {
     // parameters:
     // - onPress of TouchableOpacity of search result
     // - disabled
     // OR just renderItem
 
+    const { linkedNode, isAddingSpouse, fetchFamilyMembers } = navigation.state.params;
+
     const [nameQuery, setNameQuery] = useState('');
-    const [searchedUsers, setSearchedUsers] = useState([]);
     const [nonFamilials, setNonFamilials] = useState([]);
+    const [searchedUsers, setSearchedUsers] = useState([]);
 
     useEffect(() => {
         async function fetchNonFamilials() {
             const res = await axios.get(`${BACK_END_ENDPOINT}/family-tree/non-familial/${await AsyncStorage.getItem('userId')}`);
-            setNonFamilials(res.data);
+            let nonFamilials = res.data;
+            if (isAddingSpouse) {
+                // If adding spouse, filter non-familials who are of opposite gender
+                // and don't have spouses already
+                nonFamilials = nonFamilials.filter(person => person.gender !== linkedNode.gender && !person.spouse);
+            } else {
+                // If adding a child, the child must not have parents
+                nonFamilials = nonFamilials.filter(person => !person.father && !person.mother);
+            }
+            setNonFamilials(nonFamilials);
         }
         fetchNonFamilials();
     }, []);
 
+    // Name searching
     useEffect(() => {
         setSearchedUsers(nonFamilials.filter(person => person.name.toLowerCase().includes(nameQuery.toLowerCase())));
     }, [nameQuery, nonFamilials]);
+
+
+    function renderSearchResult({ item: { _id, name, pictureUrl } }) {
+        // const disabled = linkedNode._id === parentId || !spouse || spouse && linkedNode.spouse === parentId;
+        return (
+            <TouchableOpacity
+                onPress={() => {
+                    Alert.alert(
+                        `Add ${isAddingSpouse ? 'spouse' : 'child'}`,
+                        `Are you sure you would like to add ${name} as your ${isAddingSpouse ? 'spouse' : 'child'}?`,
+                        [
+                            {
+                                text: 'Cancel'
+                            },
+                            {
+                                text: 'OK',
+                                onPress: async () => {
+                                    if (isAddingSpouse) {
+                                        await axios.put(`${BACK_END_ENDPOINT}/user/add-spouse`, {
+                                            personId: linkedNode._id,
+                                            spouseId: _id,
+                                        });
+                                    } else {
+                                        await axios.put(`${BACK_END_ENDPOINT}/user/add-child`, {
+                                            personId: linkedNode._id,
+                                            childId: _id,
+                                        });
+                                    }
+                                    fetchFamilyMembers();
+                                    navigation.goBack();
+                                }
+                            }
+                        ]
+                    );
+                }
+                }
+            >
+                <View style={{ flexDirection: 'row', marginHorizontal: 30, marginTop: 10, marginBottom: 20, }}>
+                    <Image
+                        source={{ uri: pictureUrl || BLANK_PROFILE_PIC_URI }}
+                        style={{ height: 60, width: 60, marginRight: 30, borderRadius: 50, }} />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{name}</Text>
+                </View>
+            </TouchableOpacity>
+        );
+    }
 
     return (
         <>
@@ -44,7 +101,7 @@ export default function UserSearchBox({ renderItem }) {
             <Text style={styles.results}>Search results:</Text>
             <FlatList
                 data={searchedUsers}
-                renderItem={renderItem}
+                renderItem={renderSearchResult}
                 keyExtractor={item => item._id}
             />
         </>

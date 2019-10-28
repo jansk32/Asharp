@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Text, ActivityIndicator, StyleSheet, View, Image, Dimensions, TouchableOpacity, Button } from 'react-native';
+import { Text, ActivityIndicator, StyleSheet, View, Image, Dimensions, TouchableOpacity, Button, ToastAndroid } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import moment from 'moment';
@@ -44,11 +44,23 @@ function useCurrentUser() {
 	return currentUser;
 }
 
+export async function logout() {
+	try {
+		await axios.get(`${BACK_END_ENDPOINT}/logout`);
+		await AsyncStorage.multiRemove(['email', 'password', 'userId']);
+		OneSignal.removeExternalUserId();
+		navigate('Welcome');
+	} catch (e) {
+		ToastAndroid.show('Error logging out', ToastAndroid.SHORT);
+	}
+}
+
+
 function ProfileScreen({ navigation, ctx }) {
 	const { navigate } = navigation;
 	const [profile, setProfile] = useState({});
 	const [artefact, setArtefact] = useState([]);
-	const [hide, setHide] = useState(true);
+	const [loading, setLoading] = useState(true);
 	const currentUser = useCurrentUser();
 	const userId = navigation.state.params && navigation.state.params.userId;
 	const [canChangeSettings, setCanChangeSettings] = useState(false);
@@ -64,7 +76,7 @@ function ProfileScreen({ navigation, ctx }) {
 		try {
 			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${targetId}`);
 			setProfile(res.data);
-			setHide(false);
+			setLoading(false);
 		} catch (e) {
 			console.trace(e);
 		}
@@ -80,7 +92,7 @@ function ProfileScreen({ navigation, ctx }) {
 		try {
 			const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/findbyowner/${targetId}`);
 			setArtefact(res.data);
-			setHide(false);
+			setLoading(false);
 		} catch (e) {
 			console.trace(e);
 		}
@@ -88,7 +100,7 @@ function ProfileScreen({ navigation, ctx }) {
 
 	async function fetchProfile() {
 		if (profile === null || artefact.length < 1) {
-			setHide(true);
+			setLoading(true);
 		}
 		await getProfile();
 	}
@@ -112,20 +124,8 @@ function ProfileScreen({ navigation, ctx }) {
 	}, [currentUser]);
 
 
-	// Logout function
-	async function logout() {
-		try {
-			await axios.get(`${BACK_END_ENDPOINT}/logout`);
-			await AsyncStorage.multiRemove(['email', 'password', 'userId']);
-			OneSignal.removeExternalUserId();
-			navigate('Welcome');
-		} catch (e) {
-			console.trace(e);
-		}
-	}
-
 	// Render Item invisible if it's just a placeholder for columns in the grid,
-	// if not, render the picture for each grid
+	// If not, render the picture for each grid
 	renderItem = ({ item, index }) => {
 
 		if (item.empty === true) {
@@ -179,8 +179,8 @@ function ProfileScreen({ navigation, ctx }) {
 						circular={true}
 						width={100}
 						height={100} />
-					{hide &&
-						<ActivityIndicator size="large" color="#0000ff" animating={hide} />
+					{loading &&
+						<ActivityIndicator size="large" color="#0000ff" />
 					}
 					<View style={styles.textBox}>
 						<Text style={styles.nameText}>

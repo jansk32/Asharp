@@ -243,9 +243,8 @@ const styles = StyleSheet.create({
 	},
 	imageBox: {
 		height: Dimensions.get('window').width / numColumns, // approximate a square
-		flex: 1,
-		margin: 1,
 		width: Dimensions.get('window').width / numColumns,
+		flex: 1,
 	}
 });
 

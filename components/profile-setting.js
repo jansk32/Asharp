@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, StyleSheet, TextInput, TouchableOpacity, ToastAndroid, Dimensions, Image, ScrollView
+	Text, View, StyleSheet, TextInput, TouchableOpacity, ToastAndroid, Dimensions, Image, ScrollView, Alert, ActivityIndicator
 } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import AsyncStorage from '@react-native-community/async-storage';
-import { SCHEMES } from 'uri-js';
 import { pickImage, uploadImage } from '../image-tools';
 import axios from 'axios';
 import moment from 'moment';
+import { logout } from './profile-screen'
 
 import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI, DATE_FORMAT } from '../constants';
 
@@ -25,17 +25,18 @@ export default function ProfileSettingScreen({ navigation }) {
 	const [oldPassword, setOldPassword] = useState('');
 	const [password, setPassword] = useState('');
 	const [image, setImage] = useState({});
+	const [isLoading, setLoading] = useState(true);
 
 	// Validate name and new password
 	function validateInput() {
 		// Check if old password is the same as the new password
 		if (password && user.password !== oldPassword) {
-			alert("Old password does not match! >:)");
+			alert('Old password does not match! >:)');
 			return false;
 		}
 		else if (password && password.length < 6) {
-			alert("Password must be at least 6 characters long");
-			return false
+			alert('Password must be at least 6 characters long');
+			return false;
 		}
 		return true;
 	}
@@ -59,8 +60,9 @@ export default function ProfileSettingScreen({ navigation }) {
 			const newImage = await uploadImage(image.uri);
 			data.pictureUrl = newImage;
 		}
-		data.userId = await AsyncStorage.getItem("userId");
-		const res = await axios.put(`${BACK_END_ENDPOINT}/user/update`, data);
+
+		const userId = await AsyncStorage.getItem('userId');
+		const res = await axios.put(`${BACK_END_ENDPOINT}/user/update/${userId}`, data);
 		const updatedProfile = res.data;
 		console.log(updatedProfile);
 		setProfile(updatedProfile);
@@ -69,108 +71,135 @@ export default function ProfileSettingScreen({ navigation }) {
 	// Get user details
 	useEffect(() => {
 		async function fetchProfile() {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem("userId")}`);
+			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
 			const user = res.data;
 			console.log(user);
 			setUser(user);
 			setImage({ uri: user.pictureUrl });
+			setLoading(false);
 		}
 		fetchProfile();
 	}, []);
 
+
 	return (
-		<>
-			<ScrollView>
-				<View style={styles.container}>
-					<Image source={{ uri: image.uri || BLANK_PROFILE_PIC_URI }} style={styles.imageStyle} />
-					<View style={styles.buttonBox}>
-						<TouchableOpacity
-							onPress={async () => await setImage(await pickImage())}>
-							<View style={styles.picButton}>
-								<Text
-									style={styles.buttonText}>
-									Pick Picture
-              </Text>
-							</View>
-						</TouchableOpacity>
-					</View>
-					<View style={styles.inputBox}>
-						<View style={styles.inputElem}>
-							<Text style={styles.text}>Full Name:</Text>
-							<TextInput
-								placeholder={user.name}
-								onChangeText={setName}
-								value={name}
-								style={styles.textInput}
-							/>
-						</View>
-						<View style={styles.inputElem}>
-							<Text style={styles.text}>Date of Birth:</Text>
-							<DatePicker
-								style={styles.dateInputs}
-								date={dob || user.dob}
-								mode="date"
-								placeholder={moment(user.dob).format(DATE_FORMAT)}
-								format={DATE_FORMAT}
-								maxDate={moment().format(DATE_FORMAT)}
-								confirmBtnText="Confirm"
-								cancelBtnText="Cancel"
-								androidMode="spinner"
-								customStyles={{
-									dateIcon: {
-										position: 'absolute',
-										left: 0,
-										top: 4,
-										marginLeft: 0
-									},
-									dateInput: {
-										// borderColor: 'white',
-									}
-								}}
-								showIcon={false}
-								onDateChange={newDate => setDob(newDate)}
-								value={dob}
-							/>
-						</View>
-						<View style={styles.inputElem}>
-							<Text style={styles.text}>Old Password:</Text>
-							<TextInput
-								placeholder={'Enter Old Password'}
-								secureTextEntry={true}
-								onChangeText={setOldPassword}
-								value={oldPassword}
-								style={styles.textInput}
-								autoCapitalize="none"
-							/>
-						</View>
-						<View style={styles.inputElem}>
-							<Text style={styles.text}> New Password:</Text>
-							<TextInput
-								placeholder='Enter New Password'
-								secureTextEntry={true}
-								onChangeText={setPassword}
-								value={password}
-								style={styles.textInput}
-								autoCapitalize="none"
-							/>
-						</View>
-					</View>
+		<ScrollView>
+			<View style={styles.container}>
+				<Image source={{ uri: image.uri || BLANK_PROFILE_PIC_URI }} style={styles.imageStyle} />
+				{
+					isLoading &&
+					<ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />
+				}
+				<View style={styles.buttonBox}>
 					<TouchableOpacity
-						onPress={() => {
-							updateProfile();
-							navigate('Profile');
-						}}>
-						<View style={styles.redButton}>
+						onPress={async () => setImage(await pickImage())}>
+						<View style={styles.picButton}>
 							<Text
-								style={styles.whiteText}>
-								Next
-							</Text>
+								style={styles.buttonText}>
+								Pick Picture
+			  					</Text>
 						</View>
 					</TouchableOpacity>
 				</View>
-			</ScrollView>
-
-		</>
+				<View style={styles.inputBox}>
+					<View style={styles.inputElem}>
+						<Text style={styles.text}>Full Name:</Text>
+						<TextInput
+							placeholder={user.name}
+							onChangeText={setName}
+							value={name}
+							style={styles.textInput}
+						/>
+					</View>
+					<View style={styles.inputElem}>
+						<Text style={styles.text}>Date of Birth:</Text>
+						<DatePicker
+							style={styles.dateInputs}
+							date={dob || user.dob}
+							mode="date"
+							placeholder={moment(user.dob).format(DATE_FORMAT)}
+							format={DATE_FORMAT}
+							maxDate={moment().format(DATE_FORMAT)}
+							confirmBtnText="Confirm"
+							cancelBtnText="Cancel"
+							androidMode="spinner"
+							customStyles={{
+								dateIcon: {
+									position: 'absolute',
+									left: 0,
+									top: 4,
+									marginLeft: 0
+								},
+								dateInput: {
+									// borderColor: 'white',
+								}
+							}}
+							showIcon={false}
+							onDateChange={newDate => setDob(newDate)}
+							value={dob}
+						/>
+					</View>
+					<View style={styles.inputElem}>
+						<Text style={styles.text}>Old Password:</Text>
+						<TextInput
+							placeholder={'Enter Old Password'}
+							secureTextEntry={true}
+							onChangeText={setOldPassword}
+							value={oldPassword}
+							style={styles.textInput}
+							autoCapitalize="none"
+						/>
+					</View>
+					<View style={styles.inputElem}>
+						<Text style={styles.text}> New Password:</Text>
+						<TextInput
+							placeholder='Enter New Password'
+							secureTextEntry={true}
+							onChangeText={setPassword}
+							value={password}
+							style={styles.textInput}
+							autoCapitalize="none"
+						/>
+					</View>
+				</View>
+				<TouchableOpacity
+					onPress={() => {
+						updateProfile();
+						navigate('Profile');
+					}}>
+					<View style={styles.redButton}>
+						<Text
+							style={styles.whiteText}>
+							Done
+							</Text>
+					</View>
+				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => {
+						Alert.alert('Delete profile', 'Are you sure you would like to delete your profile? You will lose all of your artefacts. This action cannot be undone.', [
+							{
+								text: 'Cancel'
+							},
+							{
+								text: 'OK',
+								onPress: async () => {
+									setLoading(true);
+									await axios.delete(`${BACK_END_ENDPOINT}/user/delete/${user._id}`);
+									setLoading(false);
+									logout();
+								},
+							}
+						])
+					}}>
+					<View style={styles.redButton}>
+						<Text
+							style={styles.whiteText}>
+							Delete profile
+							</Text>
+					</View>
+				</TouchableOpacity>
+			</View>
+		</ScrollView>
 	);
 }
 

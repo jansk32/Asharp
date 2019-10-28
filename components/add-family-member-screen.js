@@ -16,64 +16,16 @@ import { uploadImage } from '../image-tools';
 
 export default function AddFamilyMemberScreen({ navigation }) {
     // isAddingSpouse is false if adding a child
-    const { navigate } = navigation;
     const { linkedNode, isAddingSpouse, fetchFamilyMembers } = navigation.state.params;
 
     const DATE_FORMAT = 'YYYY-MM-DD';
-
-    function renderSearchResult({ item: { _id, name, pictureUrl } }) {
-        // const disabled = linkedNode._id === parentId || !spouse || spouse && linkedNode.spouse === parentId;
-        const disabled = false;
-        return (
-            <TouchableOpacity
-                disabled={disabled}
-                onPress={() => {
-                    Alert.alert(
-                        `Add ${isAddingSpouse ? 'spouse' : 'child'}`,
-                        `Are you sure you would like to add ${name} as your ${isAddingSpouse ? 'spouse' : 'child'}?`,
-                        [
-                            {
-                                text: 'Cancel'
-                            },
-                            {
-                                text: 'OK',
-                                onPress: async () => {
-                                    if (isAddingSpouse) {
-                                        await axios.put(`${BACK_END_ENDPOINT}/user/add-spouse`, {
-                                            personId: linkedNode._id,
-                                            spouseId: _id,
-                                        });
-                                    } else {
-                                        await axios.put(`${BACK_END_ENDPOINT}/user/add-child`, {
-                                            personId: linkedNode._id,
-                                            childId: _id,
-                                        });
-                                    }
-                                    fetchFamilyMembers();
-                                    navigation.goBack();
-                                }
-                            }
-                        ]
-                    );
-                }
-                }
-                style={{ backgroundColor: disabled ? 'red' : 'white' }}
-            >
-                <View style={{ flexDirection: 'row', marginHorizontal: 30, marginTop: 10, marginBottom: 20, }}>
-                    <Image
-                        source={{ uri: pictureUrl || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
-                        style={{ height: 60, width: 60, marginRight: 30, borderRadius: 50, }} />
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{name}</Text>
-                </View>
-            </TouchableOpacity>
-        );
-    }
 
     function SearchMemberRoute() {
         return (
             <ScrollView>
                 <View style={styles.search}>
-                    <UserSearchBox renderItem={renderSearchResult} />
+                    <UserSearchBox
+                        navigation={navigation} />
                 </View>
             </ScrollView>
         );

@@ -306,12 +306,32 @@ app.put('/user/remove-spouse/:id', async ({ params: { id } }, res) => {
 });
 
 // Delete a family member or user
-app.delete('/user/delete/:id', (req, res) => {
-	User.findByIdAndDelete(req.params.id, (err, resp) => {
-		if (err) throw err;
-		res.send(resp);
-	});
+app.delete('/user/delete/:id', async ({ params: { id } }, res) => {
+	try {
+		const deletedUser = await User.findByIdAndDelete(id);
+
+		// Detach spouse
+		if (deletedUser.spouse) {
+			const spouse = await User.findByIdAndUpdate(deletedUser.spouse, { $unset: { spouse: null } });
+			// Detach children
+			const father = deletedUser.gender === 'm' ? deletedUser._id : spouse._id;
+			const mother = deletedUser.gender === 'f' ? deletedUser._id : spouse._id;
+			await User.updateMany({ father, mother }, { $unset: { father: null, mother: null } });
+		}
+
+		// Delete artefacts
+		const deletedArtefacts = await Artefact.deleteMany({ owner: id });
+		// Delete notifications related to artefacts
+		await Notification.deleteMany({ artefact: { $in: deletedArtefacts.map(artefact => artefact._id) } });
+
+		// Delete notifications related to user
+		await Notification.deleteMany({ $or: [{ sender: id }, { recipient: id }] });
+		res.send();
+	} catch (e) {
+		console.trace(e);
+	}
 });
+
 
 /* Family tree routes */
 
@@ -434,11 +454,13 @@ app.get('/artefact/findbyowner/:id', async ({ params: { id } }, res) => {
 });
 
 // Update an artefact
-app.put('/artefact/update/:id', (req, res) => {
-	Artefact.findByIdAndUpdate(req.params.id, req.body, (err, resp) => {
-		if (err) throw err;
-		res.send(resp);
-	});
+app.put('/artefact/update/:id', async ({ params: { id }, body }, res) => {
+	try {
+		const newArtefact = await Artefact.findByIdAndUpdate(id, body, { new: true });
+		res.send(newArtefact);
+	} catch (e) {
+		console.trace(e);
+	}
 });
 
 // Delete an artefact
