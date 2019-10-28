@@ -149,8 +149,8 @@ function ProfileScreen({ navigation, ctx }) {
 						<MenuTrigger>
 						</MenuTrigger>
 						<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
-							<MenuOption onSelect={() => navigate('ProfileSetting', { setProfile })} text="Profile Setting" />
-							<MenuOption onSelect={logout} text="Logout" />
+							<MenuOption onSelect={() => navigate('ProfileSetting', { setProfile })} text="Profile Settings" />
+							<MenuOption onSelect={logout} text="Log Out" />
 						</MenuOptions>
 					</Menu>
 				</View>
@@ -283,7 +283,8 @@ const styles = StyleSheet.create({
 	menuStyle: {
 		borderTopEndRadius: 20,
 		borderTopStartRadius: 20,
-		borderColor: 'black',
+		borderColor: '#f5f7fb',
+		backgroundColor:'#f5f7fb',
 		borderWidth: 0.5,
 		paddingTop: 20,
 		justifyContent: 'space-between',
@@ -291,7 +292,7 @@ const styles = StyleSheet.create({
 	},
 	menuWrapper: {
 		paddingVertical: 15,
-		borderBottomColor: 'black',
+		borderBottomColor: '#2d2e33',
 		borderBottomWidth: 0.5,
 		marginHorizontal: 50,
 	},
