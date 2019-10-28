@@ -84,11 +84,6 @@ function ItemDetailScreen({ navigation, ctx }) {
                     <View style={styles.headerCont}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
                             <View style={{ flexDirection: 'row' }}>
-                                {isEditing &&
-                                    (<View style={{ justifyContent: 'center' }}>
-                                        <Icon name="pencil" size={40} color={'gray'} />
-                                    </View>)
-                                }
                                 <TextInput
                                     style={[styles.title, { color: isEditing ? 'gray' : 'black' }]}
                                     value={name}
@@ -145,13 +140,6 @@ function ItemDetailScreen({ navigation, ctx }) {
                     <ActivityIndicator size="large" color="#0000ff" animating={hide} />
                     <View style={styles.desc}>
                         <View style={{ flexDirection: 'row' }}>
-                            {isEditing &&
-                                (<View style={{ justifyContent: 'center' }}>
-                                    <Text style={styles.boldHeader}>
-                                        Edit
-                                    </Text>
-                                </View>)
-                            }
                             <Text style={styles.boldHeader}>()Description:</Text>
                         </View>
                         <TextInput
@@ -165,13 +153,6 @@ function ItemDetailScreen({ navigation, ctx }) {
                     </View>
                     <View style={styles.desc}>
                         <View style={{ flexDirection: 'row' }}>
-                            {isEditing &&
-                                (<View style={{ justifyContent: 'center' }}>
-                                    <Text style={styles.boldHeader}>
-                                        Edit
-                                    </Text>
-                                </View>)
-                            }
                             <Text style={styles.boldHeader}>Value:</Text>
                         </View>
                         <TextInput

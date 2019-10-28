@@ -8,12 +8,12 @@ const chaiHttp = require('chai-http');
 const {after} = require('mocha');
 const should = chai.should();
 // jest.config.js
-// module.exports = {
-//   setupTestFrameworkScriptFile: './jest.setup.js'
-// }
+module.exports = {
+  setupTestFrameworkScriptFile: './jest.setup.js'
+}
 
-// // jest.setup.js
-// jest.setTimeout(30000)
+// jest.setup.js
+jest.setTimeout(30000)
 
 chai.use(chaiHttp);
 
@@ -102,6 +102,7 @@ describe('Artefacts', () => {
     })
 })
 
+
   describe('Getting one artefact', () => {
     it('should successfully get ONE artefact', (done) => {
 
@@ -165,7 +166,7 @@ describe('Artefacts', () => {
 
   describe('Find owner through the artefact', () => {
       it('so first, find an artefact', (done) => {
-          let ownerId = "5d92f0247841ae35cc02e64c";
+          let ownerId = "5daedf03a7366a1e1a8e74f1";
           chai.request(server)
           .get("/artefact/findbyowner/" + ownerId)
           .end((err, res) => {
