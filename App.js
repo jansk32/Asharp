@@ -143,7 +143,7 @@ const MainNavigator = createBottomTabNavigator({
 			tabBarIcon: ({ tintColor }) => <Icon name="md-hourglass" color={tintColor} size={30} />
 		},
 	},
-	HomeFamilyTree: {
+	FamilyTree: {
 		screen: familyStack,
 		navigationOptions: {
 			tabBarIcon: ({ tintColor }) => <Icon2 name="tree" color={tintColor} size={30} />

@@ -74,7 +74,7 @@ export default function TimelineScreen({ navigation }) {
 			return <View style={[styles.item, styles.itemInvisible]} />;
 		}
 		return (
-			<View style={{ flex: 1 }}>
+			<View style={{ flex: 1}}>
 				<View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
 					<TouchableOpacity onPress={() => navigate('ItemDetail', { artefactId: item._id })}>
 						<Image source={{ uri: item.file }} style={styles.image} />
@@ -142,12 +142,22 @@ export default function TimelineScreen({ navigation }) {
 	});
 
 	return (
-		<>
-			<View style={styles.containers}>
+		<>	
+		
+			{/* <View style={styles.containers}> */}
+			<LinearGradient colors={['#de6262', '#ffb88c']} 
+            	start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+                 style={styles.container}>
+
 				<Text style={styles.title}>Memories Left Behind</Text>
 				<Text style={styles.artefactTitle}>Artefact</Text>
-				<ActivityIndicator size="large" color="#0000ff" animating={hide} />
-			</View>
+				{ hide &&
+					(
+						<ActivityIndicator size="large" color="#0000ff" animating={hide} />
+					)
+				}
+			</LinearGradient>
+			{/* </View> */}
 			<TabView
 				navigationState={tab}
 				renderScene={SceneMap({
@@ -157,7 +167,7 @@ export default function TimelineScreen({ navigation }) {
 				renderTabBar={props =>
 					<TabBar
 						{...props}
-						indicatorStyle={{ backgroundColor: '#EC6268' }}
+						indicatorStyle={{ backgroundColor: '#de6262' }}
 						style={{ backgroundColor: '#f5f7fb' }}
 						bounces={true}
 						labelStyle={{ color: '#2d2e33' }}
@@ -178,12 +188,7 @@ const styles = StyleSheet.create({
 		fontSize: 15,
 		paddingLeft: 5,
 	},
-	title: {
-		fontSize: 20,
-		marginLeft: 10,
-		color: '#2d2e33',
-		paddingTop: '8%'
-	},
+
 	containers: {
 		backgroundColor: '#f5f7fb',
 	},
@@ -191,7 +196,8 @@ const styles = StyleSheet.create({
 		fontSize: 30,
 		marginLeft: 10,
 		fontWeight: 'bold',
-		paddingBottom: '8%',
+		paddingBottom: '3%',
+		color:'white',
 	},
 	image: {
 		width: 75,
@@ -203,8 +209,8 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 	},
 	container: {
-		flex: 1,
-		marginVertical: 20
+		// flex: 1,
+		// marginVertical: 20
 	},
 	header: {
 		fontSize: 20,
@@ -214,7 +220,7 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 20,
 		marginLeft: 10,
-		color: '#2d2e33',
+		color: 'white',
 		paddingTop: '8%',
 
 	},

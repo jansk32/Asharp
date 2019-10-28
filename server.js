@@ -99,30 +99,30 @@ app.get('/', (req, res) => {
 /* User routes */
 
 // Get logged-in user
-app.get('/user', async (req, res) => {
-	console.log('ACCESS COOKIE = ' + req.headers.cookie);
-	console.log('ACCESS SESSION ID = ' + req.session.id);
+// app.get('/user', async (req, res) => {
+// 	console.log('ACCESS COOKIE = ' + req.headers.cookie);
+// 	console.log('ACCESS SESSION ID = ' + req.session.id);
 
-	if (!req.user) {
-		console.log('req.user is undefined');
-		res.send('No user in session');
-		return;
-	}
-	res.send(req.user);
-	return;
-	// Change later
-	// const id = req.session.passport.user._id;
-	const id = req.user._id;
-	console.log('ID = ' + id);
-	console.log('Authenticating user with id: ' + id);
-	try {
-		const user = await User.findById(id);
-		res.send(user);
-		// console.log('AUTHENTICATED user with id: ' + id);
-	} catch (e) {
-		console.trace(e);
-	}
-});
+// 	if (!req.user) {
+// 		console.log('req.user is undefined');
+// 		res.send('No user in session');
+// 		return;
+// 	}
+// 	res.send(req.user);
+// 	return;
+// 	// Change later
+// 	// const id = req.session.passport.user._id;
+// 	const id = req.user._id;
+// 	console.log('ID = ' + id);
+// 	console.log('Authenticating user with id: ' + id);
+// 	try {
+// 		const user = await userModel.findById(id);
+// 		res.send(user);
+// 		// console.log('AUTHENTICATED user with id: ' + id);
+// 	} catch (e) {
+// 		console.trace(e);
+// 	}
+// });
 
 // Get limited information about another user
 app.get('/user/find/:id', async (req, res) => {
@@ -196,10 +196,13 @@ app.get('/users', async (req, res) => {
 });
 
 // Update logged-in user
-app.put('/user/update', (req, res) => {
-	const id = req.body.userId;
-	User.findOneAndUpdate({ _id: id }, req.body, { new: true }, (err, result) => {
-		if (err) throw err;
+app.put('/user/update/:id', ({ params: { id }, body }, res) => {
+	User.findByIdAndUpdate(id, body, { new: true }, (err, result) => {
+		if (err) {
+			console.trace(err);
+			return;
+		}
+		console.log(result);
 		res.send(result);
 	});
 });
@@ -388,9 +391,13 @@ app.post('/artefact/create', ({
 // Re-assign artefact to certain user
 app.put('/artefact/assign', ({ body: { artefactId, recipientId, senderId } }, res) => {
 	// Request should include id of artefact, and id of new owner
-	Artefact.updateOne({ _id: artefactId }, { owner: recipientId }, (err, resp) => {
-		if (err) throw err;
+	Artefact.findByIdAndUpdate(artefactId, { owner: recipientId }, (err, resp) => {
+		if (err) {
+			console.trace(err);
+			return;
+		}
 		res.send(resp);
+		console.log(resp);
 	});
 
 	// Send notification to recipient

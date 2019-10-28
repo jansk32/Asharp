@@ -6,6 +6,8 @@ import Icon from 'react-native-vector-icons/EvilIcons';
 import moment from 'moment';
 import OneSignal from 'react-native-onesignal';
 import AsyncStorage from '@react-native-community/async-storage';
+import LinearGradient from 'react-native-linear-gradient';
+
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
 const { SlideInMenu } = renderers;
 
@@ -147,12 +149,16 @@ function ProfileScreen({ navigation, ctx }) {
 	// Return the whole layout for profile
 	return (
 		<>
-			<View style={styles.header}>
+			{/* <View style={styles.header}> */}
+			<LinearGradient colors={['#4568dc', '#b06ab3']}
+				start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+				style={styles.header}>
+
 				<Text style={styles.profile}>Profile</Text>
 				{
 					canChangeSettings &&
 					<View style={styles.icon}>
-						<Icon name="navicon" size={40} color={'#2d2e33'}
+						<Icon name="navicon" size={40} color={'white'}
 							onPress={() => ctx.menuActions.openMenu('profileMenu')} />
 						<Menu name="profileMenu" renderer={SlideInMenu}>
 							<MenuTrigger>
@@ -164,22 +170,25 @@ function ProfileScreen({ navigation, ctx }) {
 						</Menu>
 					</View>
 				}
-			</View>
-			<ActivityIndicator size="large" color="#0000ff" animating={hide} />
+			</LinearGradient>
+
 			<ScrollView>
 				<View style={styles.profileBox}>
 					<PictureFrame
 						image={{ uri: profile.pictureUrl || BLANK_PROFILE_PIC_URI }}
 						circular={true}
 						width={100}
-						height={100}
-					/>
-
+						height={100} />
+					{hide &&
+						<ActivityIndicator size="large" color="#0000ff" animating={hide} />
+					}
 					<View style={styles.textBox}>
-						<Text
-							style={styles.nameText}>{profile.name}</Text>
-						<Text
-							style={styles.dob}>DOB: {moment(profile.dob).format('L')}</Text>
+						<Text style={styles.nameText}>
+							{profile.name}
+						</Text>
+						<Text style={styles.dob}>
+							DOB: {moment(profile.dob).format('L')}
+						</Text>
 					</View>
 				</View>
 				<View style={styles.artefactsBox}>
@@ -200,19 +209,20 @@ function ProfileScreen({ navigation, ctx }) {
 const styles = StyleSheet.create({
 	profileBox: {
 		backgroundColor: '#f5f7fb',
-		borderBottomLeftRadius: 25,
-		borderBottomRightRadius: 25,
+		// borderBottomLeftRadius: 25,
+		// borderBottomRightRadius: 25,
 	},
 	header: {
 		flexDirection: 'row',
-		paddingTop: 15,
-		margin: 10,
+		padding: 15,
+		// margin: 10,
 	},
 
 	profile: {
 		fontSize: 30,
 		fontWeight: 'bold',
-		color: '#2d2e33',
+		// color: '#2d2e33',
+		color: 'white',
 		alignItems: 'flex-start',
 		paddingLeft: 10,
 	},

@@ -36,7 +36,6 @@ describe('Notification', () => {
         .send(recepient)
         .end((err,res) => {
             if(err) return done(err);
-            console.log(res);
             res.status.should.be.equal(200);
             res.body.should.be.a('array');
             done();
