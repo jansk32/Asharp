@@ -3,6 +3,8 @@ import {
 	Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, ScrollView,
 } from 'react-native';
 import { pickImage } from '../image-tools';
+import LinearGradient from 'react-native-linear-gradient';
+
 
 export default function HomeScreen({ navigation }) {
 	const { navigate } = navigation;
@@ -12,12 +14,17 @@ export default function HomeScreen({ navigation }) {
 	   to add details page */
 	return (
 		<>
-			<View style={styles.headerContainer}>
-				<Text style={styles.title}>Mementos</Text>
-				<Text style={styles.uploadTitle}>Upload Artefact</Text>
-			</View>
+			{/* <View style={styles.headerContainer}> */}
+				<LinearGradient colors={['#c33764', '#1d2671']} 
+					start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+					style={styles.headerContainer}>
+					<Text style={styles.title}>Mementos</Text>
+					<Text style={styles.uploadTitle}>Upload Artefact</Text>
+				</LinearGradient>
+			{/* </View> */}
 			<ScrollView>
 				<Image source={image} style={styles.imageStyle} />
+			
 				<TouchableOpacity
 					onPress={async () => {
 						const myImage = await pickImage();
@@ -39,6 +46,7 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: 16,
 		textAlign: 'center',
+		color:'white'
 	},
 	whiteText: {
 		fontSize: 20,
@@ -77,7 +85,7 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 20,
 		marginLeft: 10,
-		color: '#2d2e33',
+		color: 'white',
 		paddingTop: '8%',
 	},
 	uploadTitle: {
@@ -85,10 +93,11 @@ const styles = StyleSheet.create({
 		marginLeft: 10,
 		fontWeight: 'bold',
 		paddingBottom: '8%',
+		color:'white',
 	},
 	headerContainer: {
-		borderBottomLeftRadius: 25,
-		borderBottomRightRadius: 25,
+		// borderBottomLeftRadius: 25,
+		// borderBottomRightRadius: 25,
 		backgroundColor: '#f5f7fb',
 	},
 }

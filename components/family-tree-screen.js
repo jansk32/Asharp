@@ -6,6 +6,8 @@ import axios from 'axios';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
 const { SlideInMenu } = renderers;
 import Icon from 'react-native-vector-icons/Ionicons';
+import LinearGradient from 'react-native-linear-gradient';
+
 
 import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -364,10 +366,17 @@ function FamilyTreeScreen({ ctx, navigation }) {
 
 	return (
 		<>
-			<View style={styles.headerContainer}>
+			{/* <View style={styles.headerContainer}> */}
+			<LinearGradient colors={['#02aab0', '#00cdac']} 
+            	start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+                 style={styles.headerContainer}>
 				<Text style={styles.add}>This is your</Text>
 				<Text style={styles.title}>Family Tree</Text>
-				<ActivityIndicator size="large" color="#0000ff" animating={hide} />
+				{ hide &&
+					(
+						<ActivityIndicator size="large" color="#0000ff" animating={hide} />
+					)
+				}
 				<View style={styles.searchContainer}>
 					<Icon name="md-search" size={30} color={'#2d2e33'} />
 					<TextInput
@@ -377,7 +386,8 @@ function FamilyTreeScreen({ ctx, navigation }) {
 						style={styles.searchInput}
 					/>
 				</View>
-			</View>
+			</LinearGradient>
+			{/* </View> */}
 			<View style={{ flex: 1, alignSelf: 'stretch' }} onLayout={event => {
 				const { width, height } = event.nativeEvent.layout;
 				if (isSvgDimensionsSet) {
@@ -406,8 +416,8 @@ function FamilyTreeScreen({ ctx, navigation }) {
 
 const styles = StyleSheet.create({
 	headerContainer: {
-		borderBottomLeftRadius: 30,
-		borderBottomRightRadius: 30,
+		// borderBottomLeftRadius: 30,
+		// borderBottomRightRadius: 30,
 		backgroundColor: '#f5f7fb',
 		paddingBottom: 30,
 	},
@@ -430,14 +440,16 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontSize: 35,
-		color: '#2d2e33',
+		// color: '#2d2e33',
+		color: 'white',
 		paddingBottom: 10,
 		fontWeight: 'bold',
 		marginLeft: 10,
 	},
 	add: {
 		fontSize: 25,
-		color: '#2d2e33',
+		// color: '#2d2e33',
+		color: 'white',
 		marginLeft: 10,
 		marginTop: 10,
 	},

@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').width /1.5,
         alignSelf: 'center',
         justifyContent:'center',
-        marginBottom: 50,
+        marginBottom: 0,
         marginTop: 20,
     },
     yellowButton: {

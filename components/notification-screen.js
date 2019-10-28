@@ -3,6 +3,7 @@ import { Text, ActivityIndicator, StyleSheet, View, FlatList, Dimensions, Image,
 import axios from 'axios';
 import moment from 'moment';
 import OneSignal from 'react-native-onesignal';
+import LinearGradient from 'react-native-linear-gradient';
 
 import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -68,11 +69,19 @@ export default function NotificationScreen({ navigation }) {
 
 	return (
 		<>
-			<View style={styles.headerContainer}>
+			{/* <View style={styles.headerContainer}> */}
+			<LinearGradient colors={['#F9AD6A', '#D46C4E']} 
+            	start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+                 style={styles.headerContainer}>
 				<Text style={styles.title}>View Updates</Text>
 				<Text style={styles.galleryTitle}>Notification</Text>
-			</View>
-			<ActivityIndicator size="large" color="#0000ff" animating={hide} />
+			</LinearGradient>
+			{/* </View> */}
+			{ hide &&
+				(
+					<ActivityIndicator size="large" color="#0000ff" animating={hide} />
+					)
+				}
 			<ScrollView>
 				<FlatList
 					data={notifications}
@@ -88,18 +97,22 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 20,
 		marginLeft: 10,
-		color: '#2d2e33',
-		paddingTop: '8%',
+		// color: '#2d2e33',
+		color: 'white',
+		paddingTop: '5%',
 	},
 	galleryTitle: {
 		fontSize: 30,
 		marginLeft: 10,
 		fontWeight: 'bold',
+		paddingBottom: '5%',
+		color: 'white',
 	},
 	headerContainer: {
-		borderBottomLeftRadius: 25,
-		borderBottomRightRadius: 25,
+		// borderBottomLeftRadius: 25,
+		// borderBottomRightRadius: 25,
 		backgroundColor: '#f5f7fb',
+		// paddingBottom:'3%'
 	},
 	notifBox: {
 		flexDirection: 'row',
