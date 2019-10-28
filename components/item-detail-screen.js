@@ -140,7 +140,7 @@ function ItemDetailScreen({ navigation, ctx }) {
                     <ActivityIndicator size="large" color="#0000ff" animating={hide} />
                     <View style={styles.desc}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.boldHeader}>()Description:</Text>
+                            <Text style={styles.boldHeader}>Description:</Text>
                         </View>
                         <TextInput
                             style={[styles.descriptionStyle, { borderColor: isEditing ? 'red' : 'black', color: isEditing ? 'gray' : 'black' }]}
@@ -149,7 +149,6 @@ function ItemDetailScreen({ navigation, ctx }) {
                             editable={isEditing}
                             multiline={true}
                         />
-                        {/*<Text style={styles.descriptionStyle}>{artefact.description}</Text>*/}
                     </View>
                     <View style={styles.desc}>
                         <View style={{ flexDirection: 'row' }}>
@@ -174,17 +173,22 @@ function ItemDetailScreen({ navigation, ctx }) {
                                             onPress={() => navigate('Home')}
                                             style={styles.sendButton}>
                                             <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
-                                                Send Artefact
+                                                Finish Editing
                                     </Text>
                                         </TouchableOpacity>)
                                     }
-                                    <TouchableOpacity
-                                        onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
-                                        style={styles.sendButton}>
-                                        <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
-                                            Send Artefact
-                                        </Text>
-                                    </TouchableOpacity>
+                                    { !isEditing &&
+                                        (
+                                            <TouchableOpacity
+                                            onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
+                                            style={styles.sendButton}>
+                                            <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
+                                                Send Artefact
+                                            </Text>
+                                        </TouchableOpacity>
+                                        )
+                                    }
+                                    
                                 </View>
                             </>
                         )

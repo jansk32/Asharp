@@ -8,12 +8,12 @@ const chaiHttp = require('chai-http');
 const { after } = require('mocha');
 const should = chai.should();
 // jest.config.js
-// module.exports = {
-//     setupTestFrameworkScriptFile: './jest.setup.js'
-// }
+module.exports = {
+    setupTestFrameworkScriptFile: './jest.setup.js'
+}
 
-// // jest.setup.js
-// jest.setTimeout(30000)
+// jest.setup.js
+jest.setTimeout(30000)
 
 chai.use(chaiHttp);
 
@@ -30,7 +30,7 @@ describe('User', () => {
     });
 
     describe('Create a user', () => {
-        it('Should successfully create a new user', async (done) => {
+        it('Should successfully create a new user', async () => {
             let signUp = {
                 name: "Bruce",
                 dob: "2019-01-01T00:00:00.000Z",
