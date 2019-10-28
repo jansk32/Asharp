@@ -184,7 +184,7 @@ function ItemDetailScreen({ navigation, ctx }) {
                                 :
                                 (
                                     <TouchableOpacity
-                                        onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
+                                        onPress={() => navigate('SendFamilyTree', { isSendingArtefact: true, artefactId })}
                                         style={styles.sendButton}>
                                         <LinearGradient
                                             colors={['#ff2870', '#ffe148']}

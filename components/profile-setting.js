@@ -8,6 +8,7 @@ import { SCHEMES } from 'uri-js';
 import { pickImage, uploadImage } from '../image-tools';
 import axios from 'axios';
 import moment from 'moment';
+import LinearGradient from 'react-native-linear-gradient';
 
 import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI, DATE_FORMAT } from '../constants';
 
@@ -155,21 +156,34 @@ export default function ProfileSettingScreen({ navigation }) {
 							/>
 						</View>
 					</View>
+					<LinearGradient colors={['#c33764', '#1d2671']}
+						start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+						style={styles.redButton}>
+						<TouchableOpacity
+							onPress={() => {
+								updateProfile();
+								navigate('Profile');
+							}}>
+								<Text
+									style={styles.whiteText}>
+									Save Changes
+							</Text>
+						</TouchableOpacity>
+					</LinearGradient>
+
 					<TouchableOpacity
 						onPress={() => {
-							updateProfile();
-							navigate('Profile');
+							navigate('Home');
 						}}>
 						<View style={styles.redButton}>
 							<Text
 								style={styles.whiteText}>
-								Next
+								Delete Account
 							</Text>
 						</View>
 					</TouchableOpacity>
 				</View>
 			</ScrollView>
-
 		</>
 	);
 }
@@ -221,13 +235,11 @@ const styles = StyleSheet.create({
 	},
 	imageStyle: {
 		margin: 2,
-		marginTop: '20%',
-		width: Dimensions.get('window').width / 4,
-		height: Dimensions.get('window').width / 4,
+		marginTop: '10%',
+		width: Dimensions.get('window').width / 3,
+		height: Dimensions.get('window').width / 3,
 		alignSelf: 'center',
-		borderColor: '#233439',
-		borderWidth: 1,
-		borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
+		borderRadius: 20,
 	},
 	buttonBox: {
 		backgroundColor: '#fff',
@@ -257,6 +269,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
+		marginBottom: 20,
 	},
 	textInput: {
 		borderColor: 'black',
