@@ -480,7 +480,8 @@ const styles = StyleSheet.create({
 	menuStyle: {
 		borderTopEndRadius: 20,
 		borderTopStartRadius: 20,
-		borderColor: 'black',
+		borderColor: '#f5f7fb',
+		backgroundColor:'#f5f7fb',
 		borderWidth: 0.5,
 		paddingTop: 20,
 		justifyContent: 'space-between',
@@ -488,7 +489,7 @@ const styles = StyleSheet.create({
 	},
 	menuWrapper: {
 		paddingVertical: 15,
-		borderBottomColor: 'black',
+		borderBottomColor: '#2d2e33',
 		borderBottomWidth: 0.5,
 		marginHorizontal: 50,
 	},
