@@ -169,16 +169,32 @@ function ItemDetailScreen({ navigation, ctx }) {
                             multiline={true}
                         />
                     </View>
-                    {// If the artefact owner is the current user, allow them to send the artefact
-                    currentUser && artefact.owner === currentUser._id &&
-                        (<View style={styles.buttonBox}>
-                            {isEditing ?
-                                (
-                                    <TouchableOpacity
-                                        onPress={() => navigate('Home')}
-                                        style={styles.sendButton}>
-                                        <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
-                                            Finish Editing
+                    {
+                        // If the artefact owner is the current user, allow them to send the artefact
+                        currentUser && artefact.owner === currentUser._id &&
+                        (
+                            <>
+                                <View style={styles.buttonBox}>
+                                    {isEditing &&
+                                        (<TouchableOpacity
+                                            onPress={() => navigate('Home')}
+                                            style={styles.sendButton}>
+                                            <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
+                                                Finish Editing
+                                    </Text>
+                                        </TouchableOpacity>)
+                                    }
+                                    {!isEditing &&
+                                        (
+                                            <TouchableOpacity
+                                                onPress={() => navigate('FamilyTree', { isSendingArtefact: true, artefactId })}
+                                                style={styles.sendButton}>
+                                                <LinearGradient colors={['#06beb6', '#48b1bf']}
+                                                    start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                                                    style={styles.sendButton}>
+
+                                                    <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
+                                                        Send Artefact
                                         </Text>
                                     </TouchableOpacity>
                                 )
@@ -281,25 +297,26 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignSelf: 'center',
     },
-    menuStyle: {
-        borderTopEndRadius: 20,
-        borderTopStartRadius: 20,
-        borderColor: 'black',
-        borderWidth: 0.5,
-        paddingTop: 20,
-        justifyContent: 'space-between',
-        paddingBottom: 80,
-    },
-    menuWrapper: {
-        paddingVertical: 15,
-        borderBottomColor: 'black',
-        borderBottomWidth: 0.5,
-        marginHorizontal: 50,
-    },
-    menuText: {
-        textAlign: 'left',
-        fontSize: 20,
-    },
+	menuStyle: {
+		borderTopEndRadius: 20,
+		borderTopStartRadius: 20,
+		borderColor: '#f5f7fb',
+		backgroundColor:'#f5f7fb',
+		borderWidth: 0.5,
+		paddingTop: 20,
+		justifyContent: 'space-between',
+		paddingBottom: 80,
+	},
+	menuWrapper: {
+		paddingVertical: 15,
+		borderBottomColor: '#2d2e33',
+		borderBottomWidth: 0.5,
+		marginHorizontal: 50,
+	},
+	menuText: {
+		textAlign: 'left',
+		fontSize: 20,
+	},
 });
 
 export default withMenuContext(ItemDetailScreen);
