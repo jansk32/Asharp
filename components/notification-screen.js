@@ -97,9 +97,8 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 20,
 		marginLeft: 10,
-		// color: '#2d2e33',
 		color: 'white',
-		paddingTop: '5%',
+		paddingTop: '8%',
 	},
 	galleryTitle: {
 		fontSize: 30,
