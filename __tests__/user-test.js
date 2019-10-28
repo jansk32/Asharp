@@ -23,32 +23,12 @@ describe('User', () => {
         });        
     });
 
-
-    describe('Create a user', () => {
-        it('Should successfully create a new user', (done) => {
-            let signUp = {
-                _method: 'post',
-                name: "Sam",
-                dob: "1900-01-01",
-                pictureUrl: "https://i.imgur.com/QKsSRsu.jpg",
-                email: '5@5',
-                password: '1234',
-                gender: 'm',
-                isUser: 'true'
-            };
-            chai.request(server)
-            .post('/user/create')
-            .send(signUp)
-            .end((err, res) => {
-                if(err) return done(err);
-                res.status.should.be.equal(200);
-                done();
-            })
-        })
+    afterAll(() => {
+        mongoose.connection.close();
     })
 
     describe('Find a user', () => {
-        it('Find a user by id, without revealing password or email', done => {
+        it('Find a user by id', done => {
             let id = "5d92f2247841ae35cc02e64d";
             chai.request(server)
             .get('/user/find/' + id)
@@ -59,9 +39,6 @@ describe('User', () => {
                 expect(res.body).to.have.property("name");
                 expect(res.body).to.have.property("dob");
                 expect(res.body).to.have.property("pictureUrl");
-                // res.body.should.have.property('name');
-                // res.body.should.have.property('dob');
-                // res.body.should.have.property('pictureUrl');
                 done();
             })
         })
@@ -79,5 +56,7 @@ describe('User', () => {
             })
         })
     })
+
+
 
 })
