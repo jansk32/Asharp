@@ -16,6 +16,7 @@ import NotificationScreen from './components/notification-screen';
 import AddFamilyMemberScreen from './components/add-family-member-screen';
 import AddParentsScreen from './components/add-parents-screen';
 import AddParentsManuallyScreen from './components/add-parents-manually-screen';
+import LoadingScreen from './components/loading-screen';
 
 import { MenuProvider } from 'react-native-popup-menu';
 
@@ -69,6 +70,9 @@ const sendFamilyStack = createStackNavigator({
 		navigationOptions: {
 			header: null,
 		}
+	},
+	Loading: { 
+		screen: LoadingScreen,
 	},
 },
 );

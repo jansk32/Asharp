@@ -413,7 +413,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 								fetchFamilyMembers={fetchFamilyMembers} />
 						)
 						:
-						<ActivityIndicator size="large" color="#0000ff" />
+						<ActivityIndicator size="large" color="#EC6268" />
 				}
 			</View>
 		</>

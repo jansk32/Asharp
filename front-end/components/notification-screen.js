@@ -78,7 +78,7 @@ export default function NotificationScreen({ navigation }) {
 			<ScrollView>
 				{
 					isLoading ?
-						<ActivityIndicator size="large" color="#0000ff" />
+						<ActivityIndicator size="large" color="#EC6268" />
 						:
 						(
 							<FlatList

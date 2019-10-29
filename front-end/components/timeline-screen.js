@@ -77,7 +77,7 @@ export default function TimelineScreen({ navigation }) {
 	// Layout for Timeline tab
 	function TimelineRoute() {
 		if (isLoading) {
-			return <ActivityIndicator size="large" color="#0000ff" />;
+			return <ActivityIndicator size="large" color="#EC6268" />;
 		}
 		if (!artefacts.length) {
 			return (

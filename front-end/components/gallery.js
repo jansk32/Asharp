@@ -42,7 +42,7 @@ export default function Gallery({ isLoading, artefacts, navigation }) {
 
 
     if (isLoading) {
-        return <ActivityIndicator size="large" color="#0000ff" />;
+        return <ActivityIndicator size="large" color="#EC6268" />;
     }
     return (
         <FlatList
