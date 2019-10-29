@@ -29,7 +29,7 @@ describe('User', () => {
 
     describe('Find a user', () => {
         it('Find a user by id', done => {
-            let id = "5d92f2247841ae35cc02e64d";
+            let id = "5db3d1d6631e4e2b387a97ed";
             chai.request(server)
             .get('/user/find/' + id)
             .end((err,res) => {

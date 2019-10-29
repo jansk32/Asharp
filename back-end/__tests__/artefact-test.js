@@ -33,8 +33,8 @@ describe('Artefacts', () => {
   * Test the /GET route
   */
   describe("Get artefacts", () => {
-      it('should successfully retrieve artefacts the user', (done) => {
-          let id = "5d8b53d4e53dae0e40d6381b"
+      it('should successfully retrieve artefacts of the user', (done) => {
+          let id = "5db7f48d7d061f0017dfc4fc"
           chai.request(server)
             .get('/artefact/' + id)
             .end((err,res) => {
@@ -86,15 +86,15 @@ describe('Artefacts', () => {
   describe('Getting one artefact', () => {
     it('should successfully get ONE artefact', async (done) => {
 
-        let id = "5d8b54a1e53dae0e40d6381d";
+        let id = "5db71b85f17c6e1aa4338d50";
 
-        let final =  { id: '5d8b54a1e53dae0e40d6381d',
-        name: 'Buzz lightyear toy',
-        date: '2019-01-01T00:00:00.000Z',
-        owner: '5daedf03a7366a1e1a8e74f1',
-        value: 'Precious memory',
-        description: 'My son\'s favourite toy',
-        file: 'https://firebasestorage.googleapis.com/v0/b/mementos-7bca9.appspot.com/o/images%2F1569412102133?alt=media&token=15a94607-91d6-45d2-adb0-2c004ec86acf',
+        let final =   { _id: '5db71b85f17c6e1aa4338d50',
+        name: 'Pacman cake',
+        date: '2016-10-28T13:00:00.000Z',
+        owner: '5db6d8c3af805314aceb4db8',
+        value: 'Bb',
+        description: 'Aa',
+        file: 'https://firebasestorage.googleapis.com/v0/b/mementos-7bca9.appspot.com/o/images%2F1572281216407?alt=media&token=622950a1-62db-4138-b44e-3128ab62b8a7',
         __v: 0 }
 
         chai.request(server)
@@ -115,21 +115,10 @@ describe('Artefacts', () => {
   describe("Re-assigning artefact", () => {
       it('assign artefact', (done) => {
         let artefact = {
-            artefactId: "5db3cb2d6c4501091c7f35b0",
-            recipientId: "5daedf03a7366a1e1a8e74f1",
-            senderId: "5d8b53d4e53dae0e40d6381b"
+            artefactId: "5db7eb0c7d061f0017dfc4f5",
+            recipientId: "5db3d1d6631e4e2b387a97ed",
+            senderId: "5db6d8c3af805314aceb4db8"
         }
-
-        // let expected = {
-        // _id: '5d873ac98e26051f13e3073c',
-        // name: 'Book',
-        // date: '2018-01-01T00:00:00.000Z',
-        // owner: '5d92f0247841ae35cc02e64c',
-        // value: 'Wjwiwj"',
-        // description: 'Bahabsu',
-        // file: 'https://firebasestorage.googleapis.com/v0/b/mementos-7bca9.appspot.com/o/images%2F1569143479333?alt=media&token=e0a41d98-7626-4d65-a807-0b7c325e9f2a',
-        // __v: 0 
-        // }
 
         chai.request(server)
         .put('/artefact/assign/')
@@ -138,8 +127,8 @@ describe('Artefacts', () => {
             if(err) return done(err);
             res.status.should.be.equal(200);
             res.body.should.be.a('object');
-            // expect(res.body.owner).to.be.equal(artefact.recipientId)
-            // expect(res.body._id).to.be.equal(artefact.artefactId)
+            expect(res.body.owner).to.be.equal(artefact.recipientId)
+            expect(res.body._id).to.be.equal(artefact.artefactId)
             done();
         })
       })
