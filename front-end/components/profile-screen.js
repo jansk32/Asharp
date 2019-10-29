@@ -292,6 +292,27 @@ const styles = StyleSheet.create({
 		textAlign: 'left',
 		fontSize: 20,
 	},
-})
+	textStyle: {
+		fontSize: 20,
+		fontWeight:'bold',
+		flexWrap: 'wrap',
+		// textAlignVertical: 'center',
+		textAlign:'center',
+		alignSelf:'center',
+		justifyContent:'center',
+		margin: 10,
+		padding:30,
+		flexWrap:'wrap',
+		flexDirection:'row',
+	},
+	desc: {
+		fontSize: 16,
+		paddingHorizontal:30,
+		flexWrap:'wrap',
+		textAlign:'center',
+		justifyContent:'center',
+		alignSelf:'center',
+	},
+});
 
 export default withMenuContext(ProfileScreen);

@@ -46,7 +46,7 @@ export default function Gallery({ isLoading, artefacts, navigation, refresh }) {
 
 
     if (isLoading) {
-        return <ActivityIndicator size="large" color="#0000ff" />;
+        return <ActivityIndicator size="large" color="#EC6268" />;
     }
 
     return (
@@ -62,7 +62,23 @@ export default function Gallery({ isLoading, artefacts, navigation, refresh }) {
             keyExtractor={item => item._id}
             renderItem={renderItem}
             numColumns={numColumns}
-            ListEmptyComponent={<Text>No artefacts yet</Text>}
+            ListEmptyComponent={(
+                navigation.state.routeName === 'Profile' ?
+                    (
+                        <>
+                            <Text style={styles.textStyle}>You don't have any artefacts right now.</Text>
+                            <Text style={styles.desc}>When you upload an artefact or someone sends you one, you will see it here.</Text>
+                        </>
+                    )
+                    :
+                    (
+                        <>
+                            <Text style={styles.textStyle}>Your family doesn't have any artefacts right now.</Text>
+                            <Text style={styles.desc}>When you or a family member gets an artefact, you will see it here.</Text>
+                        </>
+                    )
+
+            )}
         />
     );
 }
@@ -125,5 +141,26 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').width / numColumns, // approximate a square
         width: Dimensions.get('window').width / numColumns,
         flex: 1,
-    }
+    },
+    textStyle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        flexWrap: 'wrap',
+        // textAlignVertical: 'center',
+        textAlign: 'center',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        margin: 10,
+        padding: 30,
+        flexWrap: 'wrap',
+        flexDirection: 'row',
+    },
+    desc: {
+        fontSize: 16,
+        paddingHorizontal: 30,
+        flexWrap: 'wrap',
+        textAlign: 'center',
+        justifyContent: 'center',
+        alignSelf: 'center',
+    },
 });

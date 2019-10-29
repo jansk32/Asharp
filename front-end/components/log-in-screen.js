@@ -100,7 +100,7 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: 'white',
-		flex: 1,
+		// flex: 1,
 	},
 	loginText: {
 		fontSize: 30,
@@ -118,21 +118,16 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 	loginBox: {
-		justifyContent: 'space-evenly',
 		textAlign: 'center',
 		alignItems: 'center',
-		paddingTop: '30%',
+		paddingTop: '10%',
 	},
 	inputBox: {
-		justifyContent: 'space-between',
 		paddingVertical: '10%',
 		paddingHorizontal: '10%',
 	},
 	buttonBox: {
 		backgroundColor: '#fff',
-		paddingVertical: '9%',
-		justifyContent: 'space-between',
-		flex: 1,
 	},
 	textInput: {
 		borderColor: 'black',
@@ -144,7 +139,7 @@ const styles = StyleSheet.create({
 		paddingLeft: 10,
 	},
 	usernameBox: {
-		marginBottom: 40,
+		paddingBottom: 30,
 	},
 	redButton: {
 		backgroundColor: '#EC6268',
@@ -153,6 +148,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
+		marginTop: 60
 	},
 	whiteButton: {
 		backgroundColor: 'white',
@@ -163,6 +159,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
+		marginTop:20
 	},
 }
 );
