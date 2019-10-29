@@ -11,7 +11,7 @@ Moment.locale('en');
 
 // Enter Name, Birthday and password.
 export default function SignUp2({ navigation }) {
-	const DATE_FORMAT = 'YYYY-MM-DD';
+	const DATE_FORMAT = 'DD-MM-YYYY';
 
 	const { navigate } = navigation;
 	const [name, setName] = useState('');
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
         padding: 5,
         // paddingLeft: 10,
         // marginLeft: '5%',
-        // marginRight: '5%',
+        // marginRight: '5%', 
         flexDirection:'row',
 		justifyContent:'space-around',
 		marginBottom: 18,

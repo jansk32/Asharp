@@ -83,7 +83,12 @@ export default function NotificationScreen({ navigation }) {
 					data={notifications}
 					renderItem={renderItem}
 					keyExtractor={item => item._id}
-					ListEmptyComponent={<Text style={styles.textStyle}>No notifications yet</Text>}
+					ListEmptyComponent={
+					<View>
+						<Text style={styles.textStyle}>You don't have any notifications right now.</Text>
+						<Text style={styles.desc}>When someone send you an artefact, you will see it here.</Text>
+					</View>
+					}
 				/>
 			</ScrollView>
 		</>
@@ -130,11 +135,26 @@ const styles = StyleSheet.create({
 		marginHorizontal: 15,
 	},
 	textStyle: {
-		fontSize: 16,
+		fontSize: 20,
+		fontWeight:'bold',
 		flex: 1,
 		flexWrap: 'wrap',
 		textAlignVertical: 'center',
+		textAlign:'center',
+		alignSelf:'center',
+		justifyContent:'center',
 		margin: 10,
+		padding:30,
+		flexWrap:'wrap',
+		flexDirection:'row',
+	},
+	desc: {
+		fontSize: 16,
+		paddingHorizontal:30,
+		flexWrap:'wrap',
+		textAlign:'center',
+		justifyContent:'center',
+		alignSelf:'center',
 	},
 	ownerStyle: {
 		fontWeight: 'bold'
