@@ -91,7 +91,7 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: 'white',
-		flex: 1,
+		// flex: 1,
 	},
 	title: {
 		fontSize: 30,
@@ -109,21 +109,16 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 	signUpBox: {
-		justifyContent: 'space-evenly',
 		textAlign: 'center',
 		alignItems: 'center',
-		paddingTop: '30%',
+		paddingTop: '10%',
 	},
 	inputBox: {
-		justifyContent: 'space-between',
 		paddingVertical: '10%',
 		paddingHorizontal: '10%',
 	},
 	buttonBox: {
 		backgroundColor: '#fff',
-		justifyContent: 'space-evenly',
-		paddingVertical: '9%',
-		flex: 1,
 	},
 	redButton: {
 		backgroundColor: '#EC6268',
@@ -132,6 +127,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
+		marginTop: 120,
 	},
 	whiteButton: {
 		backgroundColor: 'white',
@@ -142,6 +138,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
+		marginTop:20,
 	},
 	textInput: {
 		borderColor: 'black',
@@ -149,7 +146,7 @@ const styles = StyleSheet.create({
 		borderRadius: 3,
 		alignContent: 'center',
 		marginTop: 10,
-		padding: 2,
+		padding: 5,
 		paddingLeft: 10,
 	},
 	inputElem: {
