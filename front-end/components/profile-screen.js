@@ -199,7 +199,12 @@ function ProfileScreen({ navigation, ctx }) {
 						keyExtractor={item => item._id}
 						numColumns={3}
 						renderItem={renderItem}
-						ListEmptyComponent={<Text style={styles.artText}>No artefacts yet</Text>}
+						ListEmptyComponent={
+							<View>
+								<Text style={styles.textStyle}>Your don't have any artefact right now.</Text>
+								<Text style={styles.desc}>When you upload an artefact/ someone send you an artefact, you will see it here.</Text>
+							</View>
+						}
 					/>
 				</View>
 			</ScrollView>
@@ -317,6 +322,27 @@ const styles = StyleSheet.create({
 		textAlign: 'left',
 		fontSize: 20,
 	},
-})
+	textStyle: {
+		fontSize: 20,
+		fontWeight:'bold',
+		flexWrap: 'wrap',
+		// textAlignVertical: 'center',
+		textAlign:'center',
+		alignSelf:'center',
+		justifyContent:'center',
+		margin: 10,
+		padding:30,
+		flexWrap:'wrap',
+		flexDirection:'row',
+	},
+	desc: {
+		fontSize: 16,
+		paddingHorizontal:30,
+		flexWrap:'wrap',
+		textAlign:'center',
+		justifyContent:'center',
+		alignSelf:'center',
+	},
+});
 
 export default withMenuContext(ProfileScreen);

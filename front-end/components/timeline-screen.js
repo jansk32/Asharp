@@ -112,7 +112,12 @@ export default function TimelineScreen({ navigation }) {
 				renderItem={renderItem}
 				numColumns={numColumns}
 				style={styles.container}
-				ListEmptyComponent={<Text>No artefacts in your family yet</Text>}
+				ListEmptyComponent={
+				<View>
+					<Text style={styles.textStyle}>Your family don't have any artefact right now.</Text>
+					<Text style={styles.desc}>When you upload an artefact/ someone send you an artefact, you will see it here.</Text>
+				</View>
+				}
 			/>
 		);
 	}
@@ -120,7 +125,16 @@ export default function TimelineScreen({ navigation }) {
 	// Layout for Timeline tab
 	function TimelineRoute() {
 		if (!artefacts.length) {
-			return <Text>No artefacts in your family yet</Text>;
+			return(
+				<>
+							<View>
+					<Text style={styles.textStyle}>Your family don't have any artefact right now.</Text>
+					<Text style={styles.desc}>When you upload an artefact/ someone send you an artefact, you will see it here.</Text>
+				</View>
+			
+				</>	
+			);
+				
 		}
 		
 		return (
@@ -242,7 +256,28 @@ const styles = StyleSheet.create({
 		height: Dimensions.get('window').width / numColumns, // approximate a square
 		width: Dimensions.get('window').width / numColumns,
 		flex: 1,
-	}
+	},
+	textStyle: {
+		fontSize: 20,
+		fontWeight:'bold',
+		flexWrap: 'wrap',
+		// textAlignVertical: 'center',
+		textAlign:'center',
+		alignSelf:'center',
+		justifyContent:'center',
+		margin: 10,
+		padding:30,
+		flexWrap:'wrap',
+		flexDirection:'row',
+	},
+	desc: {
+		fontSize: 16,
+		paddingHorizontal:30,
+		flexWrap:'wrap',
+		textAlign:'center',
+		justifyContent:'center',
+		alignSelf:'center',
+	},
 });
 
 TimelineScreen.navigationOptions = {

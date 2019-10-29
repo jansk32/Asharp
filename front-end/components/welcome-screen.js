@@ -4,69 +4,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-community/async-storage';
 import { axiosLocal } from './log-in-screen';
 
-const styles = StyleSheet.create({
-    title: {
-        marginTop: 60,
-        marginBottom: 50,
-        width: 300,
-        height: 60,
-        alignSelf: 'center'
-    },
-    image: {
-        width: Dimensions.get('window').width / 1.5,
-        height: Dimensions.get('window').width / 1.5,
-        alignSelf: 'center',
-        justifyContent: 'center',
-        marginBottom: 0,
-        marginTop: 20,
-    },
-    yellowButton: {
-        textAlign: 'center',
-        // borderWidth: 1,
-        borderRadius: 50,
-        width: Dimensions.get('window').width / 1.75,
-        height: Dimensions.get('window').width / 8,
-        // borderColor: '#fbc074',
-        // backgroundColor: '#fbc074',
-        justifyContent: 'center',
-        alignSelf: 'center',
-    },
-    whiteButton: {
-        textAlign: 'center',
-        borderWidth: 1,
-        borderRadius: 50,
-        width: Dimensions.get('window').width / 1.75,
-        height: Dimensions.get('window').width / 8,
-        borderColor: '#579B93',
-        backgroundColor: 'white',
-        justifyContent: 'center',
-        alignSelf: 'center',
-    },
-    container: {
-        backgroundColor: 'white',
-        flex: 1,
-    },
-    buttonBox: {
-        // backgroundColor: 'white',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
-        paddingVertical: 30,
-    },
-    buttonText: {
-        fontSize: 16,
-        textAlign: 'center',
-        backgroundColor: 'transparent',
-        color: 'white',
-    },
-    buttonText2: {
-        fontSize: 16,
-        textAlign: 'center',
-        backgroundColor: 'transparent',
-        color: 'black',
-    },
-});
-
 // Welcome screen to go to login and sign in
 export default function WelcomeScreen({ navigation }) {
     const { navigate } = navigation;
@@ -118,3 +55,63 @@ export default function WelcomeScreen({ navigation }) {
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    title: {
+        marginTop: 60,
+        marginBottom: 50,
+        width: 300,
+        height: 60,
+        alignSelf: 'center'
+    },
+    image: {
+        width: Dimensions.get('window').width / 1.5,
+        height: Dimensions.get('window').width / 1.5,
+        alignSelf: 'center',
+        justifyContent: 'center',
+        marginBottom: 0,
+        marginTop: 20,
+    },
+    yellowButton: {
+        textAlign: 'center',
+        borderRadius: 50,
+        width: Dimensions.get('window').width / 1.75,
+        height: Dimensions.get('window').width / 8,
+        justifyContent: 'center',
+        alignSelf: 'center',
+        marginTop:50
+    },
+    whiteButton: {
+        textAlign: 'center',
+        borderWidth: 1,
+        borderRadius: 50,
+        width: Dimensions.get('window').width / 1.75,
+        height: Dimensions.get('window').width / 8,
+        borderColor: '#579B93',
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignSelf: 'center',
+        marginTop:20
+    },
+    container: {
+        backgroundColor: 'white',
+        flex: 1,
+    },
+    buttonBox: {
+        flex: 1,
+        alignItems: 'center',
+        paddingVertical: 30,
+    },
+    buttonText: {
+        fontSize: 16,
+        textAlign: 'center',
+        backgroundColor: 'transparent',
+        color: 'white',
+    },
+    buttonText2: {
+        fontSize: 16,
+        textAlign: 'center',
+        backgroundColor: 'transparent',
+        color: 'black',
+    },
+});
