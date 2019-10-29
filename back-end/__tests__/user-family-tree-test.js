@@ -16,11 +16,11 @@ const User = mongoose.model("userSchema", userSchema);
 describe('Family Tree', () => {
     let server = require("../server");
 
-    // beforeEach((done) => {
-    //     User.remove({}, (err) => { 
-    //         done();           
-    //      });      
-    // })
+    beforeEach((done) => {
+        User.remove({}, (err) => { 
+            done();           
+         });      
+    })
 
     // after(() => {
     //     mongoose.connection.close();
@@ -28,7 +28,6 @@ describe('Family Tree', () => {
 
     describe('Get users for family tree', () => {
         it('Get users by name', async () => {
-            let server = require("../server");
             chai.request(server)
             .get("/user/search/")
             .send({name: "Sam"})
@@ -36,20 +35,21 @@ describe('Family Tree', () => {
                 if(err) return done(err);
                 res.status.should.be.equal(200);
                 expect(res.body).to.be.a('array');
+                done();
             })
         })
     })
 
     describe("Add a spouse", () => {
         let parent = {
-            personId:"5db3eafd773ed40c426b905d",
-            spouseId: "5db6721171558a0bb439bc82", 
+            personId: "5db7a00637ec9270aecdecc4",
+            spouseId: "5db7bc13ce456711c0044e2c", 
         }
 
         it("Adding manually", async (done) => {
             let server = require("../server");
-            await chai.request(server)
-            .put("/user/add-spouse/")
+            chai.request(server)
+            .put("/user/add-spouse")
             .send(parent)
             .end((err, res) => {
                 if (err) {
@@ -65,8 +65,8 @@ describe('Family Tree', () => {
 
     describe("Add parent who already has a spouse", () => {
         let sending ={
-            childId: "5db3eafd773ed40c426b905d",
-            parentId: "5db6717cfc067b0b90258c2a"
+            childId: "5db7b3554dfc8372ac55473d",
+            parentId: "5db7b0a2c048620f97b048df"
         }
 
         it("Add parent to someone with a spouse", async () => {
@@ -108,8 +108,8 @@ describe('Family Tree', () => {
     
     describe("Add a child", () => {
         let child = {
-            personId:"5db3eafd773ed40c426b905d",
-            childId: "5db681485181640e19212408"
+            personId:"5db7b53cb74af87369a9a5f6",
+            childId: "5db7b69741cfa373edc11f95"
         }
         it("Adding manually", async () => {
             await chai.request(server)
