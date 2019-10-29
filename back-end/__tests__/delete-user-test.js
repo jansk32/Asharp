@@ -17,7 +17,7 @@ describe('User', () => {
     let server = require('../server');
 
     it('Should delete a user', () => {
-            let id = "5db58b5b776f7f17e4802269";
+            let id = "5db7d9876f285019279bb03b";
             chai.request(server)
             .delete('/user/delete/' + id)
             .end((err, resp) => {
