@@ -54,14 +54,10 @@ describe('Logging in', () => {
           };
 
           chai.request(server)
-            .post('/login/local')
+            .post('/login/local/')
             .send(loginDeets)
             .end((err,res) => {
-                // res.should.have.status(200);
-                res.body.should.be.a('object');
-                res.body.should.have.property('name');
-                res.body.should.have.property('dob');
-                res.body.should.have.property('pictureUrl');
+                res.status.should.be.equal(200);
               done();
             })
       })
