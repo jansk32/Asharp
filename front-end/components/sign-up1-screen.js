@@ -23,70 +23,68 @@ export default function LoginScreen({ navigation }) {
 	// So that sign in screen signups and sends axios req
 	async function goToNextPage() {
 		await storeEmail();
-		if(validateInput() == true){
+		if (validateInput() == true) {
 			navigate('SignUp2');
 		} else {
 			navigate('SignUp1');
 		}
-		
+
 	}
 
 	// Validate email textinput
 	function validateInput() {
-		if(email === ''){
+		if (email === '') {
 			alert("Email is empty");
 			return false;
 		}
-		if(email.indexOf('@') === -1){
+		if (email.indexOf('@') === -1) {
 			alert("Invalid email");
 			return false;
-		}else{
+		} else {
 			return true;
 		}
 	}
 
 	return (
-		<>
-			<View style={styles.container}>
-				<View style={styles.signUpBox}>
-					<Text style={styles.title}>Sign Up</Text>
-				</View>
-				<View style={styles.inputBox}>
-					<View style={styles.inputElem}>
-						<Text style={styles.text}>Email</Text>
-						<View style={styles.textInput}>
-							<TextInput
-								placeholder="Enter Email"
-								onChangeText={setEmail}
-								value={email}
-								autoCapitalize="none"
-							/>
-						</View>
+		<View style={styles.container}>
+			<View style={styles.signUpBox}>
+				<Text style={styles.title}>Sign Up</Text>
+			</View>
+			<View style={styles.inputBox}>
+				<View style={styles.inputElem}>
+					<Text style={styles.text}>Email</Text>
+					<View style={styles.textInput}>
+						<TextInput
+							placeholder="Enter Email"
+							onChangeText={setEmail}
+							value={email}
+							autoCapitalize="none"
+						/>
 					</View>
 				</View>
-				<View style={styles.buttonBox}>
-					<TouchableOpacity
-						onPress={goToNextPage}>
-						<View style={styles.redButton}>
-							<Text
-								style={styles.whiteText}>
-								Next
-								</Text>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity
-						onPress={() => navigate('Welcome')}>
-						<View style={styles.whiteButton}>
-
-							<Text
-								style={styles.buttonText}>
-								Back
-								</Text>
-						</View>
-					</TouchableOpacity>
-				</View>
 			</View>
-		</>
+			<View style={styles.buttonBox}>
+				<TouchableOpacity
+					onPress={goToNextPage}>
+					<View style={styles.redButton}>
+						<Text
+							style={styles.whiteText}>
+							Next
+								</Text>
+					</View>
+				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => navigate('Welcome')}>
+					<View style={styles.whiteButton}>
+
+						<Text
+							style={styles.buttonText}>
+							Back
+								</Text>
+					</View>
+				</TouchableOpacity>
+			</View>
+		</View>
 	);
 }
 
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		paddingVertical: '10%',
 		paddingHorizontal: '10%',
-	  },
+	},
 	buttonBox: {
 		backgroundColor: '#fff',
 		justifyContent: 'space-evenly',

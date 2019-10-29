@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Component } from 'react';
 import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, Text, Alert, ActivityIndicator, } from 'react-native';
 import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text as SvgText } from 'react-native-svg';
-import { arrangeFamilyTree, mainDrawLines, getAncestors } from '../build-family-tree';
+import { arrangeFamilyTree, mainDrawLines, getAncestors } from '../build-family-tree.js';
 import axios from 'axios';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
 const { SlideInMenu } = renderers;
@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 
 
-import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
+import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI, KinshipEnum } from '../constants';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const NODE_RADIUS = 50;
@@ -246,9 +246,9 @@ class FamilyTreeSvg extends Component {
 					<MenuTrigger>
 					</MenuTrigger>
 					<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
-						<MenuOption onSelect={() => navigate('AddParents', { linkedNode: this.state.tappedNode, fetchFamilyMembers })} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
-						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode, fetchFamilyMembers, isAddingSpouse: true })} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
-						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode, fetchFamilyMembers, isAddingSpouse: false })} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
+						<MenuOption onSelect={() => navigate('AddParents', { linkedNode: this.state.tappedNode, fetchFamilyMembers, kinship: KinshipEnum.PARENT })} text="Add parents" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.father) && Boolean(this.state.tappedNode.mother)} />
+						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode, fetchFamilyMembers, kinship: KinshipEnum.SPOUSE })} text="Add spouse" disabled={this.state.tappedNode && Boolean(this.state.tappedNode.spouse)} />
+						<MenuOption onSelect={() => navigate('AddFamilyMember', { linkedNode: this.state.tappedNode, fetchFamilyMembers, kinship: KinshipEnum.CHILD })} text="Add a child" disabled={this.state.tappedNode && !Boolean(this.state.tappedNode.spouse)} />
 						<MenuOption onSelect={async () => {
 							await axios.put(`${BACK_END_ENDPOINT}/user/remove-child/${this.state.tappedNode._id}`);
 							fetchFamilyMembers();

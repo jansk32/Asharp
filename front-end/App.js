@@ -180,14 +180,13 @@ const MainNavigator = createBottomTabNavigator({
 			style: {
 				backgroundColor: '#f5f7fb',
 				borderTopColor: '#f5f7fb',
-				adfndnnkfnkdnkfnkdfnk: .5,
 				height: Dimensions.get('window').height / 14,
 				paddingTop: 5,
 			},
 			// Edit the navigation bar label
 			labelStyle: {
 				fontSize: 12,
-			}
+			},
 		},
 		navigationOptions: {
 			header: null,

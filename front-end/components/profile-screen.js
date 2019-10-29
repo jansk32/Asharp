@@ -199,6 +199,7 @@ function ProfileScreen({ navigation, ctx }) {
 						keyExtractor={item => item._id}
 						numColumns={3}
 						renderItem={renderItem}
+						ListEmptyComponent={<Text style={styles.artText}>No artefacts yet</Text>}
 					/>
 				</View>
 			</ScrollView>

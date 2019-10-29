@@ -14,7 +14,7 @@ export async function axiosLocal(objData) {
 	console.log(objData);
 	try {
 		const res = await axios.post(`${BACK_END_ENDPOINT}/login/local`, objData);
-		AsyncStorage.setItem('userId', res.data._id); 
+		AsyncStorage.setItem('userId', res.data._id);
 		OneSignal.setExternalUserId(res.data._id);
 		return true;
 	} catch (e) {
@@ -29,62 +29,60 @@ export default function LoginScreen({ navigation }) {
 	const [password, setPassword] = useState('');
 
 	return (
-		<>
-			<View style={styles.container}>
-				<View style={styles.loginBox}>
-					<Text style={styles.loginText}>LOGIN</Text>
-				</View>
-				<View style={styles.inputBox}>
-					<View style={styles.usernameBox}>
-						<Text style={styles.text}>Email</Text>
-						<View style={styles.textInput}>
-							<TextInput
-								placeholder="Enter Email"
-								onChangeText={setEmail}
-								autoCapitalize="none"
-							/>
-						</View>
-					</View>
-					<View style={styles.passwordBox}>
-						<Text style={styles.text}>Password</Text>
-						<View style={styles.textInput}>
-							<TextInput
-								placeholder="Enter Password"
-								secureTextEntry={true}
-								onChangeText={setPassword}
-								autoCapitalize="none"
-							/>
-						</View>
+		<View style={styles.container}>
+			<View style={styles.loginBox}>
+				<Text style={styles.loginText}>LOGIN</Text>
+			</View>
+			<View style={styles.inputBox}>
+				<View style={styles.usernameBox}>
+					<Text style={styles.text}>Email</Text>
+					<View style={styles.textInput}>
+						<TextInput
+							placeholder="Enter Email"
+							onChangeText={setEmail}
+							autoCapitalize="none"
+						/>
 					</View>
 				</View>
-				<View style={styles.buttonBox}>
-					<TouchableOpacity
-						onPress={async () => {
-							if (await axiosLocal({ email, password })) {
-								AsyncStorage.setItem('email', email);
-								AsyncStorage.setItem('password', password);
-								navigate('Home');
-							} else {
-								alert('Email or password is incorrect');
-							}
-						}}>
-						<View style={styles.redButton}>
-							<Text
-								style={styles.whiteText}>
-								Login</Text>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity
-						onPress={() => navigate('SignUp1')}>
-						<View style={styles.whiteButton}>
-							<Text
-								style={styles.buttonText}>
-								Sign Up</Text>
-						</View>
-					</TouchableOpacity>
+				<View style={styles.passwordBox}>
+					<Text style={styles.text}>Password</Text>
+					<View style={styles.textInput}>
+						<TextInput
+							placeholder="Enter Password"
+							secureTextEntry={true}
+							onChangeText={setPassword}
+							autoCapitalize="none"
+						/>
+					</View>
 				</View>
 			</View>
-		</>
+			<View style={styles.buttonBox}>
+				<TouchableOpacity
+					onPress={async () => {
+						if (await axiosLocal({ email, password })) {
+							AsyncStorage.setItem('email', email);
+							AsyncStorage.setItem('password', password);
+							navigate('Home');
+						} else {
+							alert('Email or password is incorrect');
+						}
+					}}>
+					<View style={styles.redButton}>
+						<Text
+							style={styles.whiteText}>
+							Login</Text>
+					</View>
+				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => navigate('SignUp1')}>
+					<View style={styles.whiteButton}>
+						<Text
+							style={styles.buttonText}>
+							Sign Up</Text>
+					</View>
+				</TouchableOpacity>
+			</View>
+		</View>
 	);
 }
 

@@ -112,12 +112,17 @@ export default function TimelineScreen({ navigation }) {
 				renderItem={renderItem}
 				numColumns={numColumns}
 				style={styles.container}
+				ListEmptyComponent={<Text>No artefacts in your family yet</Text>}
 			/>
 		);
 	}
 
 	// Layout for Timeline tab
 	function TimelineRoute() {
+		if (!artefacts.length) {
+			return <Text>No artefacts in your family yet</Text>;
+		}
+		
 		return (
 			<Timeline
 				style={styles.list}
@@ -143,7 +148,6 @@ export default function TimelineScreen({ navigation }) {
 
 	return (
 		<>	
-		
 			{/* <View style={styles.containers}> */}
 			<LinearGradient colors={['#de6262', '#ffb88c']} 
             	start={{x: 0, y: 0}} end={{x: 1, y: 0}}

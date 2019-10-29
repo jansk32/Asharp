@@ -59,7 +59,6 @@ export default function SignUp2({ navigation }) {
 	}
 
 	return (
-		<>
 			<View style={styles.container}>
 				<View style={styles.inputBox}>
 					<View style={styles.inputElem}>
@@ -137,10 +136,7 @@ export default function SignUp2({ navigation }) {
 							</Text>
 					</View>
 				</TouchableOpacity>
-				
-				
 			</View>
-		</>
 	);
 }
 
