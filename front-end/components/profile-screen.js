@@ -106,7 +106,6 @@ function ProfileScreen({ navigation, ctx }) {
 		}
 	}
 
-
 	// Get profile and artefacts by owner
 	useEffect(() => {
 		fetchProfile();

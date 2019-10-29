@@ -41,17 +41,18 @@ export default function TimelineScreen({ navigation }) {
 	}
 
 	// Get all the artefact
-	useEffect(() => {
-		async function fetchArtefacts() {
-			try {
-				const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/${await AsyncStorage.getItem('userId')}`);
-				setArtefacts(res.data);
-				console.log(res.data)
-				setLoading(false)
-			} catch (e) {
-				console.error(e);
-			}
+	async function fetchArtefacts() {
+		try {
+			const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/${await AsyncStorage.getItem('userId')}`);
+			setArtefacts(res.data);
+			console.log(res.data)
+			setLoading(false)
+		} catch (e) {
+			console.error(e);
 		}
+	}
+
+	useEffect(() => {		
 		fetchArtefacts();
 	}, []);
 
@@ -126,7 +127,7 @@ export default function TimelineScreen({ navigation }) {
 				navigationState={tab}
 				renderScene={SceneMap({
 					first: TimelineRoute,
-					second: () => Gallery({ isLoading, artefacts, navigation }),
+					second: () => Gallery({ isLoading, artefacts, navigation, refresh: fetchArtefacts }),
 				})}
 				renderTabBar={props =>
 					<TabBar

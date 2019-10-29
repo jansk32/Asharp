@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, ActivityIndicator, StyleSheet, View, Image, Dimensions, TouchableHighlight, FlatList, RefreshControl } from 'react-native';
+import { Text, ActivityIndicator, StyleSheet, View, Image, Dimensions, TouchableHighlight, FlatList, RefreshControl, ScrollView } from 'react-native';
 import moment from 'moment';
 
 // Import date formatting module moment.js
