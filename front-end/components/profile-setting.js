@@ -9,6 +9,7 @@ import axios from 'axios';
 import OneSignal from 'react-native-onesignal';
 import moment from 'moment';
 import LinearGradient from 'react-native-linear-gradient';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI, DATE_FORMAT } from '../constants';
 
@@ -19,7 +20,7 @@ moment.locale('en');
 export default function ProfileSettingScreen({ navigation }) {
 	const { navigate } = navigation;
 	// const handleProfileChange = navigation.getParam('handleProfileChange');
-	const setProfile = navigation.state.params.setProfile;
+	const { setProfile } = navigation.state.params;
 
 	const [user, setUser] = useState({});
 
@@ -29,6 +30,8 @@ export default function ProfileSettingScreen({ navigation }) {
 	const [password, setPassword] = useState('');
 	const [image, setImage] = useState({});
 	const [isLoading, setLoading] = useState(true);
+	const [showDatePicker, setShowDatePicker] = useState(false);
+
 
 	// Validate name and new password
 	function validateInput() {
@@ -91,7 +94,7 @@ export default function ProfileSettingScreen({ navigation }) {
 			setUser(user);
 			setName(user.name);
 			setDob(moment(user.dob, 'DD-MM-YYYY'));
-			
+
 			setImage({ uri: user.pictureUrl });
 			setLoading(false);
 		}
@@ -130,7 +133,21 @@ export default function ProfileSettingScreen({ navigation }) {
 					</View>
 					<View style={styles.inputElem}>
 						<Text style={styles.text}>Date of Birth:</Text>
-						<DatePicker
+						<TouchableOpacity onPress={() => setShowDatePicker(true)}>
+							<Text style={{ borderWidth: 1, padding: 15 }}>{dob.format(DATE_FORMAT)}</Text>
+						</TouchableOpacity>
+						{showDatePicker &&
+							<DateTimePicker
+								value={dob.toDate()}
+								maximumDate={moment().toDate()}
+								onChange={(event, newDob) => {
+									newDob = newDob || dob;
+									setShowDatePicker(Platform.OS === 'ios' ? true : false);
+									setDob(moment(newDob));
+								}} />
+						}
+
+						{/* <DatePicker
 							style={styles.dateInputs}
 							date={dob || user.dob}
 							mode="date"
@@ -153,7 +170,7 @@ export default function ProfileSettingScreen({ navigation }) {
 							}}
 							showIcon={false}
 							onDateChange={(dateStr, date) => setDob(moment(date))}
-						/>
+						/> */}
 					</View>
 					<View style={styles.inputElem}>
 						<Text style={styles.text}>Old Password:</Text>
@@ -179,19 +196,19 @@ export default function ProfileSettingScreen({ navigation }) {
 					</View>
 				</View>
 				<LinearGradient colors={['#c33764', '#1d2671']}
-						start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-						style={styles.redButton}>
-						<TouchableOpacity
-							onPress={() => {
-								updateProfile();
-								navigate('Profile');
-							}}>
-								<Text
-									style={styles.whiteText}>
-									Save Changes
+					start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+					style={styles.redButton}>
+					<TouchableOpacity
+						onPress={() => {
+							updateProfile();
+							navigate('Profile');
+						}}>
+						<Text
+							style={styles.whiteText}>
+							Save Changes
 							</Text>
-						</TouchableOpacity>
-					</LinearGradient>
+					</TouchableOpacity>
+				</LinearGradient>
 				<TouchableOpacity
 					onPress={() => {
 						Alert.alert('Delete profile', 'Are you sure you would like to delete your profile? You will lose all of your artefacts. This action cannot be undone.', [

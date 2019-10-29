@@ -49,7 +49,8 @@ export default function UploadImageScreen({ navigation }) {
 			try {
 				console.log(data);
 				await axios.post(`${BACK_END_ENDPOINT}/artefact/create`, data);
-				navigate('Home');
+				navigation.popToTop();
+				navigate('Profile', { shouldRefreshArtefacts: true });
 			} catch (e) {
 				console.log(e);
 			}

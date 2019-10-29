@@ -216,24 +216,17 @@ class FamilyTreeSvg extends Component {
 		});
 	}
 
-	componentDidUpdate(prevProps) {
-		/* Shift the whole family tree to center it.
-		 * The x coordinate of the top left corner of the family tree is set to
-		 * half the display width minus half the width of the family tree in pixels.
-		 * Same with the y coordinate of the top left corner but uses height instead of width.
-		 */
-		if (prevProps.familyTree.length === 0) {
-			const { height, width, familyTree } = this.props;
-			const xCoords = familyTree.map(node => node.x);
-			const familyTreeWidth = (Math.max(...xCoords) - Math.min(...xCoords)) / this.resolution;
-			const yCoords = familyTree.map(node => node.y);
-			const familyTreeHeight = (Math.max(...yCoords) - Math.min(...yCoords)) / this.resolution;
-			this.setState({
-				left: width / 2,
-				top: height / 2,
-				zoom: 2,
-			});
-		}
+	componentDidMount() {
+		const { height, width, familyTree } = this.props;
+		const xCoords = familyTree.map(node => node.x);
+		const familyTreeWidth = (Math.max(...xCoords) - Math.min(...xCoords)) / this.resolution;
+		const yCoords = familyTree.map(node => node.y);
+		const familyTreeHeight = (Math.max(...yCoords) - Math.min(...yCoords)) / this.resolution;
+		this.setState({
+			left: width / 2,
+			top: height / 2,
+			zoom: 2,
+		});
 	}
 
 	render() {
@@ -338,7 +331,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 	const [lines, setLines] = useState([]);
 	const [familyMemberSearch, setFamilyMemberSearch] = useState('');
 	const [isSvgDimensionsSet, setSvgDimensionsSet] = useState(false);
-	const [hide, setHide] = useState(true);
+	const [isLoading, setLoading] = useState(true);
 	const [svgWidth, setSvgWidth] = useState(Dimensions.get('window').width);
 	const [svgHeight, setSvgHeight] = useState(Dimensions.get('window').height);
 
@@ -358,7 +351,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 			console.log(familyTree);
 			setFamilyTree(familyTree);
 			setLines(lines);
-			setHide(false)
+			setLoading(false)
 		} catch (e) {
 			console.trace(e);
 		}
@@ -381,14 +374,13 @@ function FamilyTreeScreen({ ctx, navigation }) {
 
 	return (
 		<>
-			{/* <View style={styles.headerContainer}> */}
 			<LinearGradient colors={['#02aab0', '#00cdac']}
 				start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
 				style={styles.headerContainer}>
 				<Text style={styles.add}>This is your</Text>
 				<Text style={styles.title}>Family Tree</Text>
 				<View style={styles.searchContainer}>
-					<View style={{paddingTop:5}}>
+					<View style={{ paddingTop: 5 }}>
 						<Icon name="md-search" size={25} color={'#2d2e33'} />
 					</View>
 					<TextInput
@@ -399,12 +391,6 @@ function FamilyTreeScreen({ ctx, navigation }) {
 					/>
 				</View>
 			</LinearGradient>
-			{/* </View> */}
-			{hide &&
-				(
-					<ActivityIndicator size="large" color="#0000ff" animating={hide} />
-				)
-			}
 			<View style={{ flex: 1, alignSelf: 'stretch' }} onLayout={event => {
 				const { width, height } = event.nativeEvent.layout;
 				if (isSvgDimensionsSet) {
@@ -415,17 +401,19 @@ function FamilyTreeScreen({ ctx, navigation }) {
 				setSvgDimensionsSet(true);
 			}}>
 				{
-					isSvgDimensionsSet ?
-						<FamilyTreeSvg
-							width={svgWidth}
-							height={svgHeight}
-							familyTree={familyTree}
-							lines={lines}
-							ctx={ctx}
-							navigation={navigation}
-							fetchFamilyMembers={fetchFamilyMembers} />
+					!isLoading && isSvgDimensionsSet ?
+						(
+							<FamilyTreeSvg
+								width={svgWidth}
+								height={svgHeight}
+								familyTree={familyTree}
+								lines={lines}
+								ctx={ctx}
+								navigation={navigation}
+								fetchFamilyMembers={fetchFamilyMembers} />
+						)
 						:
-						null
+						<ActivityIndicator size="large" color="#0000ff" />
 				}
 			</View>
 		</>
@@ -497,7 +485,7 @@ const styles = StyleSheet.create({
 		borderTopEndRadius: 20,
 		borderTopStartRadius: 20,
 		borderColor: '#f5f7fb',
-		backgroundColor:'#f5f7fb',
+		backgroundColor: '#f5f7fb',
 		borderWidth: 0.5,
 		paddingTop: 20,
 		justifyContent: 'space-between',

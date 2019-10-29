@@ -7,12 +7,13 @@ import moment from 'moment';
 import OneSignal from 'react-native-onesignal';
 import AsyncStorage from '@react-native-community/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
+import Gallery from './gallery';
 
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
 const { SlideInMenu } = renderers;
 
 // Environment variables
-import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
+import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI, DATE_FORMAT } from '../constants';
 import PictureFrame from './picture-frame';
 
 // Number 
@@ -48,10 +49,12 @@ function useCurrentUser() {
 function ProfileScreen({ navigation, ctx }) {
 	const { navigate } = navigation;
 	const [profile, setProfile] = useState({});
-	const [artefact, setArtefact] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const [artefacts, setArtefacts] = useState([]);
+	const [isLoading, setLoading] = useState(true);
 	const currentUser = useCurrentUser();
 	const userId = navigation.state.params && navigation.state.params.userId;
+	const shouldRefreshArtefacts = navigation.state.params && navigation.state.params.shouldRefreshArtefacts;
+	console.log(shouldRefreshArtefacts);
 	const [canChangeSettings, setCanChangeSettings] = useState(false);
 
 	// Get profile details
@@ -80,7 +83,7 @@ function ProfileScreen({ navigation, ctx }) {
 		}
 		try {
 			const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/findbyowner/${targetId}`);
-			setArtefact(res.data);
+			setArtefacts(res.data);
 			setLoading(false);
 		} catch (e) {
 			console.trace(e);
@@ -88,7 +91,7 @@ function ProfileScreen({ navigation, ctx }) {
 	}
 
 	async function fetchProfile() {
-		if (profile === null || artefact.length < 1) {
+		if (profile === null || artefacts.length < 1) {
 			setLoading(true);
 		}
 		await getProfile();
@@ -104,7 +107,7 @@ function ProfileScreen({ navigation, ctx }) {
 			ToastAndroid.show('Error logging out', ToastAndroid.SHORT);
 		}
 	}
-	
+
 
 	// Get profile and artefacts by owner
 	useEffect(() => {
@@ -124,25 +127,14 @@ function ProfileScreen({ navigation, ctx }) {
 		}
 	}, [currentUser]);
 
-
-	// Render Item invisible if it's just a placeholder for columns in the grid,
-	// If not, render the picture for each grid
-	renderItem = ({ item, index }) => {
-
-		if (item.empty === true) {
-			return <View style={[styles.itemBox, styles.invisibleItem]} />;
+	useEffect(() => {
+		alert('shouldRefreshArtefacts changed');
+		if (shouldRefreshArtefacts) {
+			fetchArtefacts();
 		}
-		return (
-			<View style={styles.itemBox}>
-				<TouchableOpacity
-					onPress={() => navigate('ItemDetail', { artefactId: item._id })}>
-					<Image
-						source={{ uri: item.file }}
-						style={styles.imageBox} />
-				</TouchableOpacity>
-			</View>
-		);
-	};
+	}, [shouldRefreshArtefacts]);
+
+
 
 	// Format date
 	moment.locale('en');
@@ -180,27 +172,25 @@ function ProfileScreen({ navigation, ctx }) {
 						circular={true}
 						width={100}
 						height={100} />
-					{loading &&
-						<ActivityIndicator size="large" color="#0000ff" />
-					}
 					<View style={styles.textBox}>
 						<Text style={styles.nameText}>
 							{profile.name}
 						</Text>
 						<Text style={styles.dob}>
-							DOB: {moment(profile.dob).format('L')}
+							DOB: {moment(profile.dob).format(DATE_FORMAT)}
 						</Text>
 					</View>
 				</View>
 				<View style={styles.artefactsBox}>
 					<Text style={styles.artText}>My Artefacts</Text>
-					<FlatList
-						data={formatData(artefact, numColumns)}
+					<Gallery artefacts={artefacts} isLoading={isLoading} navigation={navigation} />
+					{/* <FlatList
+						data={formatData(artefacts, numColumns)}
 						keyExtractor={item => item._id}
 						numColumns={3}
 						renderItem={renderItem}
 						ListEmptyComponent={<Text style={styles.artText}>No artefacts yet</Text>}
-					/>
+					/> */}
 				</View>
 			</ScrollView>
 		</>
@@ -281,9 +271,6 @@ const styles = StyleSheet.create({
 	artefactsBox: {
 		backgroundColor: '#fff',
 		paddingTop: 20,
-		paddingLeft: 10,
-		paddingBottom: 10,
-		paddingRight: 10,
 	},
 	artText: {
 		justifyContent: 'center',
@@ -301,7 +288,7 @@ const styles = StyleSheet.create({
 		borderTopEndRadius: 20,
 		borderTopStartRadius: 20,
 		borderColor: '#f5f7fb',
-		backgroundColor:'#f5f7fb',
+		backgroundColor: '#f5f7fb',
 		borderWidth: 0.5,
 		paddingTop: 20,
 		justifyContent: 'space-between',

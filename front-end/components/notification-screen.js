@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 export default function NotificationScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [notifications, setNotifications] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const [isLoading, setLoading] = useState(true);
 
 	useEffect(() => {
 		async function fetchNotifications() {
@@ -75,16 +75,20 @@ export default function NotificationScreen({ navigation }) {
 				<Text style={styles.title}>View Updates</Text>
 				<Text style={styles.galleryTitle}>Notification</Text>
 			</LinearGradient>
-			{loading &&
-				<ActivityIndicator size="large" color="#0000ff" />
-			}
 			<ScrollView>
-				<FlatList
-					data={notifications}
-					renderItem={renderItem}
-					keyExtractor={item => item._id}
-					ListEmptyComponent={<Text style={styles.textStyle}>No notifications yet</Text>}
-				/>
+				{
+					isLoading ?
+						<ActivityIndicator size="large" color="#0000ff" />
+						:
+						(
+							<FlatList
+								data={notifications}
+								renderItem={renderItem}
+								keyExtractor={item => item._id}
+								ListEmptyComponent={<Text style={styles.textStyle}>No notifications yet</Text>}
+							/>
+						)
+				}
 			</ScrollView>
 		</>
 	);

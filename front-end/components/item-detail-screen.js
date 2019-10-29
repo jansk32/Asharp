@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, TextInput, ActivityIndicator, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Button, ToastAndroid, Alert } from 'react-native';
+import { Platform, Text, TextInput, ActivityIndicator, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Button, ToastAndroid, Alert } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
 import { BACK_END_ENDPOINT } from '../constants';
@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/EvilIcons';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
 import LinearGradient from 'react-native-linear-gradient';
 const { SlideInMenu } = renderers;
-
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 moment.locale('en');
 
@@ -23,6 +23,7 @@ function ItemDetailScreen({ navigation, ctx }) {
 	const [currentUser, setCurrentUser] = useState();
 	const [isEditing, setIsEditing] = useState(false);
 	const [artefact, setArtefact] = useState({});
+	const [showDatePicker, setShowDatePicker] = useState(false);
 
 	/* Editing the input when the edit button is pressed */
 	const [name, setName] = useState('');
@@ -116,37 +117,20 @@ function ItemDetailScreen({ navigation, ctx }) {
 					</Menu>
 					<View style={styles.headerDesc}>
 						<Text style={styles.owner}>Owned by {owner}</Text>
-
 					</View>
-					{!isEditing &&
-						(<Text style={styles.dateStyle}>Date owned: {moment(date).format('L')}</Text>)}
-					{isEditing &&
-						(<DatePicker
-							disabled={!isEditing}
-							style={styles.dateStyle}
-							date={date}
-							mode="date"
-							placeholder="Select date"
-							format="DD-MM-YYYY"
-							maxDate={moment().format('DD-MM-YYYY')}
-							confirmBtnText="Confirm"
-							cancelBtnText="Cancel"
-							androidMode="spinner"
-							customStyles={{
-								dateIcon: {
-									position: 'absolute',
-									left: 0,
-									top: 4,
-									marginLeft: 0
-								},
-								dateInput: {
-									marginLeft: 0
-								}
-							}}
-							showIcon={false}
-							onDateChange={(dateStr, date) => setDate(moment(date))}
-							value={date.format('L')}
-						/>)}
+					<TouchableOpacity onPress={() => setShowDatePicker(true)} disabled={!isEditing}>
+						<Text style={{borderWidth: isEditing ? 1 : 0, borderColor: 'red', padding: 15}}>Date owned: {date.format('L')}</Text>
+					</TouchableOpacity>
+					{showDatePicker &&
+						<DateTimePicker
+							value={date.toDate()}
+							maximumDate={moment().toDate()}
+							onChange={(event, newDate) => {
+								newDate = newDate || date;
+								setShowDatePicker(Platform.OS === 'ios' ? true : false);
+								setDate(moment(newDate));
+							}} />
+					}
 				</View>
 				<View style={styles.desc}>
 					<Text style={styles.boldHeader}>Description:</Text>

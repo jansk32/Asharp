@@ -77,10 +77,12 @@ export default function WelcomeScreen({ navigation }) {
             const email = await AsyncStorage.getItem('email');
             const password = await AsyncStorage.getItem('password');
             // Check if both email and password were stored previously before sending request
-            if (email && password && await axiosLocal({ email, password })) {
+            if (email && password && await axiosLocal({ email, password }) === 200) {
                 ToastAndroid.show('Successfully logged in with stored credentials', ToastAndroid.SHORT);
                 navigate('Home');
             } else {
+                // Email and password are invalid, clear them
+                AsyncStorage.multiRemove(['email', 'password']);
                 setLoading(false);
             }
         }

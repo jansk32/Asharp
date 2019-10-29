@@ -5,8 +5,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import moment from 'moment';
-import { BACK_END_ENDPOINT } from '../constants';
+import { BACK_END_ENDPOINT, DATE_FORMAT } from '../constants';
 import AsyncStorage from '@react-native-community/async-storage';
+import Gallery from './gallery';
 
 // Import date formatting module moment.js
 moment.locale('en');
@@ -14,22 +15,21 @@ moment.locale('en');
 const numColumns = 3;
 
 export default function TimelineScreen({ navigation }) {
-
 	const { navigate } = navigation;
 	const [artefacts, setArtefacts] = useState([]);
-	const [hide, setHide] = useState(true);
+	const [isLoading, setLoading] = useState(true);
 
 	function formatTime(timeData) {
 		// TIMELINE FORMAT
 		// Format date DD-MM-YYYY
 		timeData.forEach(entry => {
-			entry.time = moment(entry.date).format('DD-MM-YYYY');
+			entry.time = moment(entry.date).format(DATE_FORMAT);
 			console.log(entry.time);
 			entry.key = entry._id
 		});
 
 		// Sort Timeline in descending order
-		timeData.sort((a, b) => moment(b.time, 'DD-MM-YYYY').diff(moment(a.time, 'DD-MM-YYYY')));
+		timeData.sort((a, b) => moment(b.time, DATE_FORMAT).diff(moment(a.time, DATE_FORMAT)));
 
 		// Display only one date under several artefacts with the same date
 		for (let i = timeData.length - 1; i > 0; i--) {
@@ -40,18 +40,6 @@ export default function TimelineScreen({ navigation }) {
 		return timeData;
 	}
 
-	function formatData(data, numColumns) {
-		// GALLERY FORMAT
-		const numberOfFullRows = Math.floor(data.length / numColumns);
-
-		let numberOfElementsLastRow = data.length - numberOfFullRows * numColumns;
-		while (numberOfElementsLastRow !== numColumns
-			&& numberOfElementsLastRow !== 0) {
-			numberOfElementsLastRow++;
-		}
-		return data;
-	};
-
 	// Get all the artefact
 	useEffect(() => {
 		async function fetchArtefacts() {
@@ -59,7 +47,7 @@ export default function TimelineScreen({ navigation }) {
 				const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/${await AsyncStorage.getItem('userId')}`);
 				setArtefacts(res.data);
 				console.log(res.data)
-				setHide(false)
+				setLoading(false)
 			} catch (e) {
 				console.error(e);
 			}
@@ -74,7 +62,7 @@ export default function TimelineScreen({ navigation }) {
 			return <View style={[styles.item, styles.itemInvisible]} />;
 		}
 		return (
-			<View style={{ flex: 1}}>
+			<View style={{ flex: 1 }}>
 				<View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
 					<TouchableOpacity onPress={() => navigate('ItemDetail', { artefactId: item._id })}>
 						<Image source={{ uri: item.file }} style={styles.image} />
@@ -85,44 +73,15 @@ export default function TimelineScreen({ navigation }) {
 		);
 	};
 
-	// Render Item invisible if it's just a placeholder for columns in the grid,
-	// if not, render the picture for each grid (Gallery)
-	renderItem = ({ item, index }) => {
-		if (item.empty) {
-			return <View style={[styles.item, styles.itemInvisible]} />
-		}
-		return (
-			<View style={styles.item}>
-				<TouchableHighlight onPress={() => navigate('ItemDetail', { artefactId: item._id })}>
-					<Image
-						style={styles.imageBox}
-						source={{ uri: item.file }}
-					/>
-				</TouchableHighlight>
-			</View>
-		);
-	}
-
-	// Layout for Gallery tab
-	function GalleryRoute() {
-		return (
-			<FlatList
-				data={formatData(artefacts, numColumns)}
-				keyExtractor={item => item._id}
-				renderItem={renderItem}
-				numColumns={numColumns}
-				style={styles.container}
-				ListEmptyComponent={<Text>No artefacts in your family yet</Text>}
-			/>
-		);
-	}
 
 	// Layout for Timeline tab
 	function TimelineRoute() {
+		if (isLoading) {
+			return <ActivityIndicator size="large" color="#0000ff" />;
+		}
 		if (!artefacts.length) {
 			return <Text>No artefacts in your family yet</Text>;
 		}
-		
 		return (
 			<Timeline
 				style={styles.list}
@@ -132,7 +91,7 @@ export default function TimelineScreen({ navigation }) {
 				lineColor="#e3e3e3"
 				innerCircleType="dot"
 				renderDetail={renderDetail}
-				timeContainerStyle={{ minWidth: 72, marginLeft: 10 }}
+				timeContainerStyle={{ minWidth: 85, marginLeft: 10 }}
 				timeStyle={{ color: '#2d2e33' }}
 			/>
 		);
@@ -147,26 +106,21 @@ export default function TimelineScreen({ navigation }) {
 	});
 
 	return (
-		<>	
+		<>
 			{/* <View style={styles.containers}> */}
-			<LinearGradient colors={['#de6262', '#ffb88c']} 
-            	start={{x: 0, y: 0}} end={{x: 1, y: 0}}
-                 style={styles.container}>
+			<LinearGradient colors={['#de6262', '#ffb88c']}
+				start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+				style={styles.container}>
 
 				<Text style={styles.title}>Memories Left Behind</Text>
 				<Text style={styles.artefactTitle}>Artefact</Text>
-				{ hide &&
-					(
-						<ActivityIndicator size="large" color="#0000ff" animating={hide} />
-					)
-				}
 			</LinearGradient>
 			{/* </View> */}
 			<TabView
 				navigationState={tab}
 				renderScene={SceneMap({
 					first: TimelineRoute,
-					second: GalleryRoute,
+					second: () => Gallery({isLoading, artefacts, navigation}),
 				})}
 				renderTabBar={props =>
 					<TabBar
@@ -200,7 +154,7 @@ const styles = StyleSheet.create({
 		marginLeft: 10,
 		fontWeight: 'bold',
 		paddingBottom: '5%',
-		color:'white',
+		color: 'white',
 	},
 	image: {
 		width: 75,
