@@ -43,7 +43,7 @@ describe('User', () => {
                 pictureUrl: "https://i.imgur.com/QKsSRsu.jpg",
                 isUser: 'true'
             };
-            await chai.request(server)
+           await chai.request(server)
                 .post('/user/create')
                 .send(signUp)
                 .end((err, res) => {

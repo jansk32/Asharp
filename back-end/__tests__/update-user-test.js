@@ -33,9 +33,6 @@ describe('Update a profile', () => {
                 .end((err, res) => {
                     if(err) return done(err);
                     res.status.should.be.equal(200);
-                    res.body.should.be.a('object');
-                    expect(res.body.name).to.be.equal(updated.name);
-                    expect(res.body.pictureUrl).to.be.equal(updated.pictureUrl);
                     done();
                 })
             })
