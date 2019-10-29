@@ -194,35 +194,33 @@ const MainNavigator = createBottomTabNavigator({
 	},
 );
 
-// Authentication stack navigator for sign up
-const SignUpStack = createStackNavigator({
-	SignUp1: { screen: SignUp1Screen },
+// Navigation between the welcome screen, sign-up screen and login screen.
+const WelcomeStack = createStackNavigator({
+	Welcome: { 
+		screen: WelcomeScreen,  
+		navigationOptions:{
+			header:null
+		}
+	},
+	SignUp1: { 
+		screen: SignUp1Screen,
+	},
 	SignUp2: {
 		screen: SignUp2Screen,
 		navigationOptions: ({ navigation }) => ({
-			title: 'Enter details',
-			// headerTitleStyle: { color: '#EC6268' },
+			title: 'Enter your details',
 		}),
 	},
 	SignUp3: {
 		screen: SignUp3Screen,
 		navigationOptions: ({ navigation }) => ({
-			title: 'Choose your profile picture!',
-			// headerTitleStyle: { color: '#EC6268' }
+			title: 'Choose a profile picture',
 		}),
 	},
+	Login: { 
+		screen: LoginScreen,
+	},
 });
-
-const WelcomeStack = createStackNavigator({
-	Welcome: { screen: WelcomeScreen },
-	SignUpStack,
-	Login: { screen: LoginScreen },
-},
-	{
-		navigationOptions: {
-			header: null,
-		},
-	});
 
 const Stack = createSwitchNavigator({
 	WelcomeStack,
