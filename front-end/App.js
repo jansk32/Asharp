@@ -213,10 +213,19 @@ const SignUpStack = createStackNavigator({
 	},
 });
 
-const Stack = createSwitchNavigator({
+const WelcomeStack = createStackNavigator({
 	Welcome: { screen: WelcomeScreen },
 	SignUpStack,
 	Login: { screen: LoginScreen },
+},
+	{
+		navigationOptions: {
+			header: null,
+		},
+	});
+
+const Stack = createSwitchNavigator({
+	WelcomeStack,
 	MainNavigator,
 });
 
