@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "NODE_ENV=test jest ./__tests__/user-create-test",
+    "test": "NODE_ENV=test jest ./__tests__/user-family-tree-test",
     "lint": "eslint .",
     "front-end": "react-native start",
     "back-end": "node server.js",

@@ -22,14 +22,14 @@ describe('Family Tree', () => {
          });      
     })
 
-    afterEach(() => {
-        mongoose.connection.close();
-    })
+    // afterEach(() => {
+    //     mongoose.connection.close();
+    // })
 
     describe('Get users for family tree', () => {
-        it('Get users by name', (done) => {
-            chai.request(server)
-            .get("/user/search")
+        it('Get users by name', async () => {
+            await chai.request(server)
+            .get("/user/search/")
             .send({name: "Sam"})
             .end((err, res) => {
                 if(err) return done(err);
@@ -46,12 +46,12 @@ describe('Family Tree', () => {
             spouseId: "5db6721171558a0bb439bc82", 
         }
 
-        it("Adding manually", (done) => {
-            chai.request(server)
+        it("Adding manually", async () => {
+            await chai.request(server)
             .put("/user/add-spouse/")
             .send(parent)
             .end((err, res) => {
-                // if (err) return done(err);
+                if (err) return done(err);
                 res.status.should.be.equal(200);
                 done();
             })
@@ -65,8 +65,8 @@ describe('Family Tree', () => {
             parentId: "5db6717cfc067b0b90258c2a"
         }
 
-        it("Add parent to someone with a spouse", (done) => {
-            chai.request(server)
+        it("Add parent to someone with a spouse", async () => {
+            await chai.request(server)
             .put("/user/add-parent/")
             .send(sending)
             .end((err, res) => {
@@ -86,8 +86,8 @@ describe('Family Tree', () => {
             motherDob: "1900-09-01"
 
         }
-        it("Adding manually", (done) => {
-            chai.request(server)
+        it("Adding manually", async () => {
+            await chai.request(server)
             .post("/user/add-parents-manually/")
             .send(parent)
             .end((err, res) => {
@@ -104,8 +104,8 @@ describe('Family Tree', () => {
             personId:"5db3eafd773ed40c426b905d",
             childId: "5db681485181640e19212408"
         }
-        it("Adding manually", (done) => {
-            chai.request(server)
+        it("Adding manually", async () => {
+            await chai.request(server)
             .put("/user/add-child/")
             .send(child)
             .end((err, res) => {
