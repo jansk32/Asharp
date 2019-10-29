@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, ActivityIndicator, Image, Button, View, StyleSheet, ScrollView, TouchableOpacity,Dimensions, } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
-import { BACK_END_ENDPOINT } from '../constants';
+import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
 import AsyncStorage from '@react-native-community/async-storage';
 import { pickImage } from '../image-tools';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -14,7 +14,7 @@ export default function PictureFrame({ image, setImage, editable = false, circul
     return (
         <>
 		<View style={styles.container}>
-            <Image source={image} style={{ width, height, borderRadius: circular ? 250 : null}} />
+            <Image source={Object.keys(image).length ? image : { uri: BLANK_PROFILE_PIC_URI }}  style={{ width, height, borderRadius: circular ? 250 : null}} />
             {
 				editable &&
 				<View style={styles.pickImage}>
@@ -25,8 +25,9 @@ export default function PictureFrame({ image, setImage, editable = false, circul
 			}
 		</View>
         </>
-    );
+	);
 }
+
 
 const styles = StyleSheet.create({
 	image: {

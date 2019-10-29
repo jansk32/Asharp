@@ -1,0 +1,27 @@
+{
+  "name": "mementos-back-end",
+  "version": "1.0.0",
+  "description": "API for mementos app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jansk32/mementos.git"
+  },
+  "author": "A-sharp",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jansk32/mementos/issues"
+  },
+  "homepage": "https://github.com/jansk32/mementos#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "moment": "^2.24.0",
+    "mongoose": "^5.7.7",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0"
+  }
+}

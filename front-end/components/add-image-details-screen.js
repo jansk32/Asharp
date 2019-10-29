@@ -92,75 +92,73 @@ export default function UploadImageScreen({ navigation }) {
 	/* Returns a form where the user can fill in their artefacts
 	   name, description and value. */
 	return (
-		<>
-			<ScrollView>
-				<View style={styles.container}>
-					<Image
-						source={{ uri }}
-						style={styles.imageStyle}
-					/>
-					<View style={styles.inputBox}>
-						<View style={styles.inputElem}>
-							<Text style={styles.text}>Item Name:</Text>
-							<TextInput
-								placeholder='Enter Item Name'
-								onChangeText={setName}
-								style={styles.textInputUpper}
-							/>
-						</View>
-						<View style={styles.inputElem}>
-							<Text style={styles.text}>Date:</Text>
-							<DatePicker
-								style={styles.dateInputs}
-								date={date}
-								mode="date"
-								placeholder="Select date"
-								format="YYYY-MM-DD"
-								maxDate={moment().format('DD-MM-YYYY')}
-								confirmBtnText="Confirm"
-								cancelBtnText="Cancel"
-								androidMode="spinner"
-								customStyles={{
-									dateIcon: {
-										position: 'absolute',
-										left: 0,
-										top: 4,
-										marginLeft: 0
-									},
-									dateInput: {
-										marginLeft: 0
-									}
-								}}
-								showIcon={false}
-								onDateChange={setDate}
-								value={date}
-							/>
-						</View>
-						<Text style={styles.text}>Description</Text>
+		<ScrollView>
+			<View style={styles.container}>
+				<Image
+					source={{ uri }}
+					style={styles.imageStyle}
+				/>
+				<View style={styles.inputBox}>
+					<View style={styles.inputElem}>
+						<Text style={styles.text}>Item Name:</Text>
 						<TextInput
-							placeholder='Describe the item.'
-							onChangeText={setDescription}
-							multiline={true}
-							style={styles.textInput}
-						/>
-						<Text style={styles.text}>Value</Text>
-						<TextInput
-							placeholder='Write down the value and memory this item holds.'
-							onChangeText={setValue}
-							multiline={true}
-							style={styles.textInput}
+							placeholder='Enter Item Name'
+							onChangeText={setName}
+							style={styles.textInputUpper}
 						/>
 					</View>
-					<TouchableOpacity
-						onPress={createArtefact}
-						style={styles.redButton}>
-						<Text
-							style={styles.whiteText}>
-							Upload Artefact</Text>
-					</TouchableOpacity>
+					<View style={styles.inputElem}>
+						<Text style={styles.text}>Date:</Text>
+						<DatePicker
+							style={styles.dateInputs}
+							date={date}
+							mode="date"
+							placeholder="Select date"
+							format="YYYY-MM-DD"
+							maxDate={moment().format('DD-MM-YYYY')}
+							confirmBtnText="Confirm"
+							cancelBtnText="Cancel"
+							androidMode="spinner"
+							customStyles={{
+								dateIcon: {
+									position: 'absolute',
+									left: 0,
+									top: 4,
+									marginLeft: 0
+								},
+								dateInput: {
+									marginLeft: 0
+								}
+							}}
+							showIcon={false}
+							onDateChange={setDate}
+							value={date}
+						/>
+					</View>
+					<Text style={styles.text}>Description</Text>
+					<TextInput
+						placeholder='Describe the item.'
+						onChangeText={setDescription}
+						multiline={true}
+						style={styles.textInput}
+					/>
+					<Text style={styles.text}>Value</Text>
+					<TextInput
+						placeholder='Write down the value and memory this item holds.'
+						onChangeText={setValue}
+						multiline={true}
+						style={styles.textInput}
+					/>
 				</View>
-			</ScrollView>
-		</>
+				<TouchableOpacity
+					onPress={createArtefact}
+					style={styles.redButton}>
+					<Text
+						style={styles.whiteText}>
+						Upload Artefact</Text>
+				</TouchableOpacity>
+			</View>
+		</ScrollView>
 	);
 }
 

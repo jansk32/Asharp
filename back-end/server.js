@@ -2,16 +2,15 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const session = require('express-session');
+// const session = require('express-session');
 const axios = require('axios');
 const moment = require('moment');
-const { ensureLoggedIn } = require('connect-ensure-login');
 
 // Environment variables
 const constants = require('./server-constants');
 const { ONESIGNAL_ENDPOINT, ONESIGNAL_APP_ID } = constants;
 
-const { buildFamilyTree } = require('./build-family-tree');
+const { buildFamilyTree } = require('../build-family-tree');
 
 /* Database */
 // Schemas
@@ -73,15 +72,15 @@ passport.deserializeUser(async function (_id, done) {
 // Cookies
 app.set('trust proxy', 1);
 
-app.use(session({
-	secret: 'secret_string',
-	resave: false,
-	saveUninitialized: true,
-	cookie: {
-		secure: false,
-		maxAge: 60 * 60 * 1000,  // 1 hour
-	},
-}));
+// app.use(session({
+// 	secret: 'secret_string',
+// 	resave: false,
+// 	saveUninitialized: true,
+// 	cookie: {
+// 		secure: false,
+// 		maxAge: 60 * 60 * 1000,  // 1 hour
+// 	},
+// }));
 
 // app.use middlewares
 app.use(bodyParser.json({ type: 'application/json' }));

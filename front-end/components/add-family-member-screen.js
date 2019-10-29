@@ -15,8 +15,7 @@ import PictureFrame from './picture-frame';
 import { uploadImage } from '../image-tools';
 
 export default function AddFamilyMemberScreen({ navigation }) {
-    // isAddingSpouse is false if adding a child
-    const { linkedNode, isAddingSpouse, fetchFamilyMembers } = navigation.state.params;
+    const { linkedNode, kinship, fetchFamilyMembers } = navigation.state.params;
 
     const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -24,8 +23,7 @@ export default function AddFamilyMemberScreen({ navigation }) {
         return (
             <ScrollView>
                 <View style={styles.search}>
-                    <UserSearchBox
-                        navigation={navigation} />
+                    <UserSearchBox navigation={navigation} />
                 </View>
             </ScrollView>
         );
@@ -150,7 +148,7 @@ export default function AddFamilyMemberScreen({ navigation }) {
         <ScrollView style={styles.allContainer}>
             <View style={styles.container}>
                 <Text style={styles.add}>Find your</Text>
-                <Text style={styles.title}>{isAddingSpouse ? 'Spouse' : 'Child'}</Text>
+                <Text style={styles.title}>{kinship.charAt(0).toUpperCase() + kinship.slice(1)}</Text>
             </View>
             <TabView
                 navigationState={tab}
