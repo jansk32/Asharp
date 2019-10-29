@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
+		marginTop: 40
 	},
 	textInput: {
 		borderColor: 'black',
@@ -182,11 +183,7 @@ const styles = StyleSheet.create({
 		marginBottom: 18,
 	},
 	gender:{
-        // marginTop: 10,
         padding: 5,
-        // paddingLeft: 10,
-        // marginLeft: '5%',
-        // marginRight: '5%', 
         flexDirection:'row',
 		justifyContent:'space-around',
 		marginBottom: 18,

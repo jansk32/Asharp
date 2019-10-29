@@ -80,7 +80,13 @@ export default function TimelineScreen({ navigation }) {
 			return <ActivityIndicator size="large" color="#0000ff" />;
 		}
 		if (!artefacts.length) {
-			return <Text>No artefacts in your family yet</Text>;
+			return (
+				<>
+					<Text style={styles.textStyle}>Your family doesn't have any artefacts right now.</Text>
+					<Text style={styles.desc}>When you or a family member gets an artefact, you will see it here.</Text>
+				</>
+			);
+
 		}
 		return (
 			<Timeline
@@ -120,7 +126,7 @@ export default function TimelineScreen({ navigation }) {
 				navigationState={tab}
 				renderScene={SceneMap({
 					first: TimelineRoute,
-					second: () => Gallery({isLoading, artefacts, navigation}),
+					second: () => Gallery({ isLoading, artefacts, navigation }),
 				})}
 				renderTabBar={props =>
 					<TabBar
@@ -196,7 +202,28 @@ const styles = StyleSheet.create({
 		height: Dimensions.get('window').width / numColumns, // approximate a square
 		width: Dimensions.get('window').width / numColumns,
 		flex: 1,
-	}
+	},
+	textStyle: {
+		fontSize: 20,
+		fontWeight: 'bold',
+		flexWrap: 'wrap',
+		// textAlignVertical: 'center',
+		textAlign: 'center',
+		alignSelf: 'center',
+		justifyContent: 'center',
+		margin: 10,
+		padding: 30,
+		flexWrap: 'wrap',
+		flexDirection: 'row',
+	},
+	desc: {
+		fontSize: 16,
+		paddingHorizontal: 30,
+		flexWrap: 'wrap',
+		textAlign: 'center',
+		justifyContent: 'center',
+		alignSelf: 'center',
+	},
 });
 
 TimelineScreen.navigationOptions = {

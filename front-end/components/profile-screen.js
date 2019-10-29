@@ -128,7 +128,6 @@ function ProfileScreen({ navigation, ctx }) {
 	}, [currentUser]);
 
 	useEffect(() => {
-		alert('shouldRefreshArtefacts changed');
 		if (shouldRefreshArtefacts) {
 			fetchArtefacts();
 		}
@@ -184,13 +183,6 @@ function ProfileScreen({ navigation, ctx }) {
 				<View style={styles.artefactsBox}>
 					<Text style={styles.artText}>My Artefacts</Text>
 					<Gallery artefacts={artefacts} isLoading={isLoading} navigation={navigation} />
-					{/* <FlatList
-						data={formatData(artefacts, numColumns)}
-						keyExtractor={item => item._id}
-						numColumns={3}
-						renderItem={renderItem}
-						ListEmptyComponent={<Text style={styles.artText}>No artefacts yet</Text>}
-					/> */}
 				</View>
 			</ScrollView>
 		</>
@@ -304,6 +296,27 @@ const styles = StyleSheet.create({
 		textAlign: 'left',
 		fontSize: 20,
 	},
-})
+	textStyle: {
+		fontSize: 20,
+		fontWeight:'bold',
+		flexWrap: 'wrap',
+		// textAlignVertical: 'center',
+		textAlign:'center',
+		alignSelf:'center',
+		justifyContent:'center',
+		margin: 10,
+		padding:30,
+		flexWrap:'wrap',
+		flexDirection:'row',
+	},
+	desc: {
+		fontSize: 16,
+		paddingHorizontal:30,
+		flexWrap:'wrap',
+		textAlign:'center',
+		justifyContent:'center',
+		alignSelf:'center',
+	},
+});
 
 export default withMenuContext(ProfileScreen);
