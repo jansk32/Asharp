@@ -16,26 +16,26 @@ const User = mongoose.model("userSchema", userSchema);
 describe('Family Tree', () => {
     let server = require("../server");
 
-    beforeEach((done) => {
-        User.remove({}, (err) => { 
-            done();           
-         });      
-    })
+    // beforeEach((done) => {
+    //     User.remove({}, (err) => { 
+    //         done();           
+    //      });      
+    // })
 
-    // afterEach(() => {
+    // after(() => {
     //     mongoose.connection.close();
     // })
 
     describe('Get users for family tree', () => {
         it('Get users by name', async () => {
-            await chai.request(server)
+            let server = require("../server");
+            chai.request(server)
             .get("/user/search/")
             .send({name: "Sam"})
             .end((err, res) => {
                 if(err) return done(err);
                 res.status.should.be.equal(200);
                 expect(res.body).to.be.a('array');
-                done();
             })
         })
     })
@@ -46,12 +46,16 @@ describe('Family Tree', () => {
             spouseId: "5db6721171558a0bb439bc82", 
         }
 
-        it("Adding manually", async () => {
+        it("Adding manually", async (done) => {
+            let server = require("../server");
             await chai.request(server)
             .put("/user/add-spouse/")
             .send(parent)
             .end((err, res) => {
-                if (err) return done(err);
+                if (err) {
+                    console.log(err);
+                    throw done(err);
+                }
                 res.status.should.be.equal(200);
                 done();
             })
@@ -70,7 +74,10 @@ describe('Family Tree', () => {
             .put("/user/add-parent/")
             .send(sending)
             .end((err, res) => {
-                if(err) throw done(err);
+                if(err) {
+                    console.log(err);
+                    throw done(err)
+                };
                 res.status.should.be.equal(200);
                 done();
             })

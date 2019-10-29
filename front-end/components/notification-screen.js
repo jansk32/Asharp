@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 export default function NotificationScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [notifications, setNotifications] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const [isLoading, setLoading] = useState(true);
 
 	useEffect(() => {
 		async function fetchNotifications() {
@@ -75,21 +75,25 @@ export default function NotificationScreen({ navigation }) {
 				<Text style={styles.title}>View Updates</Text>
 				<Text style={styles.galleryTitle}>Notification</Text>
 			</LinearGradient>
-			{loading &&
-				<ActivityIndicator size="large" color="#0000ff" />
-			}
 			<ScrollView>
-				<FlatList
-					data={notifications}
-					renderItem={renderItem}
-					keyExtractor={item => item._id}
-					ListEmptyComponent={
-					<View>
-						<Text style={styles.textStyle}>You don't have any notifications right now.</Text>
-						<Text style={styles.desc}>When someone send you an artefact, you will see it here.</Text>
-					</View>
-					}
-				/>
+				{
+					isLoading ?
+						<ActivityIndicator size="large" color="#0000ff" />
+						:
+						(
+							<FlatList
+								data={notifications}
+								renderItem={renderItem}
+								keyExtractor={item => item._id}
+								ListEmptyComponent={(
+									<>
+										<Text style={styles.textStyle}>You don't have any notifications right now.</Text>
+										<Text style={styles.desc}>When someone send you an artefact, you will see it here.</Text>
+									</>
+								)}
+							/>
+						)
+				}
 			</ScrollView>
 		</>
 	);
@@ -136,25 +140,25 @@ const styles = StyleSheet.create({
 	},
 	textStyle: {
 		fontSize: 20,
-		fontWeight:'bold',
+		fontWeight: 'bold',
 		flex: 1,
 		flexWrap: 'wrap',
 		textAlignVertical: 'center',
-		textAlign:'center',
-		alignSelf:'center',
-		justifyContent:'center',
+		textAlign: 'center',
+		alignSelf: 'center',
+		justifyContent: 'center',
 		margin: 10,
-		padding:30,
-		flexWrap:'wrap',
-		flexDirection:'row',
+		padding: 30,
+		flexWrap: 'wrap',
+		flexDirection: 'row',
 	},
 	desc: {
 		fontSize: 16,
-		paddingHorizontal:30,
-		flexWrap:'wrap',
-		textAlign:'center',
-		justifyContent:'center',
-		alignSelf:'center',
+		paddingHorizontal: 30,
+		flexWrap: 'wrap',
+		textAlign: 'center',
+		justifyContent: 'center',
+		alignSelf: 'center',
 	},
 	ownerStyle: {
 		fontWeight: 'bold'

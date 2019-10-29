@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-community/async-storage';
 import { axiosLocal } from './log-in-screen';
 
+
 // Welcome screen to go to login and sign in
 export default function WelcomeScreen({ navigation }) {
     const { navigate } = navigation;
@@ -14,10 +15,12 @@ export default function WelcomeScreen({ navigation }) {
             const email = await AsyncStorage.getItem('email');
             const password = await AsyncStorage.getItem('password');
             // Check if both email and password were stored previously before sending request
-            if (email && password && await axiosLocal({ email, password })) {
+            if (email && password && await axiosLocal({ email, password }) === 200) {
                 ToastAndroid.show('Successfully logged in with stored credentials', ToastAndroid.SHORT);
                 navigate('Home');
             } else {
+                // Email and password are invalid, clear them
+                AsyncStorage.multiRemove(['email', 'password']);
                 setLoading(false);
             }
         }
@@ -35,18 +38,13 @@ export default function WelcomeScreen({ navigation }) {
                     <View style={styles.buttonBox}>
                         <TouchableOpacity onPress={() => navigate('SignUp1')}>
                             <LinearGradient colors={['#06beb6', '#48b1bf']} style={styles.yellowButton}>
-
-                                {/* <View style={styles.yellowButton}> */}
                                 <Text style={styles.buttonText}>I am a new user </Text>
-                                {/* </View> */}
                             </LinearGradient>
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={() => navigate('Login')}>
                             <View style={styles.whiteButton}>
-                                {/* <View style={styles.whiteButton}> */}
                                 <Text style={styles.buttonText2}>I am an existing user</Text>
-                                {/* </View> */}
                             </View>
                         </TouchableOpacity>
                     </View>
