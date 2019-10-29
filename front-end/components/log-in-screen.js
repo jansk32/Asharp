@@ -16,10 +16,16 @@ export async function axiosLocal(objData) {
 		const res = await axios.post(`${BACK_END_ENDPOINT}/login/local`, objData);
 		AsyncStorage.setItem('userId', res.data._id);
 		OneSignal.setExternalUserId(res.data._id);
-		return true;
+		return res.status;
 	} catch (e) {
 		console.trace(e);
-		return false;
+		if (e.response) {
+			// Request was sent and got an error response
+			return e.response.status;
+		} else if (e.request) {
+			// Request was unable to be sent
+			return e.request.status;
+		}
 	}
 }
 
@@ -59,12 +65,17 @@ export default function LoginScreen({ navigation }) {
 			<View style={styles.buttonBox}>
 				<TouchableOpacity
 					onPress={async () => {
-						if (await axiosLocal({ email, password })) {
+						const status = await axiosLocal({ email, password });
+						if (status === 200) {
 							AsyncStorage.setItem('email', email);
 							AsyncStorage.setItem('password', password);
 							navigate('Home');
-						} else {
+						} else if (status === 400) {
+							alert('Please fill in your email and password');
+						} else if (status === 401) {
 							alert('Email or password is incorrect');
+						} else if (status === 0) {
+							alert('Unable to connect to server');
 						}
 					}}>
 					<View style={styles.redButton}>
