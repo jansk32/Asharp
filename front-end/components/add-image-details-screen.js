@@ -7,9 +7,10 @@ import DatePicker from 'react-native-datepicker';
 import axios from 'axios';
 import { pickImage, uploadImage } from '../image-tools';
 import AsyncStorage from '@react-native-community/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 
-import { BACK_END_ENDPOINT } from '../constants';
+import { BACK_END_ENDPOINT, DATE_FORMAT } from '../constants';
 
 // Import date formatting module moment.js
 moment.locale('en');
@@ -20,7 +21,8 @@ export default function UploadImageScreen({ navigation }) {
 	const [description, setDescription] = useState('');
 	const [value, setValue] = useState('');
 	const [name, setName] = useState('');
-	const [date, setDate] = useState('');
+	const [date, setDate] = useState(moment());
+	const [showDatePicker, setShowDatePicker] = useState(false);
 
 	//   useEffect(() => {
 	//     // createArtefact();
@@ -109,7 +111,7 @@ export default function UploadImageScreen({ navigation }) {
 						/>
 					</View>
 					<View style={styles.inputElem}>
-						<Text style={styles.text}>Date:</Text>
+						{/* <Text style={styles.text}>Date:</Text>
 						<DatePicker
 							style={styles.dateInputs}
 							date={date}
@@ -134,7 +136,21 @@ export default function UploadImageScreen({ navigation }) {
 							showIcon={false}
 							onDateChange={setDate}
 							value={date}
-						/>
+						/> */}
+						<Text style={styles.text}>Date:</Text>
+						<TouchableOpacity onPress={() => setShowDatePicker(true)}>
+							<Text style={{ borderWidth: 1, padding: 15 }}>{date.format(DATE_FORMAT)}</Text>
+						</TouchableOpacity>
+						{showDatePicker &&
+							<DateTimePicker
+								value={date.toDate()}
+								maximumDate={moment().toDate()}
+								onChange={(event, newDate) => {
+									newDate = newDate || date;
+									setShowDatePicker(Platform.OS === 'ios' ? true : false);
+									setDate(moment(newDate));
+								}} />
+						}
 					</View>
 					<Text style={styles.text}>Description</Text>
 					<TextInput

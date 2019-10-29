@@ -93,8 +93,7 @@ export default function ProfileSettingScreen({ navigation }) {
 			console.log(user);
 			setUser(user);
 			setName(user.name);
-			setDob(moment(user.dob, 'DD-MM-YYYY'));
-
+			setDob(moment(user.dob));
 			setImage({ uri: user.pictureUrl });
 			setLoading(false);
 		}
@@ -199,14 +198,13 @@ export default function ProfileSettingScreen({ navigation }) {
 					start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
 					style={styles.redButton}>
 					<TouchableOpacity
-						onPress={() => {
-							updateProfile();
+						onPress={async () => {
+							await updateProfile();
 							navigate('Profile');
 						}}>
-						<Text
-							style={styles.whiteText}>
+						<Text style={styles.whiteText}>
 							Save Changes
-							</Text>
+						</Text>
 					</TouchableOpacity>
 				</LinearGradient>
 				<TouchableOpacity

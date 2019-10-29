@@ -1,5 +1,5 @@
-export const BACK_END_ENDPOINT = 'http://asharp-mementos.herokuapp.com';
-// export const BACK_END_ENDPOINT = 'http://localhost:3000';
+// export const BACK_END_ENDPOINT = 'http://asharp-mementos.herokuapp.com';
+export const BACK_END_ENDPOINT = 'http://localhost:3000';
 
 export const ONESIGNAL_ENDPOINT = 'https://onesignal.com/api/v1/notifications';
 export const ONESIGNAL_APP_ID = 'f9de7906-8c82-4674-808b-a8048c4955f1';

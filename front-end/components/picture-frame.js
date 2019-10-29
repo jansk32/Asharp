@@ -18,7 +18,7 @@ export default function PictureFrame({ image, setImage, editable = false, circul
             {
 				editable &&
 				<View style={styles.pickImage}>
-					<Icon name="md-camera" color={'back'} size={25} onPress={async () => setImage(await pickImage())}/>
+					<Icon name="md-camera" color="black" size={25} onPress={async () => setImage(await pickImage())}/>
 					{/* <Button title="Pick image" onPress={async () => setImage(await pickImage())} /> */}
 				</View>
 

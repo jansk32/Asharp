@@ -51,8 +51,8 @@ export default function NotificationScreen({ navigation }) {
 						style={styles.profPicStyle}
 					/>
 				</TouchableOpacity>
-				<Text style={styles.textStyle}>
-					<Text style={styles.ownerStyle}>{sender.name}</Text>
+				<Text style={styles.sendDetails}>
+					<Text style={styles.ownerStyle} onPress={() => navigate('NewProfile', { userId: sender._id })}>{sender.name}</Text>
 					<Text> passed down an artefact, {artefact.name}, for you!</Text>
 				</Text>
 
@@ -88,7 +88,7 @@ export default function NotificationScreen({ navigation }) {
 								ListEmptyComponent={(
 									<>
 										<Text style={styles.textStyle}>You don't have any notifications right now.</Text>
-										<Text style={styles.desc}>When someone send you an artefact, you will see it here.</Text>
+										<Text style={styles.desc}>When someone sends you an artefact, you will see it here.</Text>
 									</>
 								)}
 							/>
@@ -149,7 +149,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		margin: 10,
 		padding: 30,
-		flexWrap: 'wrap',
 		flexDirection: 'row',
 	},
 	desc: {
@@ -162,6 +161,13 @@ const styles = StyleSheet.create({
 	},
 	ownerStyle: {
 		fontWeight: 'bold'
+	},
+	sendDetails: {
+		flex: 1,
+		fontSize: 16,
+		flexWrap: 'wrap',
+		textAlignVertical: 'center',
+		margin: 10,
 	}
 });
 

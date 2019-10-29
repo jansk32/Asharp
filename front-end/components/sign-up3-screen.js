@@ -28,11 +28,16 @@ export default function SignUp3({ navigation }) {
 			}
 		}
 		data.isUser = true;
-		axios.post(`${BACK_END_ENDPOINT}/user/create`, data);
+		await axios.post(`${BACK_END_ENDPOINT}/user/create`, data);
 	}
 
 	// Automatically login to have give available acct details
 	async function login() {
+		const email = await AsyncStorage.getItem('email');
+		const password = await AsyncStorage.getItem('password');
+		console.log('email', email);
+		console.log('password', password);
+
 		const res = await axios.post(`${BACK_END_ENDPOINT}/login/local`, {
 			email: await AsyncStorage.getItem('email'),
 			password: await AsyncStorage.getItem('password')
@@ -54,33 +59,29 @@ export default function SignUp3({ navigation }) {
 	}
 
 	return (
-		<>
-			<ScrollView>
-				<View style={styles.container}>
+		<ScrollView>
+			<View style={styles.container}>
+				<PictureFrame
+					image={image}
+					setImage={setImage}
+					width={Dimensions.get('window').width * 0.25}
+					height={Dimensions.get('window').width * 0.25}
+					editable={true}
+					circular={true}
+				/>
+				<View style={styles.buttonContainer}>
+					<TouchableOpacity
+						onPress={finishSignUp}>
+						<View style={styles.finishButton}>
+							<Text style={styles.whiteText}>
+								Finish
+							</Text>
+						</View>
 
-					<PictureFrame
-						image={image || BLANK_PROFILE_PIC_URI}
-						setImage={setImage}
-						width={Dimensions.get('window').width * 0.25}
-						height={Dimensions.get('window').width * 0.25}
-						editable={true}
-						circular={true}
-					/>
-					<View style={styles.buttonContainer}>
-						<TouchableOpacity
-							onPress={finishSignUp}>
-							<View style={styles.finishButton}>
-								<Text
-									style={styles.whiteText}>
-									Finish
-									</Text>
-							</View>
-
-						</TouchableOpacity>
-					</View>
+					</TouchableOpacity>
 				</View>
-			</ScrollView>
-		</>
+			</View>
+		</ScrollView>
 	);
 }
 
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
 		// backgroundColor: 'white',
 		flex: 1,
 	},
-	buttonContainer:{
+	buttonContainer: {
 		marginTop: 50,
 	},
 	text: {

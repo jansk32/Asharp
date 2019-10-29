@@ -473,7 +473,7 @@ app.delete('/artefact/delete/:id', (req, res) => {
 
 /* Notification routes */
 // Get all notifications that are meant for a certain user
-app.get('/notification/', async ({ query: { recipient } }, res) => {
+app.get('/notification', async ({ query: { recipient } }, res) => {
 	try {
 		const notifications = await Notification.find({ recipient })
 			.populate('recipient')
@@ -485,7 +485,7 @@ app.get('/notification/', async ({ query: { recipient } }, res) => {
 	}
 });
 
-// login local
+// Login local
 app.post('/login/local', passport.authenticate('local'), (req, res) => {
 	res.send(req.user);
 	console.log('LOGIN SESSION ID = ' + req.session.id);

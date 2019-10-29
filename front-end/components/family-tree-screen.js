@@ -199,7 +199,8 @@ class FamilyTreeSvg extends Component {
 											});
 
 											navigation.setParams(null);
-											navigation.navigate('HomeScreen');
+											navigation.goBack();
+											navigation.navigate('Profile');
 										} catch (e) {
 											console.error(e);
 											ToastAndroid.show('Error sending artefact', ToastAndroid.SHORT);

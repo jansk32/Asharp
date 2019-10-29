@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, ActivityIndicator, StyleSheet, View, Image, Dimensions, TouchableHighlight, FlatList } from 'react-native';
+import { Text, ActivityIndicator, StyleSheet, View, Image, Dimensions, TouchableHighlight, FlatList, RefreshControl } from 'react-native';
 import moment from 'moment';
 
 // Import date formatting module moment.js
@@ -10,6 +10,9 @@ const numColumns = 3;
 
 // Format images in the gallery
 function formatData(data, numColumns) {
+    // Sort artefacts in descending order of time
+    data.sort((a, b) => moment(b.date).diff(moment(a.date)));
+
     const numberOfFullRows = Math.floor(data.length / numColumns);
 
     let numberOfElementsLastRow = data.length - numberOfFullRows * numColumns;
@@ -21,7 +24,8 @@ function formatData(data, numColumns) {
 };
 
 
-export default function Gallery({ isLoading, artefacts, navigation }) {
+export default function Gallery({ isLoading, artefacts, navigation, refresh }) {
+    const [refreshing, setRefreshing] = useState(false);
     // Render Item invisible if it's just a placeholder for columns in the grid,
     // if not, render the picture for each grid (Gallery)
     function renderItem({ item, index }) {
@@ -44,8 +48,16 @@ export default function Gallery({ isLoading, artefacts, navigation }) {
     if (isLoading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
+
     return (
         <FlatList
+            refreshControl={<RefreshControl
+                refreshing={refreshing}
+                onRefresh={async () => {
+                    setRefreshing(true);
+                    await refresh();
+                    setRefreshing(false);
+                }} />}
             data={formatData(artefacts, numColumns)}
             keyExtractor={item => item._id}
             renderItem={renderItem}

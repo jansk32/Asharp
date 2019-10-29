@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Platform, Text, TextInput, ActivityIndicator, Image, View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Button, ToastAndroid, Alert } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
-import { BACK_END_ENDPOINT } from '../constants';
+import { BACK_END_ENDPOINT, DATE_FORMAT } from '../constants';
 import AsyncStorage from '@react-native-community/async-storage';
 import DatePicker from 'react-native-datepicker';
 import Icon from 'react-native-vector-icons/EvilIcons';
@@ -119,7 +119,7 @@ function ItemDetailScreen({ navigation, ctx }) {
 						<Text style={styles.owner}>Owned by {owner}</Text>
 					</View>
 					<TouchableOpacity onPress={() => setShowDatePicker(true)} disabled={!isEditing}>
-						<Text style={{borderWidth: isEditing ? 1 : 0, borderColor: 'red', padding: 15}}>Date owned: {date.format('L')}</Text>
+						<Text style={{borderWidth: isEditing ? 1 : 0, borderColor: 'red', padding: 15}}>Date owned: {date.format(DATE_FORMAT)}</Text>
 					</TouchableOpacity>
 					{showDatePicker &&
 						<DateTimePicker

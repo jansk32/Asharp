@@ -53,8 +53,6 @@ function ProfileScreen({ navigation, ctx }) {
 	const [isLoading, setLoading] = useState(true);
 	const currentUser = useCurrentUser();
 	const userId = navigation.state.params && navigation.state.params.userId;
-	const shouldRefreshArtefacts = navigation.state.params && navigation.state.params.shouldRefreshArtefacts;
-	console.log(shouldRefreshArtefacts);
 	const [canChangeSettings, setCanChangeSettings] = useState(false);
 
 	// Get profile details
@@ -127,14 +125,6 @@ function ProfileScreen({ navigation, ctx }) {
 		}
 	}, [currentUser]);
 
-	useEffect(() => {
-		alert('shouldRefreshArtefacts changed');
-		if (shouldRefreshArtefacts) {
-			fetchArtefacts();
-		}
-	}, [shouldRefreshArtefacts]);
-
-
 
 	// Format date
 	moment.locale('en');
@@ -183,14 +173,12 @@ function ProfileScreen({ navigation, ctx }) {
 				</View>
 				<View style={styles.artefactsBox}>
 					<Text style={styles.artText}>My Artefacts</Text>
-					<Gallery artefacts={artefacts} isLoading={isLoading} navigation={navigation} />
-					{/* <FlatList
-						data={formatData(artefacts, numColumns)}
-						keyExtractor={item => item._id}
-						numColumns={3}
-						renderItem={renderItem}
-						ListEmptyComponent={<Text style={styles.artText}>No artefacts yet</Text>}
-					/> */}
+					<Gallery
+						artefacts={artefacts}
+						isLoading={isLoading}
+						navigation={navigation}
+						refresh={fetchArtefacts}
+					/>
 				</View>
 			</ScrollView>
 		</>
