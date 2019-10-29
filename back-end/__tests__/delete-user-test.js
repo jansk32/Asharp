@@ -16,7 +16,7 @@ const User = mongoose.model("userSchema", userSchema);
 describe('User', () => {
     let server = require('../server');
 
-    it('Should delete a user', (done) => {
+    it('Should delete a user', () => {
             let id = "5db58b5b776f7f17e4802269";
             chai.request(server)
             .delete('/user/delete/' + id)
