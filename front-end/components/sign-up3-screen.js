@@ -8,65 +8,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import { pickImage, uploadImage } from '../image-tools';
 
-import { BACK_END_ENDPOINT } from '../constants';
+import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
 import PictureFrame from './picture-frame';
-
-// Stylesheets for formatting and designing layout
-const styles = StyleSheet.create({
-	container: {
-		backgroundColor: 'white',
-		flex: 1,
-	},
-	text: {
-		fontSize: 16,
-		color: 'black',
-		textAlign: 'center',
-	},
-	whiteText: {
-		fontSize: 20,
-		color: 'white',
-		textAlign: 'center',
-	},
-	picButton: {
-		backgroundColor: '#fff',
-		borderWidth: 1,
-		borderColor: '#FBC074',
-		width: Dimensions.get('window').width / 3,
-		height: Dimensions.get('window').width / 11,
-		borderRadius: 50,
-		justifyContent: 'center',
-		alignSelf: 'center',
-		marginBottom: 80,
-	},
-	finishButton: {
-		backgroundColor: '#FBC074',
-		borderWidth: 1,
-		borderColor: '#FBC074',
-		width: Dimensions.get('window').width / 1.75,
-		height: Dimensions.get('window').width / 8,
-		borderRadius: 50,
-		justifyContent: 'center',
-		alignSelf: 'center',
-	},
-	imageStyle: {
-		margin: 2,
-		marginTop: '20%',
-		width: Dimensions.get('window').width * 0.75,
-		height: Dimensions.get('window').width * 0.75,
-		alignSelf: 'center',
-		borderColor: '#233439',
-		borderWidth: 1,
-		borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
-	},
-	buttonBox: {
-		backgroundColor: '#fff',
-		marginTop: '5%',
-		justifyContent: 'space-between',
-		flex: 1,
-		marginBottom: '7.5%',
-	},
-}
-)
 
 // Upload profile picture page.
 export default function SignUp3({ navigation }) {
@@ -114,40 +57,89 @@ export default function SignUp3({ navigation }) {
 		<>
 			<ScrollView>
 				<View style={styles.container}>
-					{/* <Image source={image} style={styles.imageStyle} />
-					<View style={styles.buttonBox}>
-						<TouchableOpacity
-							onPress={async () => setImage(await pickImage())}>
-							<View style={styles.picButton}>
-								<Text
-									style={styles.text}>
-									Pick Picture
-									</Text>
-							</View>
-						</TouchableOpacity>
-					</View> */}
 
 					<PictureFrame
-						image={image}
+						image={image || BLANK_PROFILE_PIC_URI}
 						setImage={setImage}
-						width={Dimensions.get('window').width * 0.75}
-						height={Dimensions.get('window').width * 0.75}
+						width={Dimensions.get('window').width * 0.25}
+						height={Dimensions.get('window').width * 0.25}
 						editable={true}
 						circular={true}
 					/>
+					<View style={styles.buttonContainer}>
+						<TouchableOpacity
+							onPress={finishSignUp}>
+							<View style={styles.finishButton}>
+								<Text
+									style={styles.whiteText}>
+									Finish
+									</Text>
+							</View>
 
-					<TouchableOpacity
-						onPress={finishSignUp}>
-						<View style={styles.finishButton}>
-							<Text
-								style={styles.whiteText}>
-								Finish
-								</Text>
-						</View>
-
-					</TouchableOpacity>
+						</TouchableOpacity>
+					</View>
 				</View>
 			</ScrollView>
 		</>
 	);
 }
+
+// Stylesheets for formatting and designing layout
+const styles = StyleSheet.create({
+	container: {
+		// backgroundColor: 'white',
+		flex: 1,
+	},
+	buttonContainer:{
+		marginTop: 50,
+	},
+	text: {
+		fontSize: 16,
+		color: 'black',
+		textAlign: 'center',
+	},
+	whiteText: {
+		fontSize: 20,
+		color: 'white',
+		textAlign: 'center',
+	},
+	picButton: {
+		backgroundColor: '#fff',
+		borderWidth: 1,
+		borderColor: '#FBC074',
+		width: Dimensions.get('window').width / 3,
+		height: Dimensions.get('window').width / 11,
+		borderRadius: 50,
+		justifyContent: 'center',
+		alignSelf: 'center',
+		marginBottom: 80,
+	},
+	finishButton: {
+		backgroundColor: '#FBC074',
+		borderWidth: 1,
+		borderColor: '#FBC074',
+		width: Dimensions.get('window').width / 1.75,
+		height: Dimensions.get('window').width / 8,
+		borderRadius: 50,
+		justifyContent: 'center',
+		alignSelf: 'center',
+	},
+	imageStyle: {
+		margin: 2,
+		marginTop: '20%',
+		width: Dimensions.get('window').width * 0.25,
+		height: Dimensions.get('window').width * 0.25,
+		alignSelf: 'center',
+		borderColor: '#233439',
+		borderWidth: 1,
+		borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
+	},
+	buttonBox: {
+		backgroundColor: '#fff',
+		marginTop: '5%',
+		justifyContent: 'space-between',
+		flex: 1,
+		marginBottom: '7.5%',
+	},
+}
+)

@@ -201,14 +201,14 @@ const SignUpStack = createStackNavigator({
 		screen: SignUp2Screen,
 		navigationOptions: ({ navigation }) => ({
 			title: 'Enter details',
-			headerTitleStyle: { color: '#EC6268' },
+			// headerTitleStyle: { color: '#EC6268' },
 		}),
 	},
 	SignUp3: {
 		screen: SignUp3Screen,
 		navigationOptions: ({ navigation }) => ({
-			title: 'Choose profile picture!',
-			headerTitleStyle: { color: '#EC6268' }
+			title: 'Choose your profile picture!',
+			// headerTitleStyle: { color: '#EC6268' }
 		}),
 	},
 });
