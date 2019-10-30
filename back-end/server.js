@@ -9,6 +9,7 @@ const moment = require('moment');
 // Environment variables
 const constants = require('./server-constants');
 const { ONESIGNAL_ENDPOINT, ONESIGNAL_APP_ID } = constants;
+const _DEBUG = process.env.NODE_ENV == 'test';
 
 const { buildFamilyTree } = require('../build-family-tree');
 
@@ -18,10 +19,16 @@ const userSchema = require('./schema/userSchema');
 const artefactSchema = require('./schema/artefactSchema');
 const notificationSchema = require('./schema/notificationSchema');
 
-// Create the mongoose model 
-const User = mongoose.model('User', userSchema);
-const Artefact = mongoose.model('Artefact', artefactSchema);
-const Notification = mongoose.model('Notification', notificationSchema);
+// Create the mongoose model
+const User = mongoose.model(
+	_DEBUG ? 'UserTest' : 'User',
+	userSchema);
+const Artefact = mongoose.model(
+	_DEBUG ? 'ArtefactTest' : 'Artefact',
+	artefactSchema);
+const Notification = mongoose.model(
+	_DEBUG ? 'NotifTest' : 'Notification',
+	notificationSchema);
 
 // Connect to mongodb
 require('./controller/mongooseController');
@@ -171,7 +178,10 @@ app.post('/user/create', async ({ body: {
 	});
 
 	// Await save so we can use the new document's id
-	const savedUser = await user.save();
+	const savedUser = await user.save().catch((err) => {
+		res.status(500).json({ success: false });
+		return;
+	});
 
 	// If new user has a spouse, add them as a spouse to their spouse
 	if (spouse) {
@@ -179,7 +189,9 @@ app.post('/user/create', async ({ body: {
 		spouseNode.spouse = savedUser._id;
 		await spouseNode.save();
 	}
-	res.send();
+	res.status(200).json({
+		success: true,
+	});
 });
 
 // Get all users (registered and non-registered)
@@ -222,22 +234,22 @@ app.put('/user/add-parent', async ({ body: { childId, parentId } }, res) => {
 
 // Add parents manually
 app.post('/user/add-parents-manually', async ({ body: { fatherName, fatherDob, fatherPictureUrl, motherName, motherDob, motherPictureUrl, personId } }, res) => {
-	const father = new User({
+	const father = await new User({
 		name: fatherName,
 		dob: fatherDob,
 		gender: 'm',
 		pictureUrl: fatherPictureUrl,
 		isUser: false,
-	});
+	}).save();
 
-	const mother = new User({
+	const mother = await new User({
 		name: motherName,
 		dob: motherDob,
 		gender: 'f',
 		pictureUrl: motherPictureUrl,
 		isUser: false,
 		spouse: father._id,
-	});
+	}).save();
 
 	father.spouse = mother._id;
 
@@ -260,9 +272,9 @@ app.put('/user/add-spouse', async ({ body: { personId, spouseId } }, res) => {
 	}
 
 	person.spouse = spouse._id;
-	await person.save();
 	spouse.spouse = person._id;
-	await spouse.save();
+	await Promise.all([person.save(), spouse.save()]);
+
 	res.send();
 });
 
