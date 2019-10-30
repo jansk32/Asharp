@@ -1,118 +1,169 @@
 process.env.NODE_ENV = 'test';
 
+const { DB_ENDPOINT } = require('../server-constants');
+const server = require("../server");
 const mongoose = require("mongoose");
 const userSchema = require('../schema/userSchema');
 const chai = require('chai');
 const {expect, assert} = require("chai");
 const chaiHttp = require('chai-http');
-const {before, after} = require('mocha');
 const should = chai.should();
 
 chai.use(chaiHttp);
 
-const User = mongoose.model("userSchema", userSchema);
+const User = mongoose.model('UserTest', userSchema);
 
 
 describe('Family Tree', () => {
-    let server = require("../server");
+    let dummy = {
+        father: undefined,
+        mother: undefined,
+        child: undefined,
+        realChild: undefined,
+        realChild2: undefined,
+    }
+    require('../controller/mongooseController');
 
-    beforeEach((done) => {
-        User.remove({}, (err) => { 
-            done();           
-         });      
-    })
+    // make ur orang2 before doing all the tests :) jansen
+    beforeAll(() => {
+        let orang2 = [{
+            name: "Orang",
+            dob: (new Date()).toISOString(),
+            gender: 'm',
+            isUser: true,
+        },
+        {
+            name: "Istri Orang",
+            dob: (new Date()).toISOString(),
+            gender: 'f',
+            isUser: true,
+        },
+        {
+            name: "Anak Orang",
+            dob: (new Date()).toISOString(),
+            gender: 'f',
+            isUser: false
+        },
+        {
+            name: "Bukan Adopsi",
+            dob: (new Date()).toISOString(),
+            gender: 'f',
+            isUser: false,
 
-    // after(() => {
-    //     mongoose.connection.close();
-    // })
+        }, {
+            name: "SIAPA COBA HAYO",
+            dob: (new Date()).toISOString(),
+            gender: 'm',
+            isUser: true
+        }].map((x) => {
+            return new User(x).save();
+        });
+        // makes orang2
+        return Promise.all(orang2).then((listOrang) => {
+            
+            dummy.father = listOrang[0];
+            dummy.mother = listOrang[1];
+            dummy.child = listOrang[2];
+            dummy.realChild = listOrang[3];
+            dummy.realChild2 = listOrang[4];
+            
+            return dummy;
+        });
+    });
+
+    afterAll(() => {
+        return User.remove({}).then(() => 0);
+    });
 
     describe('Get users for family tree', () => {
-        it('Get users by name', async () => {
-            chai.request(server)
-            .get("/user/search/")
-            .send({name: "Sam"})
-            .end((err, res) => {
-                if(err) return done(err);
-                res.status.should.be.equal(200);
-                expect(res.body).to.be.a('array');
-                done();
-            })
-        })
+        /// ini gaada.
+        // it('Get users by name', (done) => {
+        //     chai.request(server)
+        //     .get("/user/search")
+        //     .send({name: "Orang"})
+        //     .end((err, res) => {
+        //         if(err) return done(err);
+        //         res.status.should.be.equal(200);
+        //         expect(res.body).to.be.a('array');
+        //         done();
+        //     })
+        // })
     })
 
     describe("Add a spouse", () => {
-        let parent = {
-            personId: "5db7a00637ec9270aecdecc4",
-            spouseId: "5db7bc13ce456711c0044e2c", 
-        }
-
-        it("Adding manually", async (done) => {
-            let server = require("../server");
+        it("Adding manually", (done) => {
+            let parent = {
+                personId: dummy.father._id,
+                spouseId: dummy.mother._id,
+            }
             chai.request(server)
             .put("/user/add-spouse")
             .send(parent)
-            .end((err, res) => {
-                if (err) {
-                    console.log(err);
-                    throw done(err);
-                }
-                res.status.should.be.equal(200);
+            .then((res) => {
                 done();
-            })
+                res.status.should.be.equal(200);
+
+                return User.findById(parent.personId);
+            }).then((person) => {
+                expect(person.spouse).to.equal(parent.spouseId.toString());
+            });
+            // })
+            // .end((err, res) => {
+            //     if (err) {
+            //         throw done(err);
+            //     }
+            //     res.status.should.be.equal(200);
+                
+            //     done();
+            // });
 
         })
-    })
 
-    describe("Add parent who already has a spouse", () => {
-        let sending ={
-            childId: "5db7b3554dfc8372ac55473d",
-            parentId: "5db7b0a2c048620f97b048df"
-        }
+        it("Add parent to someone with a spouse", (done) => {
+            let sending = {
+                childId: dummy.child._id,
+                parentId: dummy.mother._id,
+            }
 
-        it("Add parent to someone with a spouse", async () => {
-            await chai.request(server)
+            chai.request(server)
             .put("/user/add-parent/")
             .send(sending)
             .end((err, res) => {
                 if(err) {
-                    console.log(err);
                     throw done(err)
                 };
                 res.status.should.be.equal(200);
                 done();
             })
         })
-    })
 
-    describe("Add a parent", () => {
-        let parent = {
-            personId:"5db681c5f0c9670e288908d0",
-            fatherName: "DaddySam", 
-            fatherDob: "1900-09-01", 
-            motherName: "MommySam",
-            motherDob: "1900-09-01"
+        it("Adding new parents manually",(done) => {
+            let parent = {
+                personId: dummy.realChild2._id,
+                fatherName: dummy.father.name, 
+                fatherDob: dummy.father.dob, 
+                motherName: dummy.mother.name,
+                motherDob: dummy.mother.dob,
+            }
 
-        }
-        it("Adding manually", async () => {
-            await chai.request(server)
+            chai.request(server)
             .post("/user/add-parents-manually/")
             .send(parent)
             .end((err, res) => {
                 if (err) return done(err);
                 res.status.should.be.equal(200);
                 done();
-            })
+            });
 
         })
-    })
-    
-    describe("Add a child", () => {
-        let child = {
-            personId:"5db7b53cb74af87369a9a5f6",
-            childId: "5db7b69741cfa373edc11f95"
-        }
-        it("Adding manually", async () => {
-            await chai.request(server)
+
+        it("Adding child manually", (done) => {
+            let child = {
+                personId: dummy.mother._id,
+                childId: dummy.realChild._id,
+            }
+
+            chai.request(server)
             .put("/user/add-child/")
             .send(child)
             .end((err, res) => {

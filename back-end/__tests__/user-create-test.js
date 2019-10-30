@@ -17,20 +17,20 @@ jest.setTimeout(30000)
 
 chai.use(chaiHttp);
 
-const User = mongoose.model("userSchema", userSchema);
+const User = mongoose.model("UserTest", userSchema);
 
 describe('User', () => {
     let server = require('../server')
     var createdUser = null;
 
-    beforeEach((done) => { //Before each test we empty the database
-        User.remove({}, (err) => {
-            done();
-        });
+
+
+    afterEach(() => { //Before each test we empty the database
+        User.remove({});
     });
 
     describe('Create a user', () => {
-        it('Should successfully create a new user', async () => {
+        it('Should successfully create a new user', (done) => {
             let signUp = {
                 name: "Bruce",
                 dob: "2019-01-01T00:00:00.000Z",
@@ -43,11 +43,13 @@ describe('User', () => {
                 pictureUrl: "https://i.imgur.com/QKsSRsu.jpg",
                 isUser: 'true'
             };
-           await chai.request(server)
+            chai.request(server)
                 .post('/user/create')
                 .send(signUp)
                 .end((err, res) => {
                     if (err) return done(err);
+                    let user = res.body;
+                    expect(res.body.success).to.be.true;
                     res.status.should.be.equal(200);
                     done();
                 })

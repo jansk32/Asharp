@@ -30,7 +30,6 @@ target 'mementos' do
 
 
 
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   target 'mementosTests' do
     inherit! :search_paths

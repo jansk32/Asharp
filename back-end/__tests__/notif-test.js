@@ -2,6 +2,8 @@ process.env.NODE_ENV = 'test';
 
 const mongoose = require("mongoose");
 const notifSchema = require('../schema/notificationSchema');
+const userSchema = require('../schema/userSchema');
+const artefactSchema = require('../schema/artefactSchema');
 const chai = require('chai');
 const {expect, assert} = require("chai");
 const chaiHttp = require('chai-http');
@@ -10,16 +12,44 @@ const should = chai.should();
 
 chai.use(chaiHttp);
 
-const Notification = mongoose.model("notifSchema", notifSchema);
+const Notification = mongoose.model("NotifTest", notifSchema);
+const User = mongoose.model("UserTest", userSchema);
+const Artefact = mongoose.model("ArtefactTest", artefactSchema);
+
 
 //Our parent block
 describe('Notification', () => {
     let server = require('../server')
+    let user;
+    let notification;
+    let artefact;
 
-    beforeEach((done) => { //Before each test we empty the database
-        Notification.remove({}, (err) => { 
-           done();           
-        });        
+    beforeEach(() => { //Before each test we empty the database
+        return new User({
+            name: "wek",
+            email: "wek@wek.com",
+            password: "wekwekwek",
+            dob: new Date().toISOString(),
+            pictureUrl: "ioasdjoiasd",
+            gender: 'f',
+            isUser: true
+        }).save().then((newuser) => {
+            user = newuser;
+            return new Artefact({
+                name: 'bagong2',
+                date: (new Date()).toISOString(),
+                owner: user._id,
+                description: "beego2",
+                value: "bebebbe2",
+                file: "hh"
+            }).save();
+        }).then((art) => {
+            return new Notification({
+                sender: user._id,
+                recepient: user._id,
+                artefact: art._id,
+            }).save();
+        });
     });
 
     describe('test notification', () => {
@@ -33,11 +63,12 @@ describe('Notification', () => {
         
         chai.request(server)
         .get('/notification/')
+        .query({ recepient: user._id })
         .send(recepient)
         .end((err,res) => {
             if(err) return done(err);
-            res.status.should.be.equal(200);
-            res.body.should.be.a('array');
+            expect(res.status).to.be.equal(200);
+            expect(res.body).to.be.a('array');
             done();
         })
     })

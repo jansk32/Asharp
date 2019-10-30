@@ -10,7 +10,7 @@ const should = chai.should();
 
 chai.use(chaiHttp);
 
-const User = mongoose.model("userSchema", userSchema);
+const User = mongoose.model("UserTest", userSchema);
 
 //Our parent block
 describe('Logging in', () => {
@@ -19,10 +19,17 @@ describe('Logging in', () => {
     // server.listen(process.env.PORT)
     // enableDestroy(server);
 
-    beforeEach((done) => { //Before each test we empty the database
-        User.remove({}, (err) => { 
-           done();           
-        });        
+    beforeEach(() => { //Before each test we empty the database
+        return new User({
+          email: "fifikwong70@yahoo.com",
+          password: "123456",
+          name: "Orang",
+          dob: (new Date()).toISOString(),
+          gender: 'm',
+          isUser: true,
+          pictureUrl: "https://upload.wikimedia.org/wikipedia/en/8/87/Batman_DC_Comics.png"
+
+        }).save();
     });
 
 
@@ -57,7 +64,7 @@ describe('Logging in', () => {
             .post('/login/local/')
             .send(loginDeets)
             .end((err,res) => {
-                res.status.should.be.equal(200);
+              res.status.should.be.equal(200);
               done();
             })
       })
