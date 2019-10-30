@@ -1,9 +1,9 @@
 import React, { useState, useEffect, Component } from 'react';
-import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, Text, Alert, ActivityIndicator, } from 'react-native';
-import Svg, { Circle, Line, Image, Defs, Pattern, Rect, ClipPath, G, Path, Text as SvgText } from 'react-native-svg';
+import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, Text, Alert, ActivityIndicator, TouchableOpacity, } from 'react-native';
+import Svg, { Circle, Line, Image, Defs, ClipPath, G, Text as SvgText } from 'react-native-svg';
 import { arrangeFamilyTree, mainDrawLines, getAncestors } from '../build-family-tree.js';
 import axios from 'axios';
-import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
+import { Menu, MenuOptions, MenuOption, MenuTrigger, withMenuContext, renderers } from 'react-native-popup-menu';
 const { SlideInMenu } = renderers;
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
@@ -128,7 +128,7 @@ class FamilyTreeSvg extends Component {
 					// Set long press timeout to open menu if a node was tapped
 					const LONG_PRESS_DURATION = 1000;
 					this.longPressTimeout = setTimeout(() => {
-						this.props.ctx.menuActions.openMenu('menu');
+						this.props.ctx.menuActions.openMenu('familyTreeMenu' + this.props.navigation.state.routeName);
 						// Null long press timeout to signal that the timeout has been resolved
 						// so on touch release, a tap isn't registered
 						this.longPressTimeout = null;
@@ -164,7 +164,7 @@ class FamilyTreeSvg extends Component {
 					}
 				}
 			},
-			onPanResponderRelease: () => {
+			onPanResponderRelease: async () => {
 				clearTimeout(this.longPressTimeout);
 
 				this.setState({
@@ -180,6 +180,12 @@ class FamilyTreeSvg extends Component {
 						const { navigation } = this.props;
 						if (navigation.state.params && navigation.state.params.isSendingArtefact) {
 							// Send artefact
+							// But first check if the user wants to send the artefact to themself
+							const userId = await AsyncStorage.getItem('userId');
+							if (this.state.tappedNode._id === userId) {
+								alert('You cannot send an artefact to yourself.');
+								return;
+							}
 							Alert.alert(
 								'Send artefact',
 								`Send artefact to ${this.state.tappedNode.name}?`,
@@ -188,23 +194,28 @@ class FamilyTreeSvg extends Component {
 								},
 								{
 									text: 'OK',
-									onPress: async () => {
-										try {
-											const userRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
-											const user = userRes.data;
-											axios.put(`${BACK_END_ENDPOINT}/artefact/assign`, {
-												artefactId: navigation.state.params.artefactId,
-												recipientId: this.state.tappedNode._id,
-												senderId: user._id,
-											});
+									onPress: () => {
+										const task = async () => {
+											try {
+												const userId = await AsyncStorage.getItem('userId');
+												await axios.put(`${BACK_END_ENDPOINT}/artefact/assign`, {
+													artefactId: navigation.state.params.artefactId,
+													recipientId: this.state.tappedNode._id,
+													senderId: userId,
+												});
 
-											navigation.setParams(null);
-											navigation.goBack();
-											navigation.navigate('Profile');
-										} catch (e) {
-											console.error(e);
-											ToastAndroid.show('Error sending artefact', ToastAndroid.SHORT);
+												navigation.setParams(null);
+												navigation.dismiss();
+												// navigation.popToTop();
+												// navigation.navigate('Profile');
+											} catch (e) {
+												console.trace(e);
+												ToastAndroid.show('Error sending artefact', ToastAndroid.LONG);
+												navigation.goBack();
+											}
 										}
+
+										navigation.navigate('Loading', { loadingMessage: 'Sending Artefact', task });
 									}
 								}]);
 						} else {
@@ -231,12 +242,13 @@ class FamilyTreeSvg extends Component {
 	}
 
 	render() {
-		const { height, width, familyTree, lines, fetchFamilyMembers, navigation: { navigate } } = this.props;
+		const { height, width, familyTree, lines, fetchFamilyMembers, navigation } = this.props;
+		const { navigate } = navigation;
 		const { left, top, zoom } = this.state;
 
 		return (
 			<View {...this._panResponder.panHandlers}>
-				<Menu name="menu" renderer={SlideInMenu}>
+				<Menu name={'familyTreeMenu' + navigation.state.routeName} renderer={SlideInMenu}>
 					<MenuTrigger>
 					</MenuTrigger>
 					<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
@@ -253,6 +265,7 @@ class FamilyTreeSvg extends Component {
 						}} text="Remove spouse" />
 					</MenuOptions>
 				</Menu>
+
 				<Svg
 					width={width}
 					height={height}
@@ -315,7 +328,7 @@ function Node({ data: { x, y, name, _id, pictureUrl, matchesSearch } }) {
 			/>
 			<SvgText
 				x={x}
-				y={y + 100}
+				y={y + 2 * NODE_RADIUS}
 				fill="black"
 				stroke="black"
 				fontSize="30"
@@ -338,6 +351,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 
 	async function fetchFamilyMembers() {
 		try {
+			setLoading(true);
 			const userId = await AsyncStorage.getItem('userId');
 			const familyTreeRes = await axios.get(`${BACK_END_ENDPOINT}/family-tree/${userId}`);
 			const familyTree = familyTreeRes.data;
@@ -380,6 +394,9 @@ function FamilyTreeScreen({ ctx, navigation }) {
 				style={styles.headerContainer}>
 				<Text style={styles.add}>This is your</Text>
 				<Text style={styles.title}>Family Tree</Text>
+				<TouchableOpacity onPress={fetchFamilyMembers} style={styles.refreshButton}>
+					<Icon name="md-refresh" size={45} />
+				</TouchableOpacity>
 				<View style={styles.searchContainer}>
 					<View style={{ paddingTop: 5 }}>
 						<Icon name="md-search" size={25} color={'#2d2e33'} />
@@ -501,6 +518,19 @@ const styles = StyleSheet.create({
 	menuText: {
 		textAlign: 'left',
 		fontSize: 20,
+	},
+	refreshButton: {
+		backgroundColor: 'gold',
+		width: 50,
+		height: 50,
+		position: 'absolute',
+		right: 0,
+		marginRight: 30,
+		top: 0,
+		marginTop: 30,
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderRadius: 25
 	},
 });
 

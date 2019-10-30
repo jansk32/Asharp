@@ -47,6 +47,7 @@ export default function LoginScreen({ navigation }) {
 							placeholder="Enter Email"
 							onChangeText={setEmail}
 							autoCapitalize="none"
+							keyboardType="email-address"
 						/>
 					</View>
 				</View>
@@ -79,9 +80,9 @@ export default function LoginScreen({ navigation }) {
 						}
 					}}>
 					<View style={styles.redButton}>
-						<Text
-							style={styles.whiteText}>
-							Login</Text>
+						<Text style={styles.whiteText}>
+							Login
+						</Text>
 					</View>
 				</TouchableOpacity>
 				<TouchableOpacity
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
-		marginTop: 60
+		marginTop: 30
 	},
 	whiteButton: {
 		backgroundColor: 'white',
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
-		marginTop:20
+		marginTop: 20
 	},
 }
 );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, ActivityIndicator, StyleSheet, View, FlatList, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, ActivityIndicator, StyleSheet, View, FlatList, Dimensions, Image, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
 import OneSignal from 'react-native-onesignal';
@@ -12,36 +12,37 @@ export default function NotificationScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [notifications, setNotifications] = useState([]);
 	const [isLoading, setLoading] = useState(true);
+	const [refreshing, setRefreshing] = useState(false);
+
+	async function fetchNotifications() {
+		const res = await axios.get(`${BACK_END_ENDPOINT}/notification`, {
+			params: {
+				recipient: await AsyncStorage.getItem('userId')
+			}
+		});
+		let notifs = res.data;
+		
+		// Filter out notifications that refer to non-existent users or artefacts
+		notifs = notifs.filter(notif => notif.sender && notif.recipient && notif.artefact);
+		
+		// Sort notifications so the most recent one appears first
+		notifs.sort((a, b) => moment(b.time).diff(moment(a.time)));
+		setNotifications(notifs);
+		setLoading(false);
+	}
 
 	useEffect(() => {
-		async function fetchNotifications() {
-			const userRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
-			const user = userRes.data;
-
-			console.log(user._id);
-
-			const res = await axios.get(`${BACK_END_ENDPOINT}/notification`, {
-				params: {
-					recipient: user._id
-				}
-			});
-			const notifs = res.data;
-			if (notifs) {
-				setLoading(false);
-			}
-			console.log(notifs);
-			// Sort notifications so the most recent one appears first
-			notifs.sort((a, b) => moment(b.time).diff(moment(a.time)));
-			setNotifications(notifs);
-		}
 		fetchNotifications();
-
 		// Fetch notifications whenever a new notification is received
 		OneSignal.addEventListener('received', fetchNotifications);
 	}, []);
 
 	// List of notification when user received an item
 	function renderItem({ item: { sender, artefact }, index }) {
+		// If the notification refers to a non-existent sender or artefact
+		if (!sender || !artefact) {
+			return null;
+		}
 		return (
 			<View style={styles.notifBox}>
 				<TouchableOpacity
@@ -73,28 +74,31 @@ export default function NotificationScreen({ navigation }) {
 				start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
 				style={styles.headerContainer}>
 				<Text style={styles.title}>View Updates</Text>
-				<Text style={styles.galleryTitle}>Notification</Text>
+				<Text style={styles.galleryTitle}>Notifications</Text>
 			</LinearGradient>
-			<ScrollView>
-				{
-					isLoading ?
-						<ActivityIndicator size="large" color="#EC6268" />
-						:
-						(
-							<FlatList
-								data={notifications}
-								renderItem={renderItem}
-								keyExtractor={item => item._id}
-								ListEmptyComponent={(
-									<>
-										<Text style={styles.textStyle}>You don't have any notifications right now.</Text>
-										<Text style={styles.desc}>When someone sends you an artefact, you will see it here.</Text>
-									</>
-								)}
-							/>
-						)
-				}
-			</ScrollView>
+			{
+				isLoading ?
+					<ActivityIndicator size="large" color="#EC6268" />
+					:
+					(
+						<FlatList
+							data={notifications}
+							renderItem={renderItem}
+							keyExtractor={item => item._id}
+							ListEmptyComponent={(
+								<>
+									<Text style={styles.textStyle}>You don't have any notifications right now</Text>
+									<Text style={styles.desc}>When someone sends you an artefact, you will see it here.</Text>
+								</>
+							)}
+							refreshControl={<RefreshControl refreshing={refreshing} onRefresh={async () => {
+								setRefreshing(true);
+								await fetchNotifications();
+								setRefreshing(false);
+							}} />}
+						/>
+					)
+			}
 		</>
 	);
 }

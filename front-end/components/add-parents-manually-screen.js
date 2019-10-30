@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, View, TouchableOpacity, TextInput, Dimensions, ScrollView, ToastAndroid } from 'react-native';
 import axios from 'axios';
-import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
 import { BACK_END_ENDPOINT } from '../constants';
-import AsyncStorage from '@react-native-community/async-storage';
+import DatePanel from './date-panel';
+import PictureFrame from './picture-frame';
+import { uploadImage } from '../image-tools';
 
 moment.locale('en');
 
 export default function AddParentsManuallyScreen({ navigation, childNode }) {
     const { navigate } = navigation;
-    const [fatherDob, setFatherDob] = useState('');
-    const [motherDob, setMotherDob] = useState('');
+    const { fetchFamilyMembers } = navigation.state.params;
+    const [fatherDob, setFatherDob] = useState(moment());
+    const [motherDob, setMotherDob] = useState(moment());
     const [fatherName, setFatherName] = useState('');
     const [motherName, setMotherName] = useState('');
+    const [fatherImage, setFatherImage] = useState({});
+    const [motherImage, setMotherImage] = useState({});
 
     return (
         <ScrollView style={styles.allContainer}>
@@ -32,33 +36,16 @@ export default function AddParentsManuallyScreen({ navigation, childNode }) {
                 />
 
                 <Text style={styles.dobText}>Date of Birth:</Text>
-                <View style={styles.dobPicker}>
-                    <DatePicker
-                        style={styles.dateInputs}
-                        date={fatherDob}
-                        mode="date"
-                        placeholder="Select date"
-                        format="YYYY-MM-DD"
-                        maxDate={moment().format('DD-MM-YYYY')}
-                        confirmBtnText="Confirm"
-                        cancelBtnText="Cancel"
-                        androidMode="spinner"
-                        customStyles={{
-                            dateIcon: {
-                                position: 'absolute',
-                                left: 0,
-                                top: 4,
-                                marginLeft: 0
-                            },
-                            dateInput: {
-                                marginLeft: 0
-                            }
-                        }}
-                        // showIcon={false}
-                        onDateChange={dateString => setFatherDob(dateString)}
-                        value={fatherDob}
-                    />
-                </View>
+                <DatePanel date={fatherDob} setDate={setFatherDob} isEditing={true} />
+
+                <PictureFrame
+                    image={fatherImage}
+                    setImage={setFatherImage}
+                    circular
+                    editable
+                    width={200}
+                    height={200}
+                />
             </View>
 
             <View style={styles.inputContainer}>
@@ -69,47 +56,34 @@ export default function AddParentsManuallyScreen({ navigation, childNode }) {
                     value={motherName}
                     onChangeText={setMotherName}
                 />
+
                 <Text style={styles.dobText}>Date of Birth:</Text>
-                <View style={styles.dobPicker}>
-                    <DatePicker
-                        style={styles.dateInputs}
-                        date={motherDob}
-                        mode="date"
-                        placeholder="Select date"
-                        format="YYYY-MM-DD"
-                        maxDate={moment().format('DD-MM-YYYY')}
-                        confirmBtnText="Confirm"
-                        cancelBtnText="Cancel"
-                        androidMode="spinner"
-                        customStyles={{
-                            dateIcon: {
-                                position: 'absolute',
-                                left: 0,
-                                top: 4,
-                                marginLeft: 0
-                            },
-                            dateInput: {
-                                marginLeft: 0
-                            }
-                        }}
-                        // showIcon={false}
-                        onDateChange={dateString => setMotherDob(dateString)}
-                        value={motherDob}
-                    />
-                </View>
+                <DatePanel date={motherDob} setDate={setMotherDob} isEditing={true} />
+
+                <PictureFrame
+                    image={motherImage}
+                    setImage={setMotherImage}
+                    circular
+                    editable
+                    width={200}
+                    height={200}
+                />
             </View>
 
             <TouchableOpacity style={styles.button} onPress={async () => {
                 const personId = childNode._id;
 
-                axios.post(`${BACK_END_ENDPOINT}/user/add-parents-manually`, {
+                await axios.post(`${BACK_END_ENDPOINT}/user/add-parents-manually`, {
                     fatherName,
                     fatherDob,
+                    fatherPictureUrl: await uploadImage(fatherImage.uri),
                     motherName,
                     motherDob,
+                    motherPictureUrl: await uploadImage(motherImage.uri),
                     personId,
                 });
-
+                
+                fetchFamilyMembers();
                 navigate('FamilyTree');
             }}>
                 <Text style={styles.buttonText}>Add</Text>
@@ -156,11 +130,6 @@ const styles = StyleSheet.create({
         marginRight: '5%',
         backgroundColor: '#f5f7fb',
         borderColor: '#f5f7fb'
-    },
-    searchInput: {
-        flex: 1,
-        marginLeft: 15,
-        padding: 5
     },
     header: {
         padding: 10,

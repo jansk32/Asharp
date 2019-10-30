@@ -2,64 +2,24 @@ import React, { useState, useEffect } from 'react';
 import {
 	Text, View, Image, StyleSheet, TextInput, ScrollView, ToastAndroid, TouchableOpacity, Dimensions,
 } from 'react-native';
-import { NavigationEvents } from 'react-navigation';
-import DatePicker from 'react-native-datepicker';
 import axios from 'axios';
-import { pickImage, uploadImage } from '../image-tools';
+import { uploadImage } from '../image-tools';
 import AsyncStorage from '@react-native-community/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePanel from './date-panel';
 import moment from 'moment';
+import { BACK_END_ENDPOINT } from '../constants';
 
-import { BACK_END_ENDPOINT, DATE_FORMAT } from '../constants';
-
-// Import date formatting module moment.js
 moment.locale('en');
+
 
 export default function UploadImageScreen({ navigation }) {
 	const { navigate } = navigation;
 	const { uri } = navigation.state.params;
-	const [description, setDescription] = useState('');
-	const [value, setValue] = useState('');
+
 	const [name, setName] = useState('');
 	const [date, setDate] = useState(moment());
-	const [showDatePicker, setShowDatePicker] = useState(false);
-
-	//   useEffect(() => {
-	//     // createArtefact();
-	//     console.log("I am in the add image details screen");
-	//     // console.log(await AsyncStorage.getItem('artefactPictureUrl'));
-	//     // setImage(downloadImage());
-	// },[]);
-
-	// Function to create artefact
-	async function createArtefact() {
-		// let dataKeys = ['value', 'name', 'date', 'description','pictureUrl'];
-		const data = {
-			name,
-			date,
-			value,
-			description,
-		};
-		data.owner = await AsyncStorage.getItem('userId');
-		if (validateInput()) {
-			try {
-				data.file = await uploadImage(uri);
-				// setImage(data.file);
-			} catch (e) {
-				ToastAndroid.show('Error uploading image', ToastAndroid.SHORT);
-			}
-			try {
-				console.log(data);
-				await axios.post(`${BACK_END_ENDPOINT}/artefact/create`, data);
-				navigation.popToTop();
-				navigate('Profile', { shouldRefreshArtefacts: true });
-			} catch (e) {
-				console.log(e);
-			}
-		} else {
-			navigate('AddImageDetails');
-		}
-	}
+	const [description, setDescription] = useState('');
+	const [value, setValue] = useState('');
 
 	// Validate input of the item details
 	function validateInput() {
@@ -72,28 +32,45 @@ export default function UploadImageScreen({ navigation }) {
 			return false;
 		}
 		if (!value) {
-			alert('No value inputed');
+			alert('Please describe the sentimental value');
 			return false;
 		}
 		return true;
 	}
 
-	// Initialise image
-	// async function getImage() {
-	// 	// const file = await AsyncStorage.getItem('artefactPictureUrl');
-	// 	setImage({ uri });
-	// 	console.log(file);
-	// }
+	function createArtefact() {
+		async function task() {
+			const data = {
+				name,
+				date,
+				description,
+				value,
+			};
+			data.owner = await AsyncStorage.getItem('userId');
+			try {
+				data.file = await uploadImage(uri);
+			} catch (e) {
+				ToastAndroid.show('Error uploading image', ToastAndroid.LONG);
+				navigation.goBack();
+			}
+			try {
+				console.log(data);
+				await axios.post(`${BACK_END_ENDPOINT}/artefact/create`, data);
+				navigation.popToTop();
+				navigate('Profile');
+			} catch (e) {
+				console.trace(e);
+				ToastAndroid.show('Error uploading artefact', ToastAndroid.LONG);
+				navigation.goBack();
+			}
+		}
+		if (validateInput()) {
+			navigate('Loading', { loadingMessage: 'Uploading Artefact', task });
+		}
+	}
 
-	// Get image to show on the screen
-	// useEffect(() => {
-	// 	setLoad(false);
-	// 	getImage();
-	// 	setLoad(true);
-	// }, []);
-
-	/* Returns a form where the user can fill in their artefacts
-	   name, description and value. */
+	/* Render a form where the user can fill in their artefact's
+	   name, date, description, and value */
 	return (
 		<ScrollView>
 			<View style={styles.container}>
@@ -111,46 +88,8 @@ export default function UploadImageScreen({ navigation }) {
 						/>
 					</View>
 					<View style={styles.inputElem}>
-						{/* <Text style={styles.text}>Date:</Text>
-						<DatePicker
-							style={styles.dateInputs}
-							date={date}
-							mode="date"
-							placeholder="Select date"
-							format="YYYY-MM-DD"
-							maxDate={moment().format('DD-MM-YYYY')}
-							confirmBtnText="Confirm"
-							cancelBtnText="Cancel"
-							androidMode="spinner"
-							customStyles={{
-								dateIcon: {
-									position: 'absolute',
-									left: 0,
-									top: 4,
-									marginLeft: 0
-								},
-								dateInput: {
-									marginLeft: 0
-								}
-							}}
-							showIcon={false}
-							onDateChange={setDate}
-							value={date}
-						/> */}
 						<Text style={styles.text}>Date:</Text>
-						<TouchableOpacity onPress={() => setShowDatePicker(true)}>
-							<Text style={{ borderWidth: 1, padding: 15 }}>{date.format(DATE_FORMAT)}</Text>
-						</TouchableOpacity>
-						{showDatePicker &&
-							<DateTimePicker
-								value={date.toDate()}
-								maximumDate={moment().toDate()}
-								onChange={(event, newDate) => {
-									newDate = newDate || date;
-									setShowDatePicker(Platform.OS === 'ios' ? true : false);
-									setDate(moment(newDate));
-								}} />
-						}
+						<DatePanel date={date} setDate={setDate} isEditing={true} width={Dimensions.get('window').width / 2} />
 					</View>
 					<Text style={styles.text}>Description</Text>
 					<TextInput
@@ -170,16 +109,15 @@ export default function UploadImageScreen({ navigation }) {
 				<TouchableOpacity
 					onPress={createArtefact}
 					style={styles.redButton}>
-					<Text
-						style={styles.whiteText}>
-						Upload Artefact</Text>
+					<Text style={styles.whiteText}>
+						Upload Artefact
+					</Text>
 				</TouchableOpacity>
 			</View>
 		</ScrollView>
 	);
 }
 
-// Stylesheets for styles
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: 'white',
@@ -249,4 +187,4 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 }
-)
+);

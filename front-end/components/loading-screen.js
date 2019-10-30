@@ -1,33 +1,34 @@
-import React, { useState, useEffect, Component } from 'react';
-import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, Text, Alert, ActivityIndicator, } from 'react-native';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Text, ActivityIndicator, Platform } from 'react-native';
 
-export default function LoadingScreen({ isLoading, navigation }) {
-    return(
-        <>  
+
+export default function LoadingScreen({ navigation }) {
+    const { loadingMessage, task } = navigation.state.params;
+
+    useEffect(() => {
+        task();
+    }, []);
+
+    return (
         <View style={styles.container}>
-            <ActivityIndicator size={50} color="#EC6268" />
-            <Text style={styles.text}>Sending Artefact</Text>
+            <ActivityIndicator size={Platform.OS === 'android' ? 50 : 'large'} color="#EC6268" />
+            <Text style={styles.text}>{loadingMessage}</Text>
         </View>
-        </>
     );
 }
 
 const styles = StyleSheet.create({
-    container:{
-        justifyContent:'center',
-        alignItems:'center',
-        textAlignVertical:'center',
-        flex:1,
+    container: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlignVertical: 'center',
+        flex: 1,
     },
-    text:{
+    text: {
         fontSize: 20,
-        fontWeight:'bold',
-        justifyContent:'center',
-        alignSelf:'center',
+        fontWeight: 'bold',
+        justifyContent: 'center',
+        alignSelf: 'center',
         marginTop: 10,
-
     },
 });
-
-

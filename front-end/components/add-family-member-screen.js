@@ -4,11 +4,11 @@ import UserSearchBox from './user-search-box';
 import axios from 'axios';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
-import DatePicker from 'react-native-datepicker';
-import Moment from 'moment';
+import DatePanel from './date-panel';
+import moment from 'moment';
 
 // import moment from 'moment';
-Moment.locale('en');
+moment.locale('en');
 
 import { BACK_END_ENDPOINT } from '../constants';
 import PictureFrame from './picture-frame';
@@ -16,8 +16,6 @@ import { uploadImage } from '../image-tools';
 
 export default function AddFamilyMemberScreen({ navigation }) {
     const { linkedNode, kinship, fetchFamilyMembers } = navigation.state.params;
-
-    const DATE_FORMAT = 'YYYY-MM-DD';
 
     function SearchMemberRoute() {
         return (
@@ -31,9 +29,9 @@ export default function AddFamilyMemberScreen({ navigation }) {
 
     function AddMemberRoute() {
         const [name, setName] = useState('');
-        const [dob, setDob] = useState('');
+        const [dob, setDob] = useState(moment());
         const [gender, setGender] = useState('');
-        const [image, setImage] = useState();
+        const [image, setImage] = useState({});
 
         return (
             <>
@@ -44,39 +42,17 @@ export default function AddFamilyMemberScreen({ navigation }) {
                         value={name}
                         onChangeText={setName}
                     />
-                    <Text style={styles.dobText}>Date of Birth:</Text>
-                    <View style={styles.dobPicker}>
-                        <DatePicker
-                            style={styles.dateInputs}
-                            date={dob}
-                            mode="date"
-                            placeholder="Select date"
-                            format={DATE_FORMAT}
-                            maxDate={Moment().format(DATE_FORMAT)}
-                            confirmBtnText="Confirm"
-                            cancelBtnText="Cancel"
-                            androidMode="spinner"
-                            customStyles={{
-                                dateIcon: {
-                                    position: 'absolute',
-                                    left: 0,
-                                    top: 4,
-                                    marginLeft: 0
-                                },
-                                dateInput: {
-                                    marginLeft: 0
-                                }
-                            }}
-                            // showIcon={false}
-                            onDateChange={newDate => setDob(newDate)}
-                            value={dob}
-                        />
-                    </View>
+
+                    <>
+                        <Text style={styles.dobText}>Date of Birth:</Text>
+                        <DatePanel date={dob} setDate={setDob} isEditing={true} />
+                    </>
+                    
                     {linkedNode.spouse &&
-                        /* Gender options */
+                        // Gender options
                         <View style={styles.gender}>
                             <Text>Gender: </Text>
-                            <View >
+                            <View>
                                 <Text value={gender} onPress={() => setGender('m')} style={{ ...styles.genderButton, backgroundColor: gender === 'm' ? '#579B93' : '#a1a1a1' }}>
                                     Male
                                 </Text>
@@ -88,18 +64,16 @@ export default function AddFamilyMemberScreen({ navigation }) {
                                 </Text>
                             </View>
                         </View>
-                        // <TextInput
-                        //     placeholder="Gender"
-                        //     style={styles.textInput}
-                        //     value={gender}
-                        //     onChangeText={setGender}
-                        // />
                     }
+
                     <Text>Profile picture</Text>
                     <PictureFrame
                         image={image}
                         setImage={setImage}
-                        editable={true}
+                        circular
+                        editable
+                        width={200}
+                        height={200}
                     />
                 </View>
                 <View style={styles.button}>
@@ -183,17 +157,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     genderButton: {
-        // backgroundColor: '#EC6268',
-        // borderColor: '#EC6268',
         borderWidth: 0,
         width: 80,
         height: 30,
         borderRadius: 50,
         textAlign: 'center',
         color: 'white',
-        justifyContent: 'center'
-        // justifyContent: 'center',
-        // alignSelf: 'center',
+        justifyContent: 'center',
+        alignSelf: 'center',
         // marginVertical: 20,
     },
     genderText: {
@@ -259,11 +230,11 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     inputContainer: {
-        marginTop: '10%',
+        marginTop: 15,
+        marginHorizontal: 15,
         backgroundColor: 'white',
         borderRadius: 25,
-        padding: '10%',
-        marginHorizontal: 15,
+        padding: 15,
     },
     buttonText: {
         fontSize: 15,

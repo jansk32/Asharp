@@ -124,7 +124,7 @@ const family = [{
 const radius = 50;
 const margin = 10;
 const baseWidth = 6 * (radius + margin);
-const verticalGap = 4 * (radius + margin);
+const verticalGap = 5 * (radius + margin);
 
 
 // Recursively find the most distant ancestors of a certain individual

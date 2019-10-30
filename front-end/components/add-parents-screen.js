@@ -72,7 +72,6 @@ style={styles.button}
 const styles = StyleSheet.create({
     allContainer: {
         backgroundColor: '#f5f7fb'
-        // backgroundColor: 'white',
     },
     textInput: {
         borderBottomColor: 'black',
