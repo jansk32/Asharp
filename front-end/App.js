@@ -1,5 +1,5 @@
 import React from 'react';
-// Importing all existing screens for navigation
+// Import all existing screens for navigation
 import HomeScreen from './components/home-screen';
 import FamilyTreeScreen from './components/family-tree-screen';
 import ProfileScreen from './components/profile-screen';
@@ -11,7 +11,7 @@ import SignUp1Screen from './components/sign-up1-screen';
 import SignUp2Screen from './components/sign-up2-screen';
 import SignUp3Screen from './components/sign-up3-screen';
 import AddImageDetailsScreen from './components/add-image-details-screen';
-import ProfileSettingScreen from './components/profile-setting';
+import ProfileSettingsScreen from './components/profile-settings';
 import NotificationScreen from './components/notification-screen';
 import AddFamilyMemberScreen from './components/add-family-member-screen';
 import AddParentsScreen from './components/add-parents-screen';
@@ -36,7 +36,7 @@ import Icon2 from 'react-native-vector-icons/Entypo';
 import { Dimensions } from 'react-native';
 
 // Initialize Firebase
-import * as firebase from 'firebase';
+import firebase from 'firebase';
 const firebaseConfig = {
 	apiKey: "AIzaSyC4JLE-2HExIPeHTFE0QZmOt7f6koxTqsE",
 	authDomain: "mementos-7bca9.firebaseapp.com",
@@ -71,8 +71,11 @@ const sendFamilyStack = createStackNavigator({
 			header: null,
 		}
 	},
-	Loading: { 
+	Loading: {
 		screen: LoadingScreen,
+		navigationOptions: {
+			header: null,
+		}
 	},
 },
 );
@@ -85,6 +88,14 @@ const familyStack = createStackNavigator({
 		}
 	},
 	NewProfile: { screen: ProfileScreen },
+	ItemDetail: { screen: ItemDetailScreen },
+	ProfileSettings: { screen: ProfileSettingsScreen },
+	Loading: {
+		screen: LoadingScreen,
+		navigationOptions: {
+			header: null,
+		}
+	},
 	AddFamilyMember: { screen: AddFamilyMemberScreen },
 	AddParentsManually: { screen: AddParentsManuallyScreen },
 	AddParents: { screen: AddParentsScreen },
@@ -97,7 +108,7 @@ const notifStack = createStackNavigator({
 			header: null,
 		}
 	},
-	ItemDetail: { screen: ItemDetailScreen },
+	sendFamilyStack,
 	NewProfile: { screen: ProfileScreen },
 });
 
@@ -110,6 +121,12 @@ const uploadArtefactStack = createStackNavigator({
 		}
 	},
 	AddImageDetails: { screen: AddImageDetailsScreen },
+	Loading: {
+		screen: LoadingScreen,
+		navigationOptions: {
+			header: null,
+		}
+	},
 },
 	{
 		navigationOptions: {
@@ -126,7 +143,7 @@ const profileStack = createStackNavigator({
 		}
 	},
 	sendFamilyStack,
-	ProfileSetting: { screen: ProfileSettingScreen },
+	ProfileSettings: { screen: ProfileSettingsScreen },
 });
 
 const timelineStack = createStackNavigator({
@@ -136,7 +153,9 @@ const timelineStack = createStackNavigator({
 			header: null,
 		}
 	},
-	ItemDetail: { screen: ItemDetailScreen },
+	sendFamilyStack,
+
+	// ItemDetail: { screen: ItemDetailScreen },
 });
 
 // Main bottom tab navigator to navigate the main functionalities of the application
@@ -200,13 +219,13 @@ const MainNavigator = createBottomTabNavigator({
 
 // Navigation between the welcome screen, sign-up screen and login screen.
 const WelcomeStack = createStackNavigator({
-	Welcome: { 
-		screen: WelcomeScreen,  
-		navigationOptions:{
-			header:null
+	Welcome: {
+		screen: WelcomeScreen,
+		navigationOptions: {
+			header: null
 		}
 	},
-	SignUp1: { 
+	SignUp1: {
 		screen: SignUp1Screen,
 	},
 	SignUp2: {
@@ -221,7 +240,7 @@ const WelcomeStack = createStackNavigator({
 			title: 'Choose a profile picture',
 		}),
 	},
-	Login: { 
+	Login: {
 		screen: LoginScreen,
 	},
 });

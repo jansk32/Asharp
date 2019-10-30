@@ -52,13 +52,13 @@ export default function UserSearchBox({ navigation }) {
 				onPress={() => {
 					Alert.alert(
 						`Add ${kinship}`,
-						`Are you sure you would like to add ${name} as your ${kinship}?`,
+						`Are you sure you would like to add ${name} as a ${kinship}?`,
 						[
 							{
-								text: 'Cancel'
+								text: 'No'
 							},
 							{
-								text: 'OK',
+								text: 'Yes',
 								onPress: async () => {
 									if (kinship === KinshipEnum.SPOUSE) {
 										await axios.put(`${BACK_END_ENDPOINT}/user/add-spouse`, {

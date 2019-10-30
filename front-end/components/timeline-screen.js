@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, ActivityIndicator, StyleSheet, View, Image, TouchableOpacity, Dimensions, TouchableHighlight, FlatList } from 'react-native';
+import { Text, ActivityIndicator, StyleSheet, View, Image, TouchableOpacity, Dimensions, RefreshControl } from 'react-native';
 import Timeline from 'react-native-timeline-feed';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
@@ -20,11 +20,8 @@ export default function TimelineScreen({ navigation }) {
 	const [isLoading, setLoading] = useState(true);
 
 	function formatTime(timeData) {
-		// TIMELINE FORMAT
-		// Format date DD-MM-YYYY
 		timeData.forEach(entry => {
 			entry.time = moment(entry.date).format(DATE_FORMAT);
-			console.log(entry.time);
 			entry.key = entry._id
 		});
 
@@ -48,11 +45,11 @@ export default function TimelineScreen({ navigation }) {
 			console.log(res.data)
 			setLoading(false)
 		} catch (e) {
-			console.error(e);
+			console.trace(e);
 		}
 	}
 
-	useEffect(() => {		
+	useEffect(() => {
 		fetchArtefacts();
 	}, []);
 
@@ -77,18 +74,12 @@ export default function TimelineScreen({ navigation }) {
 
 	// Layout for Timeline tab
 	function TimelineRoute() {
+		const [refreshing, setRefreshing] = useState(false);
+
 		if (isLoading) {
 			return <ActivityIndicator size="large" color="#EC6268" />;
 		}
-		if (!artefacts.length) {
-			return (
-				<>
-					<Text style={styles.textStyle}>Your family doesn't have any artefacts right now.</Text>
-					<Text style={styles.desc}>When you or a family member gets an artefact, you will see it here.</Text>
-				</>
-			);
-
-		}
+		
 		return (
 			<Timeline
 				style={styles.list}
@@ -100,6 +91,24 @@ export default function TimelineScreen({ navigation }) {
 				renderDetail={renderDetail}
 				timeContainerStyle={{ minWidth: 85, marginLeft: 10 }}
 				timeStyle={{ color: '#2d2e33' }}
+				flatListProps={{
+					refreshControl: (
+						<RefreshControl
+							refreshing={refreshing}
+							onRefresh={async () => {
+								setRefreshing(true);
+								await fetchArtefacts();
+								setRefreshing(false);
+							}}
+						/>
+					),
+					ListEmptyComponent: (
+						<>
+							<Text style={styles.textStyle}>Your family doesn't have any artefacts right now</Text>
+							<Text style={styles.desc}>When you or a family member gets an artefact, you will see it here.</Text>
+						</>
+					)
+				}}
 			/>
 		);
 	}
@@ -120,7 +129,7 @@ export default function TimelineScreen({ navigation }) {
 				style={styles.container}>
 
 				<Text style={styles.title}>Memories Left Behind</Text>
-				<Text style={styles.artefactTitle}>Artefact</Text>
+				<Text style={styles.artefactTitle}>Artefacts</Text>
 			</LinearGradient>
 			{/* </View> */}
 			<TabView
@@ -166,11 +175,10 @@ const styles = StyleSheet.create({
 	image: {
 		width: 75,
 		height: 75,
-		borderRadius: 10
+		borderRadius: 10,
 	},
 	list: {
 		flex: 1,
-		marginTop: 20,
 	},
 	container: {
 		// flex: 1,

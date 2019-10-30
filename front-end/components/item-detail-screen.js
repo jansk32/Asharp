@@ -4,12 +4,11 @@ import axios from 'axios';
 import moment from 'moment';
 import { BACK_END_ENDPOINT, DATE_FORMAT } from '../constants';
 import AsyncStorage from '@react-native-community/async-storage';
-import DatePicker from 'react-native-datepicker';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
 import LinearGradient from 'react-native-linear-gradient';
 const { SlideInMenu } = renderers;
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePanel from './date-panel';
 
 moment.locale('en');
 
@@ -17,19 +16,19 @@ moment.locale('en');
 // See the details of each individual artefact
 function ItemDetailScreen({ navigation, ctx }) {
 	const { navigate } = navigation;
-	const { artefactId } = navigation.state.params;
+	const { artefactId } = navigation.state.params || {};
 	const [owner, setOwner] = useState('');
 	const [isLoading, setLoading] = useState(true);
 	const [currentUser, setCurrentUser] = useState();
 	const [isEditing, setIsEditing] = useState(false);
+	const [isArtefactOwner, setIsArtefactOwner] = useState(false);
 	const [artefact, setArtefact] = useState({});
-	const [showDatePicker, setShowDatePicker] = useState(false);
 
 	/* Editing the input when the edit button is pressed */
 	const [name, setName] = useState('');
+	const [date, setDate] = useState(moment());
 	const [description, setDescription] = useState('');
 	const [value, setValue] = useState('');
-	const [date, setDate] = useState(moment());
 
 	useEffect(() => {
 		// Get a specific artefact
@@ -60,12 +59,22 @@ function ItemDetailScreen({ navigation, ctx }) {
 	}, []);
 
 	// Update artefact attribute states when artefact changes
-	useEffect(() => {
+
+	function setArtefactDetails() {
 		setName(artefact.name);
 		setDescription(artefact.description);
 		setValue(artefact.value);
 		setDate(moment(artefact.date));
+	}
+
+	useEffect(() => {
+		setArtefactDetails();
 	}, [artefact]);
+
+	useEffect(() => {
+		setIsArtefactOwner(currentUser && artefact.owner === currentUser._id);
+	}, [currentUser, artefact]);
+
 
 	return (
 		<ScrollView>
@@ -79,58 +88,79 @@ function ItemDetailScreen({ navigation, ctx }) {
 					<ActivityIndicator size="large" color="#0000ff" animating={isLoading} />
 				}
 				<View style={styles.headerCont}>
-					<View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+					<View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
 						<TextInput
-							style={[styles.title, { color: isEditing ? 'gray' : 'black' }]}
+							style={[styles.title, { color: isEditing ? 'gray' : 'black', width: 260 }]}
 							value={name}
 							onChangeText={setName}
 							editable={isEditing}
+							multiline={true}
 						/>
-						<View style={{ justifyContent: 'center' }}>
-							<Icon
-								name="navicon" size={40} color={'#2d2e33'}
-								onPress={() => ctx.menuActions.openMenu('itemMenu')}
-							/>
-						</View>
+						{
+							isArtefactOwner &&
+							(
+								<>
+									<View style={{ justifyContent: 'center' }}>
+										<Icon
+											name="navicon" size={40} color={'#2d2e33'}
+											onPress={() => ctx.menuActions.openMenu('itemMenu')}
+										/>
+									</View>
+									<Menu name="itemMenu" renderer={SlideInMenu}>
+										<MenuTrigger>
+										</MenuTrigger>
+										<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
+											<MenuOption
+												onSelect={() => {
+													// Reset artefact details after canceling edits
+													if (isEditing &&
+														(name !== artefact.name || !date.isSame(artefact.date) || description !== artefact.description || value !== artefact.value)) {
+														Alert.alert('Cancel edits', 'Are you sure you would like to discard your changes?', [
+															{
+																text: 'No'
+															}, {
+																text: 'Yes',
+																onPress: () => {
+																	setArtefactDetails();
+																	setIsEditing(!isEditing);
+																}
+															}
+														]);
+													} else {
+														setIsEditing(!isEditing);
+													}
+												}}
+												text={isEditing ? 'Cancel Edits' : 'Edit Artefact'} />
+											<MenuOption onSelect={() => {
+												Alert.alert('Delete artefact', 'Are you sure you would like to delete this artefact?', [
+													{
+														text: 'No'
+													},
+													{
+														text: 'Yes',
+														onPress: async () => {
+															await axios.delete(`${BACK_END_ENDPOINT}/artefact/delete/${artefactId}`);
+															ToastAndroid.show('Artefact deleted', ToastAndroid.SHORT);
+															navigation.dismiss();
+															{/* navigation.navigate('Profile'); */}
+														}
+													}
+												]);
+											}} text="Delete Artefact" />
+										</MenuOptions>
+									</Menu>
+								</>
+							)
+						}
 					</View>
-					<Menu name="itemMenu" renderer={SlideInMenu}>
-						<MenuTrigger>
-						</MenuTrigger>
-						<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
-							<MenuOption onSelect={() => setIsEditing(true)} text="Edit Artefact" />
-							<MenuOption onSelect={() => {
-								Alert.alert('Delete artefact', 'Are you sure you would like to delete this artefact?', [
-									{
-										text: 'Cancel'
-									},
-									{
-										text: 'OK',
-										onPress: async () => {
-											await axios.delete(`${BACK_END_ENDPOINT}/artefact/delete/${artefactId}`);
-											ToastAndroid.show('Artefact deleted', ToastAndroid.SHORT);
-											navigation.goBack();
-										}
-									}
-								]);
-							}} text="Delete Artefact" />
-						</MenuOptions>
-					</Menu>
+
 					<View style={styles.headerDesc}>
 						<Text style={styles.owner}>Owned by {owner}</Text>
 					</View>
-					<TouchableOpacity onPress={() => setShowDatePicker(true)} disabled={!isEditing}>
-						<Text style={{borderWidth: isEditing ? 1 : 0, borderColor: 'red', padding: 15}}>Date owned: {date.format(DATE_FORMAT)}</Text>
-					</TouchableOpacity>
-					{showDatePicker &&
-						<DateTimePicker
-							value={date.toDate()}
-							maximumDate={moment().toDate()}
-							onChange={(event, newDate) => {
-								newDate = newDate || date;
-								setShowDatePicker(Platform.OS === 'ios' ? true : false);
-								setDate(moment(newDate));
-							}} />
-					}
+				</View>
+				<View style={[styles.date, { marginBottom: 20 }]}>
+					<Text style={[styles.boldHeader, {marginRight: 20}]}>Date owned:</Text>
+					<DatePanel date={date} setDate={setDate} isEditing={isEditing} />
 				</View>
 				<View style={styles.desc}>
 					<Text style={styles.boldHeader}>Description:</Text>
@@ -154,7 +184,7 @@ function ItemDetailScreen({ navigation, ctx }) {
 				</View>
 				{
 					// If the artefact owner is the current user, allow them to send the artefact
-					currentUser && artefact.owner === currentUser._id &&
+					isArtefactOwner &&
 					<View style={styles.buttonBox}>
 						{isEditing ?
 							(
@@ -201,14 +231,6 @@ function ItemDetailScreen({ navigation, ctx }) {
 
 }
 
-{/* ItemDetailScreen.navigationOptions = ({ navigation }) => {
-	return {
-		title: 'item detail title',
-		headerRight: () => (
-			<Button onPress={() => alert('Header button pressed')} />
-		),
-	};
-}; */}
 
 ItemDetailScreen.navigationOptions = {
 	title: 'my title'
@@ -264,6 +286,11 @@ const styles = StyleSheet.create({
 	dateStyle: {
 		borderLeftColor: '#fff',
 		// alignSelf: 'flex-end',
+	},
+	date: {
+		flexDirection: 'row',
+		marginHorizontal: '8%',
+		alignItems: 'center',
 	},
 	boldHeader: {
 		fontWeight: 'bold',

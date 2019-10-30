@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
 	Platform, Text, View, StyleSheet, TextInput, TouchableOpacity, ToastAndroid, Dimensions,
 } from 'react-native';
-import DatePicker from 'react-native-datepicker';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePanel from './date-panel';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 import { DATE_FORMAT } from '../constants';
@@ -74,19 +73,7 @@ export default function SignUp2({ navigation }) {
 				</View>
 				<View style={styles.inputElem}>
 					<Text style={styles.text}>Date of Birth</Text>
-					<TouchableOpacity onPress={() => setShowDatePicker(true)}>
-						<Text style={{ borderWidth: 1, padding: 15 }}>{dob.format(DATE_FORMAT)}</Text>
-					</TouchableOpacity>
-					{showDatePicker &&
-						<DateTimePicker
-							value={dob.toDate()}
-							maximumDate={moment().toDate()}
-							onChange={(event, newDob) => {
-								newDob = newDob || dob;
-								setShowDatePicker(Platform.OS === 'ios' ? true : false);
-								setDob(moment(newDob));
-							}} />
-					}
+					<DatePanel date={dob} setDate={setDob} isEditing={true} />
 				</View>
 				<View style={styles.inputElem}>
 					<Text style={styles.text}>Password</Text>
@@ -170,10 +157,10 @@ const styles = StyleSheet.create({
 	inputElem: {
 		marginBottom: 18,
 	},
-	gender:{
-        padding: 5,
-        flexDirection:'row',
-		justifyContent:'space-around',
+	gender: {
+		padding: 5,
+		flexDirection: 'row',
+		justifyContent: 'space-around',
 		marginBottom: 18,
 	},
 	genderButton: {

@@ -1,27 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, StyleSheet, TextInput, TouchableOpacity, ToastAndroid, Dimensions, Image, ScrollView, Alert, ActivityIndicator
+	Text, View, StyleSheet, TextInput, TouchableOpacity, ToastAndroid, Dimensions, ScrollView, Alert, ActivityIndicator
 } from 'react-native';
-import DatePicker from 'react-native-datepicker';
 import AsyncStorage from '@react-native-community/async-storage';
-import { pickImage, uploadImage } from '../image-tools';
+import { uploadImage } from '../image-tools';
 import axios from 'axios';
 import OneSignal from 'react-native-onesignal';
 import moment from 'moment';
 import LinearGradient from 'react-native-linear-gradient';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePanel from './date-panel';
 
-import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI, DATE_FORMAT } from '../constants';
+import { BACK_END_ENDPOINT } from '../constants';
+import PictureFrame from './picture-frame';
 
-// import moment from 'moment';
 moment.locale('en');
 
 // Edit user details: Name, DOB, password, profile picture
-export default function ProfileSettingScreen({ navigation }) {
+export default function ProfileSettingsScreen({ navigation }) {
 	const { navigate } = navigation;
-	// const handleProfileChange = navigation.getParam('handleProfileChange');
-	const { setProfile } = navigation.state.params;
-
+	const { viewedUserId, setProfile } = navigation.state.params;
 	const [user, setUser] = useState({});
 
 	const [name, setName] = useState('');
@@ -30,27 +27,26 @@ export default function ProfileSettingScreen({ navigation }) {
 	const [password, setPassword] = useState('');
 	const [image, setImage] = useState({});
 	const [isLoading, setLoading] = useState(true);
-	const [showDatePicker, setShowDatePicker] = useState(false);
-
+	const [isCurrentUser, setIsCurrentUser] = useState(false);
 
 	// Validate name and new password
-	function validateInput() {
+	function validatePassword() {
 		// Check if old password is the same as the new password
 		if (password && user.password !== oldPassword) {
 			alert('Old password does not match! >:)');
 			return false;
-		}
-		else if (password && password.length < 6) {
+		} else if (password && password.length < 6) {
 			alert('Password must be at least 6 characters long');
 			return false;
 		}
 		return true;
 	}
 
-	// Post profile
-	// TODO: FIX ERROR -> AFTER CHANGING SETTING, RELOGIN THE PERSON
 	async function updateProfile() {
-		validateInput();
+		if (!validatePassword()) {
+			return;
+		}
+
 		// Upload current image
 		const data = {};
 		if (name) {
@@ -61,17 +57,18 @@ export default function ProfileSettingScreen({ navigation }) {
 		}
 		if (password) {
 			data.password = password;
+			await AsyncStorage.setItem('password', password);
 		}
 		if (!image.uri.includes('firebase')) {
 			const newImage = await uploadImage(image.uri);
 			data.pictureUrl = newImage;
 		}
 
-		const userId = await AsyncStorage.getItem('userId');
-		const res = await axios.put(`${BACK_END_ENDPOINT}/user/update/${userId}`, data);
+		const res = await axios.put(`${BACK_END_ENDPOINT}/user/update/${viewedUserId}`, data);
 		const updatedProfile = res.data;
 		console.log(updatedProfile);
 		setProfile(updatedProfile);
+		navigation.goBack();
 	}
 
 	async function logout() {
@@ -81,16 +78,22 @@ export default function ProfileSettingScreen({ navigation }) {
 			OneSignal.removeExternalUserId();
 			navigate('Welcome');
 		} catch (e) {
-			ToastAndroid.show('Error logging out', ToastAndroid.SHORT);
+			ToastAndroid.show('Error logging out', ToastAndroid.LONG);
 		}
 	}
 
 	// Get user details
 	useEffect(() => {
 		async function fetchProfile() {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
+			const currentUserId = await AsyncStorage.getItem('userId');
+			if (currentUserId === viewedUserId) {
+				setIsCurrentUser(true);
+			}
+
+			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${viewedUserId}`);
 			const user = res.data;
 			console.log(user);
+
 			setUser(user);
 			setName(user.name);
 			setDob(moment(user.dob));
@@ -104,22 +107,10 @@ export default function ProfileSettingScreen({ navigation }) {
 	return (
 		<ScrollView>
 			<View style={styles.container}>
-				<Image source={{ uri: image.uri || BLANK_PROFILE_PIC_URI }} style={styles.imageStyle} />
+				<PictureFrame image={image} setImage={setImage} circular editable width={Dimensions.get('window').width / 3} height={Dimensions.get('window').width / 3} />
 				{
-					isLoading &&
-					<ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />
+					isLoading && <ActivityIndicator size="large" />
 				}
-				<View style={styles.buttonBox}>
-					<TouchableOpacity
-						onPress={async () => setImage(await pickImage())}>
-						<View style={styles.picButton}>
-							<Text
-								style={styles.buttonText}>
-								Pick Picture
-			  					</Text>
-						</View>
-					</TouchableOpacity>
-				</View>
 				<View style={styles.inputBox}>
 					<View style={styles.inputElem}>
 						<Text style={styles.text}>Full Name:</Text>
@@ -130,78 +121,46 @@ export default function ProfileSettingScreen({ navigation }) {
 							style={styles.textInput}
 						/>
 					</View>
+
 					<View style={styles.inputElem}>
 						<Text style={styles.text}>Date of Birth:</Text>
-						<TouchableOpacity onPress={() => setShowDatePicker(true)}>
-							<Text style={{ borderWidth: 1, padding: 15 }}>{dob.format(DATE_FORMAT)}</Text>
-						</TouchableOpacity>
-						{showDatePicker &&
-							<DateTimePicker
-								value={dob.toDate()}
-								maximumDate={moment().toDate()}
-								onChange={(event, newDob) => {
-									newDob = newDob || dob;
-									setShowDatePicker(Platform.OS === 'ios' ? true : false);
-									setDob(moment(newDob));
-								}} />
-						}
+						<DatePanel date={dob} setDate={setDob} isEditing={true} width={Dimensions.get('window').width / 2.5} />
+					</View>
 
-						{/* <DatePicker
-							style={styles.dateInputs}
-							date={dob || user.dob}
-							mode="date"
-							placeholder={moment(user.dob).format(DATE_FORMAT)}
-							format={DATE_FORMAT}
-							maxDate={moment().format(DATE_FORMAT)}
-							confirmBtnText="Confirm"
-							cancelBtnText="Cancel"
-							androidMode="spinner"
-							customStyles={{
-								dateIcon: {
-									position: 'absolute',
-									left: 0,
-									top: 4,
-									marginLeft: 0
-								},
-								dateInput: {
-									// borderColor: 'white',
-								}
-							}}
-							showIcon={false}
-							onDateChange={(dateStr, date) => setDob(moment(date))}
-						/> */}
-					</View>
-					<View style={styles.inputElem}>
-						<Text style={styles.text}>Old Password:</Text>
-						<TextInput
-							placeholder={'Enter Old Password'}
-							secureTextEntry={true}
-							onChangeText={setOldPassword}
-							value={oldPassword}
-							style={styles.textInput}
-							autoCapitalize="none"
-						/>
-					</View>
-					<View style={styles.inputElem}>
-						<Text style={styles.text}> New Password:</Text>
-						<TextInput
-							placeholder='Enter New Password'
-							secureTextEntry={true}
-							onChangeText={setPassword}
-							value={password}
-							style={styles.textInput}
-							autoCapitalize="none"
-						/>
-					</View>
+					{
+						isCurrentUser &&
+						(
+							<>
+								<View style={styles.inputElem}>
+									<Text style={styles.text}>Old Password:</Text>
+									<TextInput
+										placeholder="Enter Old Password"
+										secureTextEntry
+										value={oldPassword}
+										onChangeText={setOldPassword}
+										style={styles.textInput}
+										autoCapitalize="none"
+									/>
+								</View>
+								<View style={styles.inputElem}>
+									<Text style={styles.text}> New Password:</Text>
+									<TextInput
+										placeholder="Enter New Password"
+										secureTextEntry
+										value={password}
+										onChangeText={setPassword}
+										style={styles.textInput}
+										autoCapitalize="none"
+									/>
+								</View>
+							</>
+						)
+					}
 				</View>
 				<LinearGradient colors={['#c33764', '#1d2671']}
 					start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
 					style={styles.redButton}>
-					<TouchableOpacity
-						onPress={async () => {
-							await updateProfile();
-							navigate('Profile');
-						}}>
+					<TouchableOpacity onPress={updateProfile}>
 						<Text style={styles.whiteText}>
 							Save Changes
 						</Text>
@@ -209,26 +168,34 @@ export default function ProfileSettingScreen({ navigation }) {
 				</LinearGradient>
 				<TouchableOpacity
 					onPress={() => {
-						Alert.alert('Delete profile', 'Are you sure you would like to delete your profile? You will lose all of your artefacts. This action cannot be undone.', [
+						Alert.alert('Delete account', 'Are you sure you would like to delete this account? All currently owned artefacts will be lost. This action cannot be undone.', [
 							{
-								text: 'Cancel'
+								text: 'No'
 							},
 							{
-								text: 'OK',
-								onPress: async () => {
-									setLoading(true);
-									await axios.delete(`${BACK_END_ENDPOINT}/user/delete/${await AsyncStorage.getItem('userId')}`);
-									setLoading(false);
-									logout();
+								text: 'Yes',
+								onPress: () => {
+									async function task() {
+										try {
+											await axios.delete(`${BACK_END_ENDPOINT}/user/delete/${viewedUserId}`);
+											if (isCurrentUser) {
+												logout();
+											} else {
+												navigate('FamilyTree');
+											}
+										} catch (e) {
+											ToastAndroid.show('Error deleting account', ToastAndroid.LONG);
+										}
+									}
+									navigate('Loading', {loadingMessage: 'Deleting Account', task});
 								},
 							}
 						])
 					}}>
 					<View style={styles.redButton}>
-						<Text
-							style={styles.whiteText}>
-							Delete profile
-							</Text>
+						<Text style={styles.whiteText}>
+							Delete Account
+						</Text>
 					</View>
 				</TouchableOpacity>
 			</View>
@@ -281,13 +248,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignSelf: 'center',
 	},
-	imageStyle: {
-		margin: 2,
-		marginTop: '10%',
-		width: Dimensions.get('window').width / 3,
-		height: Dimensions.get('window').width / 3,
-		alignSelf: 'center',
-		borderRadius: 20,
+	header: {
+		marginTop: 15,
+		// alignItems: 'center',
 	},
 	buttonBox: {
 		backgroundColor: '#fff',
@@ -295,10 +258,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		flex: 1,
 		marginBottom: '7.5%',
-	},
-	container: {
-		backgroundColor: 'white',
-		flex: 1,
 	},
 	whiteText: {
 		fontSize: 20,
@@ -308,6 +267,7 @@ const styles = StyleSheet.create({
 	inputBox: {
 		justifyContent: 'space-between',
 		paddingHorizontal: 40,
+		marginTop: 60,
 		marginBottom: 40,
 	},
 	redButton: {
@@ -326,7 +286,7 @@ const styles = StyleSheet.create({
 		alignContent: 'center',
 		padding: 5,
 		paddingLeft: 10,
-		width: Dimensions.get('window').width / 2,
+		width: Dimensions.get('window').width / 2.5,
 	},
 	dateInputs: {
 		alignContent: 'center',

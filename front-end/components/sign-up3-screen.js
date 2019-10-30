@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, Image, StyleSheet, ScrollView,
+	Text, View, StyleSheet, ScrollView,
 	ToastAndroid, TouchableOpacity, Dimensions
 } from 'react-native';
-import { NavigationEvents } from 'react-navigation';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
-import { pickImage, uploadImage } from '../image-tools';
+import { uploadImage } from '../image-tools';
 
-import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI } from '../constants';
+import { BACK_END_ENDPOINT } from '../constants';
 import PictureFrame from './picture-frame';
 
 // Upload profile picture page.
@@ -47,15 +46,18 @@ export default function SignUp3({ navigation }) {
 	}
 
 	// Finish sign up and log in straight into the home page
-	async function finishSignUp() {
-		const pictureUrl = await uploadImage(image.uri);
-		try {
-			const res = await AsyncStorage.setItem('pictureUrl', pictureUrl);
-		} catch (e) {
-			ToastAndroid.show('Error storing picture URL', ToastAndroid.SHORT);
+	function finishSignUp() {
+		async function task() {
+			const pictureUrl = await uploadImage(image.uri);
+			try {
+				await AsyncStorage.setItem('pictureUrl', pictureUrl);
+			} catch (e) {
+				ToastAndroid.show('Error storing picture URL', ToastAndroid.SHORT);
+			}
+			await uploadSignUpData();
+			await login();
 		}
-		await uploadSignUpData();
-		await login();
+		navigate('Loading', {loadingMessage: 'Creating Account', task});
 	}
 
 	return (
@@ -64,8 +66,8 @@ export default function SignUp3({ navigation }) {
 				<PictureFrame
 					image={image}
 					setImage={setImage}
-					width={Dimensions.get('window').width * 0.25}
-					height={Dimensions.get('window').width * 0.25}
+					width={Dimensions.get('window').width * 0.75}
+					height={Dimensions.get('window').width * 0.75}
 					editable={true}
 					circular={true}
 				/>
@@ -77,7 +79,6 @@ export default function SignUp3({ navigation }) {
 								Finish
 							</Text>
 						</View>
-
 					</TouchableOpacity>
 				</View>
 			</View>
@@ -85,10 +86,8 @@ export default function SignUp3({ navigation }) {
 	);
 }
 
-// Stylesheets for formatting and designing layout
 const styles = StyleSheet.create({
 	container: {
-		// backgroundColor: 'white',
 		flex: 1,
 	},
 	buttonContainer: {

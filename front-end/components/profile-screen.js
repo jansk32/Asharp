@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Text, ActivityIndicator, StyleSheet, View, Image, Dimensions, TouchableOpacity, Button, ToastAndroid } from 'react-native';
+import { Text, ActivityIndicator, StyleSheet, View, Image, Dimensions, TouchableOpacity, Button, ToastAndroid, RefreshControl } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import moment from 'moment';
@@ -13,87 +13,18 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuConte
 const { SlideInMenu } = renderers;
 
 // Environment variables
-import { BACK_END_ENDPOINT, BLANK_PROFILE_PIC_URI, DATE_FORMAT } from '../constants';
+import { BACK_END_ENDPOINT, DATE_FORMAT } from '../constants';
 import PictureFrame from './picture-frame';
-
-// Number 
-const numColumns = 3;
-
-// To format data
-const formatData = (data, numColumns) => {
-	const fullRowsNum = Math.floor(data.length / numColumns);
-
-	let numberOfElementsLastRow = data.length - (fullRowsNum * numColumns);
-	while (numberOfElementsLastRow !== numColumns && numberOfElementsLastRow !== 0) {
-		data.push({ key: `blank-${numberOfElementsLastRow}`, empty: true });
-		numberOfElementsLastRow++;
-	}
-	return data;
-};
-
-function useCurrentUser() {
-	const [currentUser, setCurrentUser] = useState({});
-
-	useEffect(() => {
-		async function fetchCurrentUser() {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
-			setCurrentUser(res.data);
-		}
-		fetchCurrentUser();
-	}, []);
-
-	return currentUser;
-}
 
 
 function ProfileScreen({ navigation, ctx }) {
 	const { navigate } = navigation;
-	const [profile, setProfile] = useState({});
+	const [viewedUser, setViewedUser] = useState('');
 	const [artefacts, setArtefacts] = useState([]);
 	const [isLoading, setLoading] = useState(true);
-	const currentUser = useCurrentUser();
-	const userId = navigation.state.params && navigation.state.params.userId;
 	const [canChangeSettings, setCanChangeSettings] = useState(false);
+	const [isCurrentUser, setIsCurrentUser] = useState(false);
 
-	// Get profile details
-	async function getProfile() {
-		let targetId = userId
-		console.log(targetId);
-		if (!userId) {
-			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
-			targetId = currentUserRes.data._id;
-		}
-		try {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${targetId}`);
-			setProfile(res.data);
-			setLoading(false);
-		} catch (e) {
-			console.trace(e);
-		}
-	}
-
-	// Get the artefacts of the user
-	async function fetchArtefacts() {
-		let targetId = userId;
-		if (!userId) {
-			const currentUserRes = await axios.get(`${BACK_END_ENDPOINT}/user/find/${await AsyncStorage.getItem('userId')}`);
-			targetId = currentUserRes.data._id;
-		}
-		try {
-			const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/findbyowner/${targetId}`);
-			setArtefacts(res.data);
-			setLoading(false);
-		} catch (e) {
-			console.trace(e);
-		}
-	}
-
-	async function fetchProfile() {
-		if (profile === null || artefacts.length < 1) {
-			setLoading(true);
-		}
-		await getProfile();
-	}
 
 	async function logout() {
 		try {
@@ -108,21 +39,73 @@ function ProfileScreen({ navigation, ctx }) {
 
 	// Get profile and artefacts by owner
 	useEffect(() => {
-		fetchProfile();
+		async function fetchViewedUser() {
+			try {
+				setLoading(true);
+				const currentUserId = await AsyncStorage.getItem('userId');
+				console.log(currentUserId);
+				let viewedUserId;
+				if (navigation.state.routeName === 'NewProfile') {
+					viewedUserId = navigation.state.params.userId;
+					if (viewedUserId === currentUserId) {
+						setCanChangeSettings(true);
+						setIsCurrentUser(true);
+					}
+				} else {
+					viewedUserId = await AsyncStorage.getItem('userId');
+					setCanChangeSettings(true);
+					setIsCurrentUser(true);
+				}
+				const res = await axios.get(`${BACK_END_ENDPOINT}/user/find/${viewedUserId}`);
+				setViewedUser(res.data);
+				if (!res.data.isUser) {
+					setCanChangeSettings(true);
+				}
+				console.log('profile is', res.data.name);
+				console.log('profile id is', res.data._id);
+				setLoading(false);
+			} catch (e) {
+				console.trace(e);
+			}
+		}
+		fetchViewedUser();
+	}, []);
+
+	async function fetchArtefacts() {
+		try {
+			setLoading(true);
+			const res = await axios.get(`${BACK_END_ENDPOINT}/artefact/findbyowner/${viewedUser._id}`);
+			setArtefacts(res.data);
+			setLoading(false);
+		} catch (e) {
+			console.trace(e);
+		}
+	}
+
+	// Update artefacts according to fetched profile
+	useEffect(() => {
 		fetchArtefacts();
-	}, [userId]);
+	}, [viewedUser]);
 
 	// Update canChangeSettings once currentUser is loaded
-	useEffect(() => {
-		if (!userId) {
-			// No userId from navigation, this means the screen was opened from bottom tab
-			// So the viewed user is the current user
-			setCanChangeSettings(true);
-		} else if (userId === currentUser._id) {
-			// Viewed user is the same as the current user
-			setCanChangeSettings(true);
-		}
-	}, [currentUser]);
+	// useEffect(() => {
+	// 	if (!userId) {
+	// 		// No userId from navigation, this means the screen was opened from bottom tab
+	// 		// So the viewed user is the current user
+	// 		setCanChangeSettings(true);
+	// 		setIsCurrentUser(true);
+	// 		alert('no user id');
+	// 	} else if (userId === currentUserId._id) {
+	// 		// Viewed user is the same as the current user
+	// 		setCanChangeSettings(true);
+	// 		setIsCurrentUser(true);
+	// 		alert('same as current user');
+	// 	} else if (viewedUser && !viewedUser.isUser) {
+	// 		// Anyone can edit or delete the dummy user
+	// 		setCanChangeSettings(true);
+	// 		alert('is dummy');
+	// 	}
+	// }, [currentUserId, viewedUser]);
 
 
 	// Format date
@@ -141,13 +124,15 @@ function ProfileScreen({ navigation, ctx }) {
 					canChangeSettings &&
 					<View style={styles.icon}>
 						<Icon name="navicon" size={40} color={'white'}
-							onPress={() => ctx.menuActions.openMenu('profileMenu')} />
-						<Menu name="profileMenu" renderer={SlideInMenu}>
+							onPress={() => ctx.menuActions.openMenu('profileMenu' + navigation.state.routeName)} />
+						<Menu name={'profileMenu' + navigation.state.routeName} renderer={SlideInMenu}>
 							<MenuTrigger>
 							</MenuTrigger>
 							<MenuOptions customStyles={{ optionText: styles.menuText, optionWrapper: styles.menuWrapper, optionsContainer: styles.menuStyle }}>
-								<MenuOption onSelect={() => navigate('ProfileSetting', { setProfile })} text="Profile Setting" />
-								<MenuOption onSelect={logout} text="Logout" />
+								<MenuOption onSelect={() => navigate('ProfileSettings', { viewedUserId: viewedUser._id, setProfile: setViewedUser })} text="Profile Settings" />
+								{
+									isCurrentUser && <MenuOption onSelect={logout} text="Logout" />
+								}
 							</MenuOptions>
 						</Menu>
 					</View>
@@ -157,16 +142,16 @@ function ProfileScreen({ navigation, ctx }) {
 			<ScrollView>
 				<View style={styles.profileBox}>
 					<PictureFrame
-						image={{ uri: profile.pictureUrl || BLANK_PROFILE_PIC_URI }}
-						circular={true}
+						image={{ uri: viewedUser.pictureUrl }}
+						circular
 						width={100}
 						height={100} />
 					<View style={styles.textBox}>
 						<Text style={styles.nameText}>
-							{profile.name}
+							{viewedUser.name}
 						</Text>
 						<Text style={styles.dob}>
-							DOB: {moment(profile.dob).format(DATE_FORMAT)}
+							{viewedUser.dob && 'DOB: ' + moment(viewedUser.dob).format(DATE_FORMAT)}
 						</Text>
 					</View>
 				</View>
@@ -194,13 +179,11 @@ const styles = StyleSheet.create({
 	header: {
 		flexDirection: 'row',
 		padding: 15,
-		// margin: 10,
 	},
 
 	profile: {
 		fontSize: 30,
 		fontWeight: 'bold',
-		// color: '#2d2e33',
 		color: 'white',
 		alignItems: 'flex-start',
 		paddingLeft: 10,
@@ -228,10 +211,8 @@ const styles = StyleSheet.create({
 		height: Dimensions.get('window').width / 3.2,
 	},
 	textBox: {
-		// flex: 1,
 		padding: 8,
-		marginLeft: 10,
-		justifyContent: "center",
+		justifyContent: 'center',
 		alignSelf: 'center',
 	},
 	itemBox: {
@@ -293,24 +274,24 @@ const styles = StyleSheet.create({
 	},
 	textStyle: {
 		fontSize: 20,
-		fontWeight:'bold',
+		fontWeight: 'bold',
 		flexWrap: 'wrap',
 		// textAlignVertical: 'center',
-		textAlign:'center',
-		alignSelf:'center',
-		justifyContent:'center',
+		textAlign: 'center',
+		alignSelf: 'center',
+		justifyContent: 'center',
 		margin: 10,
-		padding:30,
-		flexWrap:'wrap',
-		flexDirection:'row',
+		padding: 30,
+		flexWrap: 'wrap',
+		flexDirection: 'row',
 	},
 	desc: {
 		fontSize: 16,
-		paddingHorizontal:30,
-		flexWrap:'wrap',
-		textAlign:'center',
-		justifyContent:'center',
-		alignSelf:'center',
+		paddingHorizontal: 30,
+		flexWrap: 'wrap',
+		textAlign: 'center',
+		justifyContent: 'center',
+		alignSelf: 'center',
 	},
 });
 

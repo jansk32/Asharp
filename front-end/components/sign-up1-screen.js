@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, Image, StyleSheet, TextInput, ToastAndroid, TouchableOpacity, Dimensions,
+	Text, View, StyleSheet, TextInput, ToastAndroid, TouchableOpacity, Dimensions,
 } from 'react-native';
-import { NavigationEvents } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
-import { validate } from '@babel/types';
 
 // Enter email
 export default function LoginScreen({ navigation }) {
@@ -34,11 +32,11 @@ export default function LoginScreen({ navigation }) {
 	// Validate email textinput
 	function validateInput() {
 		if (email === '') {
-			alert("Email is empty");
+			alert('Email is empty');
 			return false;
 		}
 		if (email.indexOf('@') === -1) {
-			alert("Invalid email");
+			alert('Invalid email');
 			return false;
 		} else {
 			return true;
@@ -56,9 +54,10 @@ export default function LoginScreen({ navigation }) {
 					<View style={styles.textInput}>
 						<TextInput
 							placeholder="Enter Email"
-							onChangeText={setEmail}
 							value={email}
+							onChangeText={setEmail}
 							autoCapitalize="none"
+							keyboardType="email-address"
 						/>
 					</View>
 				</View>

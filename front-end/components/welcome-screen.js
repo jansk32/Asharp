@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         justifyContent: 'center',
         marginBottom: 0,
-        marginTop: 20,
+        marginTop: 5,
     },
     yellowButton: {
         textAlign: 'center',
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').width / 8,
         justifyContent: 'center',
         alignSelf: 'center',
-        marginTop:50
+        marginTop: 40
     },
     whiteButton: {
         textAlign: 'center',
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         justifyContent: 'center',
         alignSelf: 'center',
-        marginTop:20
+        marginTop: 20
     },
     container: {
         backgroundColor: 'white',
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     buttonBox: {
         flex: 1,
         alignItems: 'center',
-        paddingVertical: 30,
+        // paddingVertical: 30,
     },
     buttonText: {
         fontSize: 16,

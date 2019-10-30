@@ -26,6 +26,23 @@ function formatData(data, numColumns) {
 
 export default function Gallery({ isLoading, artefacts, navigation, refresh }) {
     const [refreshing, setRefreshing] = useState(false);
+
+    const [noArtefactsTitle, setNoArtefactsTitle] = useState('');
+    const [noArtefactsDescription, setNoArtefactsDescription] = useState('');
+
+    useEffect(() => {
+        if (navigation.state.routeName === 'Profile') {
+            setNoArtefactsTitle("You don't have any artefacts right now");
+            setNoArtefactsDescription("When you upload an artefact or someone sends you one, you will see it here.");
+        } else if (navigation.state.routeName === 'Timeline') {
+            setNoArtefactsTitle("Your family doesn't have any artefacts right now");
+            setNoArtefactsDescription("When you or a family member gets an artefact, you will see it here.");
+        } else {
+            setNoArtefactsTitle("This person doesn't have any artefacts right now");
+            setNoArtefactsDescription("When they upload an artefact or someone sends them one, you will see it here.");
+        }
+    }, []);
+
     // Render Item invisible if it's just a placeholder for columns in the grid,
     // if not, render the picture for each grid (Gallery)
     function renderItem({ item, index }) {
@@ -63,21 +80,10 @@ export default function Gallery({ isLoading, artefacts, navigation, refresh }) {
             renderItem={renderItem}
             numColumns={numColumns}
             ListEmptyComponent={(
-                navigation.state.routeName === 'Profile' ?
-                    (
-                        <>
-                            <Text style={styles.textStyle}>You don't have any artefacts right now.</Text>
-                            <Text style={styles.desc}>When you upload an artefact or someone sends you one, you will see it here.</Text>
-                        </>
-                    )
-                    :
-                    (
-                        <>
-                            <Text style={styles.textStyle}>Your family doesn't have any artefacts right now.</Text>
-                            <Text style={styles.desc}>When you or a family member gets an artefact, you will see it here.</Text>
-                        </>
-                    )
-
+                <>
+                    <Text style={styles.textStyle}>{noArtefactsTitle}</Text>
+                    <Text style={styles.desc}>{noArtefactsDescription}</Text>
+                </>
             )}
         />
     );

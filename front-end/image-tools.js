@@ -1,7 +1,6 @@
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
-import * as firebase from 'firebase';
-import { ToastAndroid } from 'react-native';
+import firebase from 'firebase';
 
 // Return image object
 export function pickImage() {
@@ -9,8 +8,6 @@ export function pickImage() {
         ImagePicker.showImagePicker(response => {
             if (!response.didCancel) {
                 resolve({ uri: response.uri });
-            } else {
-                reject(null);
             }
         });
     });
@@ -18,8 +15,6 @@ export function pickImage() {
 
 // Return URL of uploaded image
 export async function uploadImage(uri) {
-    ToastAndroid.show('Uploading image', ToastAndroid.SHORT);
-
     const Blob = RNFetchBlob.polyfill.Blob;
     const fs = RNFetchBlob.fs;
     window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
@@ -36,7 +31,6 @@ export async function uploadImage(uri) {
     uploadBlob = blob;
     await imageRef.put(blob, { contentType: mime });
     uploadBlob.close();
-    ToastAndroid.show('Image uploaded', ToastAndroid.SHORT);
     const url = await imageRef.getDownloadURL();
     return url;
 }

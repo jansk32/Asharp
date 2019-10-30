@@ -221,12 +221,12 @@ app.put('/user/add-parent', async ({ body: { childId, parentId } }, res) => {
 });
 
 // Add parents manually
-app.post('/user/add-parents-manually', async ({ body: { fatherName, fatherDob, motherName, motherDob, personId } }, res) => {
-	console.log(personId);
+app.post('/user/add-parents-manually', async ({ body: { fatherName, fatherDob, fatherPictureUrl, motherName, motherDob, motherPictureUrl, personId } }, res) => {
 	const father = new User({
 		name: fatherName,
 		dob: fatherDob,
 		gender: 'm',
+		pictureUrl: fatherPictureUrl,
 		isUser: false,
 	});
 
@@ -234,18 +234,20 @@ app.post('/user/add-parents-manually', async ({ body: { fatherName, fatherDob, m
 		name: motherName,
 		dob: motherDob,
 		gender: 'f',
+		pictureUrl: motherPictureUrl,
 		isUser: false,
 		spouse: father._id,
 	});
 
 	father.spouse = mother._id;
 
-	father.save();
-	mother.save();
+	await father.save();
+	await mother.save();
 
 	// Link person to their parents
 	// findByIdAndUpdate must be called with await, else it won't work
 	await User.findByIdAndUpdate(personId, { father: father._id, mother: mother._id });
+	res.send();
 });
 
 // Add spouse
@@ -469,6 +471,9 @@ app.delete('/artefact/delete/:id', (req, res) => {
 		if (err) throw err;
 		res.send(resp);
 	});
+
+	// Delete notifications that refer to the artefact
+	Notification.deleteMany({artefact: req.params.id});
 });
 
 /* Notification routes */
@@ -488,7 +493,6 @@ app.get('/notification', async ({ query: { recipient } }, res) => {
 // Login local
 app.post('/login/local', passport.authenticate('local'), (req, res) => {
 	res.send(req.user);
-	console.log('LOGIN SESSION ID = ' + req.session.id);
 });
 
 
