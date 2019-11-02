@@ -213,7 +213,7 @@ function ItemDetailScreen({ navigation, ctx }) {
 								<TouchableOpacity
 									onPress={() => navigate('SendFamilyTree', { isSendingArtefact: true, artefactId })}
 									style={styles.sendButton}>
-									<LinearGradient colors={['#ff2870', '#ffe148']}
+									<LinearGradient colors={['#06beb6', '#48b1bf']}
 										start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
 										style={styles.sendButton}>
 										<Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		color: 'black',
-		fontSize: 50,
+		fontSize: 45,
 		fontWeight: 'bold',
 	},
 	owner: {
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
 	},
 	boldHeader: {
 		fontWeight: 'bold',
-		fontSize: 20,
+		fontSize: 18,
 	},
 	value: {
 		fontSize: 20,
@@ -315,7 +315,8 @@ const styles = StyleSheet.create({
 	menuStyle: {
 		borderTopEndRadius: 20,
 		borderTopStartRadius: 20,
-		borderColor: 'black',
+		borderColor: '#f5f7fb',
+		backgroundColor: '#f5f7fb',
 		borderWidth: 0.5,
 		paddingTop: 20,
 		justifyContent: 'space-between',
@@ -323,7 +324,7 @@ const styles = StyleSheet.create({
 	},
 	menuWrapper: {
 		paddingVertical: 15,
-		borderBottomColor: 'black',
+		borderBottomColor: '#2d2e33',
 		borderBottomWidth: 0.5,
 		marginHorizontal: 50,
 	},

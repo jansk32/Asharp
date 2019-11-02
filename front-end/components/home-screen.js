@@ -4,28 +4,37 @@ import {
 } from 'react-native';
 import { pickImage } from '../image-tools';
 import LinearGradient from 'react-native-linear-gradient';
-import Icon from 'react-native-vector-icons/Ionicons'
+import Icon from 'react-native-vector-icons/Ionicons';
+// import Icon from 'react-native-vector-icons/SimpleLineIcons';
+import { blockStatement } from '@babel/types';
 
 
 export default function HomeScreen({ navigation }) {
 	const { navigate } = navigation;
 	const [image, setImage] = useState({});
 
+
 	/*	A button for user to upload image, previews image, and a button to navigate 
 	   to add details page */
-	return (
+	return (	
 		<>
-			<LinearGradient colors={['#c33764', '#1d2671']}
+			<LinearGradient colors={['#8360c3', '#2ebf91']}
 				start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
 				style={styles.headerContainer}>
-				<Text style={styles.title}>Mementos</Text>
-				<Text style={styles.uploadTitle}>Upload Artefact</Text>
-			</LinearGradient>
-			<ScrollView>
+				<Text style={styles.title}>Welcome to</Text>
+				<Text style={styles.uploadTitle}>Mementos</Text>
+					</LinearGradient>
+
+			
+			
+			{/* <Text style={{textAlign:'center', fontWeight:'bold'}}>MEMENTOS</Text> */}
+
+			{/* <ScrollView> */}
+			<View style={styles.background}>
+				<Text style={styles.upload}>Upload Your Artefact Here!</Text>
 				<View style={styles.imageStyle}>
-					<Icon name="md-cloud-upload" size={260} color="purple" />
-				</View>
-				{/* <Image source={require('../upload-icon.png')} style={styles.imageStyle} /> */}
+					<Icon name="md-cloud-upload" size={150} color="black" />
+					{/* <Icon name="cloud-upload" size={200} color="#f5f7fb" style={{alignSelf:'center', justifyContent:'center'}}/> */}
 				<LinearGradient colors={['#06beb6', '#48b1bf']}
 					start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
 					style={styles.uploadButton}>
@@ -41,12 +50,21 @@ export default function HomeScreen({ navigation }) {
 						</Text>
 					</TouchableOpacity>
 				</LinearGradient>
-			</ScrollView>
+				</View>
+				</View>
+
+				{/* <Image source={require('../upload-icon.png')} style={styles.imageStyle} /> */}
+				
+			{/* </ScrollView> */}
+				{/* </View> */}
 		</>
 	);
 }
 /* Stylesheets for styles */
 const styles = StyleSheet.create({
+	background:{
+		backgroundColor: 'white',
+	},
 	text: {
 		fontSize: 20,
 		textAlign: 'center',
@@ -75,16 +93,32 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 		justifyContent: 'center',
 		alignSelf: 'center',
+		marginTop: 10,
 	},
 	imageStyle: {
 		// width: Dimensions.get('window').width * 0.95,
 		// height: Dimensions.get('window').width * 0.95,
 		width: 300,
 		height: 300,
-		marginBottom: 20,
-		marginTop: 30,
+		// marginBottom: 500,
+		marginTop: 50,
 		alignItems: 'center',
 		alignSelf: 'center',
+		justifyContent:'center',
+		borderRadius:25,
+		backgroundColor: 'white',
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+		
+		elevation: 5,
+		// borderRadius:375,
+		// borderColor:'black',
+		// borderWidth:1,
 	},
 	title: {
 		fontSize: 20,
@@ -98,6 +132,14 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		paddingBottom: '8%',
 		color: 'white',
+		// color: '#525151',
+	},
+	upload:{
+		fontSize: 25,
+		// fontWeight: 'bold',
+		// paddingBottom: '8%',
+		textAlign:'center',
+		marginTop: 30,
 	},
 	headerContainer: {
 		// borderBottomLeftRadius: 25,

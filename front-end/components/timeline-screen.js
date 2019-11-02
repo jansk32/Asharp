@@ -90,7 +90,7 @@ export default function TimelineScreen({ navigation }) {
 				innerCircleType="dot"
 				renderDetail={renderDetail}
 				timeContainerStyle={{ minWidth: 85, marginLeft: 10 }}
-				timeStyle={{ color: '#2d2e33' }}
+				timeStyle={{ color: '#2d2e33', fontWeight:'bold' }}
 				flatListProps={{
 					refreshControl: (
 						<RefreshControl
@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
 	itemTitle: {
 		fontSize: 15,
 		paddingLeft: 5,
+		// fontWeight:'bold'
 	},
 	containers: {
 		backgroundColor: '#f5f7fb',
@@ -179,6 +180,7 @@ const styles = StyleSheet.create({
 	},
 	list: {
 		flex: 1,
+		marginTop: 5,
 	},
 	container: {
 		// flex: 1,
