@@ -10,8 +10,10 @@ const constants = require('../server-constants');
 const { ONESIGNAL_ENDPOINT, ONESIGNAL_APP_ID } = constants;
 
 // Schema
+const userSchema = require('../schema/userSchema');
 const artefactSchema = require('../schema/artefactSchema');
 const notificationSchema = require('../schema/notificationSchema');
+const User = mongoose.model('User', userSchema);
 const Artefact = mongoose.model('Artefact', artefactSchema);
 const Notification = mongoose.model('Notification', notificationSchema);
 
