@@ -154,14 +154,14 @@ export default function ProfileSettingsScreen({ navigation }) {
 									/>
 								</View>
 							</>
-						)
+						) 
 					}
 				</View>
-				<LinearGradient colors={['#c33764', '#1d2671']}
+				<LinearGradient colors={['#06beb6', '#48b1bf']}
 					start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
 					style={styles.redButton}>
 					<TouchableOpacity onPress={updateProfile}>
-						<Text style={styles.whiteText}>
+						<Text style={styles.gradientText}>
 							Save Changes
 						</Text>
 					</TouchableOpacity>
@@ -227,6 +227,11 @@ const styles = StyleSheet.create({
 		color: 'white',
 		textAlign: 'center',
 	},
+	gradientText: {
+		fontSize: 20,
+		color: 'white',
+		textAlign: 'center',
+	},
 	picButton: {
 		backgroundColor: '#fff',
 		borderWidth: 1,
@@ -261,7 +266,7 @@ const styles = StyleSheet.create({
 	},
 	whiteText: {
 		fontSize: 20,
-		color: 'white',
+		color: 'black',
 		textAlign: 'center',
 	},
 	inputBox: {
@@ -271,7 +276,9 @@ const styles = StyleSheet.create({
 		marginBottom: 40,
 	},
 	redButton: {
-		backgroundColor: '#EC6268',
+		backgroundColor: 'white',
+		borderColor:'#48b1bf',
+		borderWidth:1,
 		width: Dimensions.get('window').width / 1.75,
 		height: Dimensions.get('window').width / 8,
 		borderRadius: 50,

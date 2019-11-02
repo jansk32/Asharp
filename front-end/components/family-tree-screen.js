@@ -395,7 +395,7 @@ function FamilyTreeScreen({ ctx, navigation }) {
 				<Text style={styles.add}>This is your</Text>
 				<Text style={styles.title}>Family Tree</Text>
 				<TouchableOpacity onPress={fetchFamilyMembers} style={styles.refreshButton}>
-					<Icon name="md-refresh" size={45} />
+					<Icon name="md-refresh" size={35} color='#2d2e33'/>
 				</TouchableOpacity>
 				<View style={styles.searchContainer}>
 					<View style={{ paddingTop: 5 }}>
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 	},
 	refreshButton: {
-		backgroundColor: 'gold',
+		backgroundColor: 'white',
 		width: 50,
 		height: 50,
 		position: 'absolute',
