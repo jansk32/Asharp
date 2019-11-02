@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const userSchema = require('../schema/userSchema');
 
 // creates the mongoose model 
+const userSchema = require('../schema/userSchema');
+const artefactSchema = require('../schema/artefactSchema');
+const notificationSchema = require('../schema/notificationSchema');
 const User = mongoose.model('User', userSchema);
+const Artefact = mongoose.model('Artefact', artefactSchema);
+const Notification = mongoose.model('Notification', notificationSchema);
 
 
 // Get limited information about another user
