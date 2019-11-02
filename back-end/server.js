@@ -5,10 +5,6 @@ const mongoose = require('mongoose');
 // const session = require('express-session');
 
 
-// Environment variables
-const constants = require('./server-constants');
-const { ONESIGNAL_ENDPOINT, ONESIGNAL_APP_ID } = constants;
-
 const { buildFamilyTree } = require('../build-family-tree');
 
 /* Database */
@@ -75,8 +71,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// need to change this later not sure to what though
-// '/' should be the home page 
+// '/' is the home page 
 app.get('/', (req, res) => {
 	res.send('Hello World');
 });
@@ -85,8 +80,8 @@ app.get('/', (req, res) => {
 /* User routes */
 const userRoute = require('./routes/userRoute');
 app.use('/user', userRoute);
-app.get('/users', async (req, res) => {
 
+app.get('/users', async (req, res) => {
 	try {
 		const users = await User.find();
 		res.send(users);
@@ -127,8 +122,8 @@ app.get('/family-tree/non-familial/:id', async ({ params: { id } }, res) => {
 
 
 /* Artefact routes */
-const artefactRoute = require("./routes/artefactRoute")
-app.use("/artefact", artefactRoute);
+const artefactRoute = require('./routes/artefactRoute');
+app.use('/artefact', artefactRoute);
 
 /* Notification routes */
 // Get all notifications that are meant for a certain user
@@ -156,10 +151,9 @@ app.get('/logout', (req, res) => {
 	res.send();
 });
 
-
+// Logs any promise rejections 
 process.on('unhandledRejection', (reason, p) => {
 	console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
-	// application specific logging, throwing an error, or other logic here
 });
 
 const port = process.env.PORT || 3000;

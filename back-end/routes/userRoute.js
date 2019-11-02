@@ -203,6 +203,7 @@ router.delete('/delete/:id', async ({ params: { id } }, res) => {
 		// Delete artefacts
 		const artefactsToDelete = await Artefact.find({ owner: id });
 		await Artefact.deleteMany({ owner: id });
+		
 		// Delete notifications related to artefacts
 		await Notification.deleteMany({ artefact: { $in: artefactsToDelete.map(artefact => artefact._id) } });
 

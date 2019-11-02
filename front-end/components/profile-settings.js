@@ -177,7 +177,7 @@ export default function ProfileSettingsScreen({ navigation }) {
 								onPress: () => {
 									async function task() {
 										try {
-											await axios.delete(`${BACK_END_ENDPOINT}/user/delete/${viewedUserId}`);
+											axios.delete(`${BACK_END_ENDPOINT}/user/delete/${viewedUserId}`);
 											if (isCurrentUser) {
 												logout();
 											} else {

@@ -12,7 +12,6 @@ export default function LoginScreen({ navigation }) {
 	async function storeEmail() {
 		try {
 			await AsyncStorage.setItem('email', email);
-			ToastAndroid.show('Stored email', ToastAndroid.SHORT);
 		} catch (e) {
 			ToastAndroid.show('Error storing email', ToastAndroid.SHORT);
 		}
