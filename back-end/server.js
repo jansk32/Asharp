@@ -14,9 +14,11 @@ const { buildFamilyTree } = require('../build-family-tree');
 /* Database */
 // Schemas
 const notificationSchema = require('./schema/notificationSchema');
+const userSchema = require('../schema/userSchema');
 
 // Create the mongoose model 
 const Notification = mongoose.model('Notification', notificationSchema);
+const User = mongoose.model('User', userSchema);
 
 // Connect to mongodb
 require('./controller/mongooseController');
