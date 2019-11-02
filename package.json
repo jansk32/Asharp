@@ -1,0 +1,23 @@
+{
+  "name": "mementos",
+  "version": "1.0.0",
+  "description": "API for mementos app",
+  "main": "server.js",
+  "scripts": {
+    "start": "cd back-end && node server.js",
+    "lint": "eslint ."
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testResultsProcessor": "./node_modules/jest-html-reporter/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jansk32/mementos.git"
+  },
+  "author": "A-sharp",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jansk32/mementos/issues"
+  }
+}
