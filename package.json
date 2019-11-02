@@ -1,9 +1,10 @@
 {
-  "name": "mementos",
+  "name": "mementos-back-end",
   "version": "1.0.0",
   "description": "API for mementos app",
   "main": "server.js",
   "scripts": {
+    "test": "NODE_ENV=test jest --runInBand",
     "start": "cd back-end && node server.js",
     "lint": "eslint ."
   },
@@ -22,7 +23,6 @@
   },
   "homepage": "https://github.com/jansk32/mementos#readme",
   "dependencies": {
-    "axios": "^0.19.0",
     "express": "^4.17.1",
     "moment": "^2.24.0",
     "mongoose": "^5.7.7",
