@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const axios = require('axios');
 const moment = require('moment');
-const { buildFamilyTree } = require('../build-family-tree');
+const { buildFamilyTree } = require('../../build-family-tree');
 
 // Environment variables
 const constants = require('../server-constants');
@@ -11,6 +11,7 @@ const { ONESIGNAL_ENDPOINT, ONESIGNAL_APP_ID } = constants;
 
 // Schema
 const artefactSchema = require('../schema/artefactSchema');
+const notificationSchema = require('../schema/notificationSchema');
 const Artefact = mongoose.model('Artefact', artefactSchema);
 const Notification = mongoose.model('Notification', notificationSchema);
 
