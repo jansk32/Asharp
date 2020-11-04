@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, Text, Alert, ActivityIndicator, TouchableOpacity, } from 'react-native';
+import { View, PanResponder, Dimensions, ToastAndroid, TextInput, StyleSheet, Text, Alert, ActivityIndicator, TouchableOpacity, Platform } from 'react-native';
 import Svg, { Circle, Line, Image, Defs, ClipPath, G, Text as SvgText } from 'react-native-svg';
 import { arrangeFamilyTree, mainDrawLines, getAncestors } from '../build-family-tree.js';
 import axios from 'axios';
@@ -472,7 +472,8 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		color: 'white',
 		marginLeft: 10,
-		paddingTop: '5%',
+		paddingTop: Platform.OS === 'ios' ? '12%' : '5%',
+
 	},
 	menuStyle: {
 		borderTopEndRadius: 20,
@@ -527,7 +528,7 @@ const styles = StyleSheet.create({
 		right: 0,
 		marginRight: 30,
 		top: 0,
-		marginTop: 30,
+		marginTop: Platform.OS === 'ios' ? 60: 30,
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderRadius: 25

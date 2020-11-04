@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-	Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, ScrollView,
+	Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, ScrollView, Platform
 } from 'react-native';
 import { pickImage } from '../image-tools';
 import LinearGradient from 'react-native-linear-gradient';
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		marginLeft: 10,
 		color: 'white',
-		paddingTop: '8%',
+		paddingTop: Platform.OS === 'ios' ? '15%' : '8%',
 	},
 	uploadTitle: {
 		fontSize: 30,

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Text, ActivityIndicator, StyleSheet, View, Image, Dimensions, TouchableOpacity, Button, ToastAndroid, RefreshControl } from 'react-native';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { Text, ScrollView, StyleSheet, View, Dimensions, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import moment from 'moment';
 import OneSignal from 'react-native-onesignal';
 import AsyncStorage from '@react-native-community/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import Gallery from './gallery';
+
+import Toast from 'react-native-simple-toast';
+
 
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider, withMenuContext, renderers } from 'react-native-popup-menu';
 const { SlideInMenu } = renderers;
@@ -33,7 +35,7 @@ function ProfileScreen({ navigation, ctx }) {
 			OneSignal.removeExternalUserId();
 			navigate('Welcome');
 		} catch (e) {
-			ToastAndroid.show('Error logging out', ToastAndroid.SHORT);
+			Toast.show('Error logging out');
 		}
 	}
 
@@ -179,6 +181,7 @@ const styles = StyleSheet.create({
 	header: {
 		flexDirection: 'row',
 		padding: 15,
+		paddingTop: Platform.OS === 'ios' ? 60 : 15,
 	},
 
 	profile: {

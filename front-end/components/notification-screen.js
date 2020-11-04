@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, ActivityIndicator, StyleSheet, View, FlatList, Dimensions, Image, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
+import { Text, ActivityIndicator, StyleSheet, View, FlatList, Image, TouchableOpacity, RefreshControl, Platform } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
 import OneSignal from 'react-native-onesignal';
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		marginLeft: 10,
 		color: 'white',
-		paddingTop: '8%',
+		paddingTop: Platform.OS === 'ios' ? '15%' : '8%',
 	},
 	galleryTitle: {
 		fontSize: 30,

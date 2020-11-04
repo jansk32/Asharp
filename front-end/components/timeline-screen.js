@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, ActivityIndicator, StyleSheet, View, Image, TouchableOpacity, Dimensions, RefreshControl } from 'react-native';
+import { Text, ActivityIndicator, StyleSheet, View, Image, TouchableOpacity, Dimensions, RefreshControl, Platform } from 'react-native';
 import Timeline from 'react-native-timeline-feed';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		marginLeft: 10,
 		color: 'white',
-		paddingTop: '8%',
+		paddingTop: Platform.OS === 'ios' ? '15%' : '8%',
 
 	},
 	item: {
