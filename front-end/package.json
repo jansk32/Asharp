@@ -19,7 +19,7 @@
     "mocha": "^6.2.2",
     "moment": "^2.24.0",
     "react": "16.8.6",
-    "react-native": "0.60.4",
+    "react-native": "0.62.3",
     "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^1.2.6",
     "react-native-gesture-handler": "^1.4.1",
